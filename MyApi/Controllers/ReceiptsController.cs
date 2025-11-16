@@ -349,6 +349,156 @@ public class ReceiptsController : ControllerBase
         }
     }
 
+    [HttpPost("batch-ocr")]
+    public async Task<ActionResult<BatchOcrResultDto>> PerformBatchOcr([FromBody] BatchOcrRequestDto request)
+    {
+        var userId = GetUserId();
+
+        if (request.ReceiptIds == null || !request.ReceiptIds.Any())
+        {
+            return BadRequest(new { message = "No receipt IDs provided" });
+        }
+
+        var result = new BatchOcrResultDto
+        {
+            TotalRequested = request.ReceiptIds.Count
+        };
+
+        _logger.LogInformation("User {UserId} requested batch OCR for {Count} receipts", userId, request.ReceiptIds.Count);
+
+        // Fetch all receipts belonging to the user
+        var receipts = await _context.Receipts
+            .Where(r => request.ReceiptIds.Contains(r.Id) && r.UserId == userId)
+            .ToListAsync();
+
+        foreach (var receiptId in request.ReceiptIds)
+        {
+            var receipt = receipts.FirstOrDefault(r => r.Id == receiptId);
+            var receiptResult = new ReceiptOcrResultDto
+            {
+                ReceiptId = receiptId,
+                FileName = receipt?.FileName ?? "Unknown"
+            };
+
+            if (receipt == null)
+            {
+                receiptResult.Success = false;
+                receiptResult.ErrorMessage = "Receipt not found or does not belong to user";
+                result.Skipped++;
+                result.Results.Add(receiptResult);
+                continue;
+            }
+
+            // Check if file is an image
+            var extension = Path.GetExtension(receipt.FileName).ToLowerInvariant();
+            if (extension != ".jpg" && extension != ".jpeg" && extension != ".png")
+            {
+                receiptResult.Success = false;
+                receiptResult.ErrorMessage = "OCR is only supported for image files (JPG, PNG)";
+                result.Skipped++;
+                result.Results.Add(receiptResult);
+                continue;
+            }
+
+            try
+            {
+                // Get the file and perform OCR
+                using var fileStream = await _fileStorage.GetFileAsync(receipt.StoragePath);
+                var ocrResult = await _ocrService.ExtractReceiptDataAsync(fileStream, receipt.FileName);
+
+                if (!ocrResult.Success)
+                {
+                    receiptResult.Success = false;
+                    receiptResult.ErrorMessage = $"OCR failed: {ocrResult.ErrorMessage}";
+                    result.Failed++;
+                    result.Results.Add(receiptResult);
+                    continue;
+                }
+
+                // Update receipt with OCR results (only update null fields)
+                var updated = false;
+
+                if (receipt.Merchant == null && !string.IsNullOrWhiteSpace(ocrResult.Merchant))
+                {
+                    receipt.Merchant = ocrResult.Merchant;
+                    updated = true;
+                }
+
+                if (receipt.Amount == null && ocrResult.Amount.HasValue)
+                {
+                    receipt.Amount = ocrResult.Amount;
+                    updated = true;
+                }
+
+                if (receipt.PurchaseDate == null && ocrResult.PurchaseDate.HasValue)
+                {
+                    receipt.PurchaseDate = ocrResult.PurchaseDate;
+                    updated = true;
+                }
+
+                if (receipt.ProductName == null && !string.IsNullOrWhiteSpace(ocrResult.ProductName))
+                {
+                    receipt.ProductName = ocrResult.ProductName;
+                    updated = true;
+                }
+
+                // Append OCR extracted text to notes
+                if (!string.IsNullOrWhiteSpace(ocrResult.ExtractedText))
+                {
+                    receipt.Notes = string.IsNullOrWhiteSpace(receipt.Notes)
+                        ? $"OCR: {ocrResult.ExtractedText}"
+                        : $"{receipt.Notes}\n\nOCR: {ocrResult.ExtractedText}";
+                    updated = true;
+                }
+
+                if (updated)
+                {
+                    receipt.LastModifiedAt = DateTime.UtcNow;
+                }
+
+                receiptResult.Success = true;
+                receiptResult.UpdatedReceipt = MapToResponseDto(receipt);
+                result.SuccessfullyProcessed++;
+                result.Results.Add(receiptResult);
+
+                _logger.LogInformation("Successfully processed OCR for receipt {ReceiptId}", receiptId);
+            }
+            catch (FileNotFoundException)
+            {
+                receiptResult.Success = false;
+                receiptResult.ErrorMessage = "Receipt file not found in storage";
+                result.Failed++;
+                result.Results.Add(receiptResult);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error performing OCR on receipt {ReceiptId}", receiptId);
+                receiptResult.Success = false;
+                receiptResult.ErrorMessage = "An unexpected error occurred during OCR processing";
+                result.Failed++;
+                result.Results.Add(receiptResult);
+            }
+        }
+
+        // Save all changes at once
+        if (result.SuccessfullyProcessed > 0)
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Batch OCR completed. Total: {Total}, Success: {Success}, Failed: {Failed}, Skipped: {Skipped}",
+                    result.TotalRequested, result.SuccessfullyProcessed, result.Failed, result.Skipped);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving batch OCR changes");
+                return StatusCode(500, new { message = "Batch OCR completed but failed to save changes" });
+            }
+        }
+
+        return Ok(result);
+    }
+
     private ReceiptResponseDto MapToResponseDto(Receipt receipt)
     {
         return new ReceiptResponseDto

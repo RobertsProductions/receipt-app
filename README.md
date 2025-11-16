@@ -40,7 +40,8 @@ MyAspireSolution/
 │   ├── 11-email-sms-notifications.md  # Email and SMS notification configuration
 │   ├── 12-user-profile-management.md   # User profile API
 │   ├── 13-pdf-ocr-support.md      # PDF receipt OCR processing
-│   └── 14-phone-verification.md   # SMS phone number verification
+│   ├── 14-phone-verification.md   # SMS phone number verification
+│   └── 15-batch-ocr-processing.md # Batch OCR for multiple receipts
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
@@ -72,6 +73,8 @@ MyAspireSolution/
 │   │   ├── RegisterDto.cs         # Registration request
 │   │   ├── ReceiptResponseDto.cs  # Receipt response
 │   │   ├── UploadReceiptDto.cs    # Receipt upload request
+│   │   ├── BatchOcrRequestDto.cs  # Batch OCR request
+│   │   ├── BatchOcrResultDto.cs   # Batch OCR response
 │   │   └── UserProfileDto.cs      # User profile, preferences, phone verification
 │   ├── Data/                      # EF Core DbContext
 │   │   ├── ApplicationDbContext.cs
@@ -219,9 +222,11 @@ The port number will be displayed in the console or available in the Aspire Dash
 - PDF text extraction with PdfPig library
 - Optional OCR during upload (`UseOcr=true` parameter)
 - Run OCR on existing receipts via dedicated endpoint
+- **Batch OCR processing** for multiple receipts at once
 - Smart data merging (OCR only fills empty fields)
 - Image OCR uses OpenAI GPT-4o-mini vision model (~$0.00015 per image)
 - PDF OCR uses text extraction + GPT-4o-mini (~$0.00005 per PDF, more cost-effective)
+- Detailed batch results with success/failure tracking per receipt
 
 **Warranty Expiration Notifications**
 - Background service monitors warranties 24/7
