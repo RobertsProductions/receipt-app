@@ -2,11 +2,11 @@
 
 [![.NET CI/CD Pipeline](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml)
 
-A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction and proactive warranty expiration notifications.
+A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction, proactive warranty expiration notifications via email and SMS, and comprehensive user management.
 
 ## Overview
 
-This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts, and a background service that monitors and notifies users about expiring warranties.
+This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts, a background service that monitors and notifies users about expiring warranties via email and optional SMS, leveraging ASP.NET Core Identity's built-in fields for seamless integration.
 
 ## Technology Stack
 
@@ -35,7 +35,8 @@ MyAspireSolution/
 │   ├── 07-connection-fixes.md     # Database connection troubleshooting
 │   ├── 08-receipt-upload-feature.md   # Receipt upload and management
 │   ├── 09-ocr-openai-integration.md   # OpenAI OCR integration
-│   └── 10-warranty-expiration-notifications.md   # Background notification service
+│   ├── 10-warranty-expiration-notifications.md   # Background notification service
+│   └── 11-email-sms-notifications.md  # Email and SMS notification configuration
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   ├── Services/                  # Business logic & OCR service
@@ -50,6 +51,7 @@ MyAspireSolution/
 │   └── appsettings.json
 ├── global.json                    # .NET SDK version pinning
 ├── SetOpenAiKey.ps1               # Helper script for OpenAI API key setup
+├── ConfigureEmail.ps1             # Helper script for email notification setup
 ├── MyAspireSolution.sln
 └── README.md
 ```
@@ -173,11 +175,17 @@ The port number will be displayed in the console or available in the Aspire Dash
 **Warranty Expiration Notifications**
 - Background service monitors warranties 24/7
 - Configurable notification threshold (default: 7 days before expiration)
+- Email notifications with HTML templates and urgency color coding
+- Optional SMS notifications via Twilio (if user has phone number)
+- Uses Identity's built-in Email and PhoneNumber fields
+- Composite notification service (sends both email and SMS)
 - In-memory caching for fast API access
 - RESTful endpoints to query expiring warranties
 - Prevents duplicate notifications
-- Extensible notification system (logs, email, SMS)
-- User-isolated notifications
+- Graceful degradation when SMS not configured
+- Interactive configuration scripts (ConfigureEmail.ps1)
+- Support for Gmail, Outlook, SendGrid, custom SMTP
+- Production-ready with secure credential storage
 
 ## Development
 
@@ -234,6 +242,7 @@ Detailed documentation is available in the `docs/` folder:
 - [08 - Receipt Upload Feature](docs/08-receipt-upload-feature.md): Upload and manage receipt images and PDFs
 - [09 - OpenAI OCR Integration](docs/09-ocr-openai-integration.md): AI-powered receipt data extraction setup and usage
 - [10 - Warranty Expiration Notifications](docs/10-warranty-expiration-notifications.md): Background service for warranty monitoring and notifications
+- [11 - Email and SMS Notifications](docs/11-email-sms-notifications.md): Email and SMS notification setup, configuration, and testing
 
 ## Contributing
 
@@ -307,7 +316,9 @@ For issues, questions, or contributions, please:
 - [x] Configure Aspire parameters for secret management
 - [x] Automatic database migrations on startup
 - [x] Add warranty expiration notifications (background service with caching)
-- [ ] Implement email/SMS notifications for warranty expirations
+- [x] Implement email/SMS notifications for warranty expirations (SMTP, Twilio)
+- [ ] Add user profile management API (update phone number, preferences)
+- [ ] Implement notification preferences (email only, SMS only, both)
 - [ ] Implement PDF OCR support
 - [ ] Add batch OCR processing
 - [ ] Create frontend UI
