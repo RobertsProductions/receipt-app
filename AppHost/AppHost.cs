@@ -28,7 +28,7 @@ var myApi = builder.AddProject<Projects.MyApi>("myapi")
 // Add Angular frontend as NPM app
 // Runs 'npm start' in the WarrantyApp.Web directory
 var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
-    .WithHttpEndpoint(port: 4200, env: "PORT")
+    .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
     .WaitFor(myApi);
 

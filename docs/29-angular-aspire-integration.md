@@ -121,14 +121,14 @@ builder.Services.AddCors(options =>
 app.UseCors("AllowAngularDev");
 ```
 
-### 3. Add Package.json Scripts (if needed)
+**3. Add Package.json Scripts (if needed)**
 
 Ensure the Angular project has appropriate npm scripts for Aspire:
 
 ```json
 {
   "scripts": {
-    "start": "ng serve --host 0.0.0.0 --port 4200",
+    "start": "ng serve --proxy-config proxy.conf.json --port ${PORT:-4200}",
     "start:aspire": "ng serve --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
     "build:prod": "ng build --configuration production"
@@ -136,7 +136,9 @@ Ensure the Angular project has appropriate npm scripts for Aspire:
 }
 ```
 
-### 4. Update AppHost Configuration
+**Note**: The `start` script uses `${PORT:-4200}` to read the port from the environment variable set by Aspire, defaulting to 4200 if not set. This prevents port conflict issues and allows Aspire to manage port assignment dynamically.
+
+**4. Update AppHost Configuration**
 
 Complete example of `AppHost.cs` with frontend integration:
 
@@ -162,26 +164,32 @@ var myApi = builder.AddProject<Projects.MyApi>("myapi")
     .WithEnvironment("OpenAI__ApiKey", openAiApiKey)
     .WaitFor(receiptdb);
 
-// Frontend Angular App
-var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web")
-    .WithNpmCommand("start")
-    .WithHttpEndpoint(port: 4200, env: "PORT")
+// Frontend Angular App with dynamic port assignment
+var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
+    .WithHttpEndpoint(env: "PORT")  // No hardcoded port - Aspire assigns dynamically
     .WithExternalHttpEndpoints()
-    .WithReference(myApi); // Optional: creates service binding
+    .WaitFor(myApi);
 
 builder.Build().Run();
 ```
+
+**Key Points:**
+- Removed `port: 4200` parameter to allow dynamic port assignment
+- Aspire will assign an available port and set it via the PORT environment variable
+- Angular's npm start script reads the PORT environment variable
+- This prevents port conflicts and interactive prompts
 
 ## Acceptance Criteria
 
 - [x] Angular app starts automatically when running Aspire AppHost
 - [x] Frontend appears in Aspire dashboard with proper health status
-- [x] Angular dev server is accessible at `http://localhost:4200`
+- [x] Angular dev server is accessible (dynamic port assignment)
 - [x] API endpoint is accessible from Angular app (CORS configured)
 - [x] Logs from Angular dev server appear in Aspire dashboard
 - [x] Hot reload works for Angular code changes
 - [x] Aspire can stop/restart the Angular app
-- [x] Environment variables can be passed to Angular from Aspire
+- [x] Environment variables can be passed to Angular from Aspire (PORT)
+- [x] No port conflict errors when port 4200 is in use
 
 ## Implementation Summary
 
@@ -193,15 +201,35 @@ dotnet add package Aspire.Hosting.NodeJs --version 9.5.2
 ```
 
 **2. Updated AppHost.cs**
-Added the Angular frontend as an NPM app resource:
+Added the Angular frontend as an NPM app resource with dynamic port assignment:
 ```csharp
 var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
-    .WithHttpEndpoint(port: 4200, env: "PORT")
+    .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
     .WaitFor(myApi);
 ```
 
-**3. Configured CORS in MyApi**
+**Key Changes:**
+- Removed hardcoded `port: 4200` to allow Aspire to assign a dynamic port
+- This prevents port conflicts when port 4200 is already in use
+- The PORT environment variable is automatically set by Aspire
+
+**3. Updated package.json**
+Modified the npm start script to use the PORT environment variable:
+```json
+{
+  "scripts": {
+    "start": "ng serve --proxy-config proxy.conf.json --port ${PORT:-4200}"
+  }
+}
+```
+
+**Key Changes:**
+- Uses `${PORT:-4200}` syntax to read PORT from environment (defaults to 4200)
+- Prevents Angular CLI from prompting for user input when port is in use
+- Ensures seamless integration with Aspire's dynamic port assignment
+
+**4. Configured CORS in MyApi**
 Added CORS policy to allow requests from Angular dev server:
 ```csharp
 builder.Services.AddCors(options =>
@@ -219,15 +247,16 @@ builder.Services.AddCors(options =>
 app.UseCors("AllowAngularDev");
 ```
 
-**4. Testing Results**
+**5. Testing Results**
 - ✅ Aspire dashboard starts successfully
 - ✅ SQL Server container launches
 - ✅ MyApi starts and applies migrations
-- ✅ Angular dev server starts on port 4200
+- ✅ Angular dev server starts on dynamically assigned port
 - ✅ All resources visible in Aspire dashboard
 - ✅ Unified logging for all services
-- [ ] Aspire can stop/restart the Angular app
-- [ ] Environment variables can be passed to Angular from Aspire
+- ✅ No port conflict errors
+- ✅ Aspire can stop/restart the Angular app
+- ✅ Environment variables passed to Angular from Aspire (PORT)
 
 ## Testing Steps
 
@@ -238,13 +267,14 @@ app.UseCors("AllowAngularDev");
    ```
 
 2. **Verify Aspire Dashboard**
-   - Open Aspire dashboard (usually `http://localhost:15000`)
+   - Open Aspire dashboard (URL shown in console output)
    - Confirm "frontend" resource appears
    - Check health status is green
    - View logs for npm/Angular CLI output
+   - Note the dynamically assigned port for the frontend
 
 3. **Test Angular App**
-   - Navigate to `http://localhost:4200`
+   - Navigate to the frontend URL shown in Aspire dashboard
    - Verify Angular welcome page loads
    - Check browser console for errors
 
@@ -257,6 +287,12 @@ app.UseCors("AllowAngularDev");
    - Modify an Angular component
    - Verify browser auto-refreshes with changes
 
+6. **Test Port Conflict Handling**
+   - Start another process on port 4200
+   - Run Aspire AppHost
+   - Verify Angular starts on a different port without errors
+   - Confirm no interactive prompts are shown
+
 ## Benefits of Aspire Integration
 
 1. **Unified Development Experience**: Start all services with one command
@@ -265,6 +301,9 @@ app.UseCors("AllowAngularDev");
 4. **Health Monitoring**: Track frontend app health alongside API and database
 5. **Simplified Onboarding**: New developers can spin up entire stack easily
 6. **Environment Consistency**: Same orchestration for local dev and testing
+7. **Dynamic Port Management**: No port conflicts - Aspire assigns available ports automatically
+8. **No Interactive Prompts**: Angular starts automatically without user input
+9. **Environment Variable Injection**: Aspire manages PORT and other configuration
 
 ## Alternative Approaches
 
@@ -292,15 +331,18 @@ Update documentation to reflect the two-step startup process.
 
 ## Next Steps
 
-1. Implement Option A (NPM project resource) in AppHost.cs
-2. Configure CORS in MyApi for Angular dev server
-3. Test integration with Aspire dashboard
-4. Update project README with new startup instructions
-5. Document any environment variable configuration needed
+1. ✅ Implement NPM project resource in AppHost.cs
+2. ✅ Configure CORS in MyApi for Angular dev server
+3. ✅ Test integration with Aspire dashboard
+4. ✅ Update project README with new startup instructions
+5. ✅ Fix port conflict issues with dynamic port assignment
+6. ✅ Document environment variable configuration
+7. ⏭️ Begin implementing authentication UI in Angular
+8. ⏭️ Connect Angular app to MyApi endpoints
 
 ---
 
 **Priority**: High  
 **Estimated Effort**: 2-3 hours  
-**Dependencies**: None (Angular project and Aspire already set up)  
-**Assignee**: TBD
+**Status**: ✅ Complete (all acceptance criteria met)  
+**Completed**: November 16, 2025
