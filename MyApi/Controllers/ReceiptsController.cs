@@ -21,6 +21,7 @@ public class ReceiptsController : ControllerBase
     private readonly IFileStorageService _fileStorage;
     private readonly IOcrService _ocrService;
     private readonly ILogger<ReceiptsController> _logger;
+    private readonly IUserCacheService _userCacheService;
     private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".pdf" };
     private const long MaxFileSize = 10 * 1024 * 1024; // 10MB
 
@@ -28,12 +29,14 @@ public class ReceiptsController : ControllerBase
         ApplicationDbContext context,
         IFileStorageService fileStorage,
         IOcrService ocrService,
-        ILogger<ReceiptsController> logger)
+        ILogger<ReceiptsController> logger,
+        IUserCacheService userCacheService)
     {
         _context = context;
         _fileStorage = fileStorage;
         _ocrService = ocrService;
         _logger = logger;
+        _userCacheService = userCacheService;
     }
 
     private string GetUserId()
@@ -170,6 +173,9 @@ public class ReceiptsController : ControllerBase
             _context.Receipts.Add(receipt);
             await _context.SaveChangesAsync();
 
+            // Invalidate receipt cache after adding new receipt
+            _userCacheService.InvalidateReceiptCache(userId);
+
             _logger.LogInformation("User {UserId} uploaded receipt {ReceiptId}", userId, receipt.Id);
 
             var response = MapToResponseDto(receipt);
@@ -286,6 +292,9 @@ public class ReceiptsController : ControllerBase
             _context.Receipts.Remove(receipt);
             await _context.SaveChangesAsync();
 
+            // Invalidate receipt cache after deleting receipt
+            _userCacheService.InvalidateReceiptCache(userId);
+
             _logger.LogInformation("User {UserId} deleted receipt {ReceiptId}", userId, id);
             return NoContent();
         }
@@ -375,6 +384,10 @@ public class ReceiptsController : ControllerBase
             {
                 receipt.LastModifiedAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
+                
+                // Invalidate receipt cache after OCR update
+                _userCacheService.InvalidateReceiptCache(userId);
+                
                 _logger.LogInformation("Updated receipt {ReceiptId} with OCR data", id);
             }
 
@@ -536,6 +549,10 @@ public class ReceiptsController : ControllerBase
             try
             {
                 await _context.SaveChangesAsync();
+                
+                // Invalidate receipt cache after batch OCR
+                _userCacheService.InvalidateReceiptCache(userId);
+                
                 _logger.LogInformation("Batch OCR completed. Total: {Total}, Success: {Success}, Failed: {Failed}, Skipped: {Skipped}",
                     result.TotalRequested, result.SuccessfullyProcessed, result.Failed, result.Skipped);
             }

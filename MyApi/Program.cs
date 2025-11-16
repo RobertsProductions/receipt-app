@@ -184,6 +184,7 @@ builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IOcrService, OpenAiOcrService>();
 builder.Services.AddScoped<IPhoneVerificationService, PhoneVerificationService>();
 builder.Services.AddScoped<IChatbotService, ChatbotService>();
+builder.Services.AddScoped<IUserCacheService, UserCacheService>();
 
 // Register background services
 builder.Services.AddHostedService<WarrantyExpirationService>();

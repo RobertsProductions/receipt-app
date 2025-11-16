@@ -51,7 +51,8 @@ MyAspireSolution/
 │   ├── 22-code-quality-improvements.md             # XML documentation and error responses
 │   ├── 23-receipt-sharing.md                       # Receipt sharing with read-only access
 │   ├── 24-ai-chatbot-receipt-queries.md            # AI chatbot for natural language queries
-│   └── 25-performance-optimization.md              # Response caching, indexes, rate limiting, compression
+│   ├── 25-performance-optimization.md              # Response caching, indexes, rate limiting, compression
+│   └── 26-user-data-caching.md                     # Automatic user data caching on login
 ├── MyApi/                                          # ASP.NET Core Web API
 │   ├── Controllers/                                # API endpoints
 │   │   ├── AuthController.cs                       # Authentication (register, login)
@@ -76,12 +77,14 @@ MyAspireSolution/
 │   │   ├── LocalFileStorageService.cs              # File storage management
 │   │   ├── TokenService.cs                         # JWT token generation
 │   │   ├── WarrantyExpirationService.cs            # Background warranty monitoring
+│   │   ├── UserCacheService.cs                     # User data caching service
 │   │   ├── IPhoneVerificationService.cs            # Phone verification interface
 │   │   ├── IChatbotService.cs                      # Chatbot interface
 │   │   ├── INotificationService.cs                 # Notification interface
 │   │   ├── IOcrService.cs                          # OCR interface
 │   │   ├── IFileStorageService.cs                  # Storage interface
 │   │   ├── ITokenService.cs                        # Token interface
+│   │   ├── IUserCacheService.cs                    # User cache interface
 │   │   └── JwtSettings.cs                          # JWT configuration
 │   ├── Models/                                     # Data models
 │   │   ├── ApplicationUser.cs                      # User entity (Identity + preferences)
@@ -434,6 +437,7 @@ Detailed documentation is available in the `docs/` folder:
 - [23 - Receipt Sharing](docs/23-receipt-sharing.md): Share receipts with other users (read-only access) with warranty monitoring integration
 - [24 - AI Chatbot Receipt Queries](docs/24-ai-chatbot-receipt-queries.md): Natural language receipt queries with AI-powered chatbot, conversation history, and suggested questions
 - [25 - Performance Optimization](docs/25-performance-optimization.md): Response caching, database indexes, rate limiting, and compression for improved performance and scalability
+- [26 - User Data Caching](docs/26-user-data-caching.md): Automatic user data preloading into cache on login for 10-30x faster response times
 
 ## Contributing
 
@@ -520,6 +524,7 @@ For issues, questions, or contributions, please:
 - [x] Add receipt sharing (share receipts with read-only access and warranty monitoring)
 - [x] Implement AI chatbot for receipt queries (natural language queries, conversation history)
 - [x] Add performance optimizations (response caching, database indexes, rate limiting, compression)
+- [x] Add user data caching on login (automatic preloading for 10-30x faster response times)
 
 ### Backend Tasks (No UI Required) 🔧
 

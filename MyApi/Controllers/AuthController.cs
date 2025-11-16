@@ -23,6 +23,7 @@ public class AuthController : ControllerBase
     private readonly EmailNotificationService _emailService;
     private readonly ILogger<AuthController> _logger;
     private readonly IConfiguration _configuration;
+    private readonly IUserCacheService _userCacheService;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
@@ -30,7 +31,8 @@ public class AuthController : ControllerBase
         ITokenService tokenService,
         EmailNotificationService emailService,
         ILogger<AuthController> logger,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IUserCacheService userCacheService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -38,6 +40,7 @@ public class AuthController : ControllerBase
         _emailService = emailService;
         _logger = logger;
         _configuration = configuration;
+        _userCacheService = userCacheService;
     }
 
     /// <summary>
@@ -176,6 +179,9 @@ public class AuthController : ControllerBase
         user.RefreshTokenExpiryTime = refreshTokenExpiresAt;
         await _userManager.UpdateAsync(user);
 
+        // Preload user data into cache for better performance
+        _ = _userCacheService.PreloadUserDataAsync(user.Id); // Fire and forget
+
         _logger.LogInformation("User {Email} logged in successfully", model.Email);
 
         return Ok(new AuthResponseDto
@@ -220,7 +226,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Logs out the current user by signing them out of the session.
+    /// Logs out the current user by signing them out of the session and clearing cached data.
     /// </summary>
     /// <returns>Success message confirming logout</returns>
     [Authorize]
@@ -228,6 +234,12 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Logout()
     {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            _userCacheService.ClearUserCache(userId);
+        }
+
         await _signInManager.SignOutAsync();
         return Ok(new { message = "Logged out successfully" });
     }
@@ -516,6 +528,9 @@ public class AuthController : ControllerBase
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = refreshTokenExpiresAt;
         await _userManager.UpdateAsync(user);
+
+        // Preload user data into cache for better performance
+        _ = _userCacheService.PreloadUserDataAsync(user.Id); // Fire and forget
 
         _logger.LogInformation("User {Email} logged in successfully with 2FA", model.Email);
 
