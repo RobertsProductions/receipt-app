@@ -3,7 +3,10 @@
 **Created**: November 16, 2025  
 **Status**: ✅ Complete  
 **Completed**: November 16, 2025  
-**Version**: 1.0
+**Version**: 1.1  
+**Last Updated**: November 16, 2025
+
+> **Note**: This document describes the initial Angular + Aspire integration. For the proxy configuration and port management fix, see [32-aspire-angular-proxy-fix.md](32-aspire-angular-proxy-fix.md).
 
 ## Overview
 

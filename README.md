@@ -60,7 +60,10 @@ MyAspireSolution/
 │   ├── 26-user-data-caching.md                     # Automatic user data caching on login
 │   ├── 27-design-reference.md                      # UI/UX design guidelines and style reference
 │   ├── 28-frontend-workflows.md                    # Frontend implementation workflows and task breakdown
-│   └── 29-angular-aspire-integration.md            # Angular + Aspire integration guide
+│   ├── 29-angular-aspire-integration.md            # Angular + Aspire integration guide
+│   ├── 30-frontend-setup-complete.md               # Frontend setup completion summary
+│   ├── 31-aspire-integration-complete.md           # Aspire integration completion summary
+│   └── 32-aspire-angular-proxy-fix.md              # Angular proxy and port management fix
 ├── MyApi/                                          # ASP.NET Core Web API
 │   ├── Controllers/                                # API endpoints
 │   │   ├── AuthController.cs                       # Authentication (register, login)
@@ -130,7 +133,8 @@ MyAspireSolution/
 │   ├── angular.json                                # Angular CLI config
 │   ├── package.json                                # npm dependencies
 │   ├── eslint.config.js                            # ESLint configuration
-│   ├── proxy.conf.json                             # API proxy for dev server
+│   ├── proxy.conf.mjs                              # Dynamic API proxy configuration
+│   ├── start-server.js                             # Aspire PORT handling script
 │   └── README.md                                   # Frontend documentation
 ├── global.json                                     # .NET SDK version pinning
 ├── SetOpenAiKey.ps1                                # Helper script for OpenAI API key setup
@@ -206,17 +210,18 @@ dotnet run
 This will:
 - Start the Aspire Dashboard
 - Launch SQL Server container (persistent)
-- Automatically launch the MyApi service
-- **Launch Angular frontend dev server (port 4200)**
+- Automatically launch the MyApi service on a dynamic port
+- **Launch Angular frontend dev server on a dynamic port**
 - Apply database migrations automatically
 - Provide unified logging and telemetry
 - Open the dashboard in your browser
 
-Access points:
+**Access via Aspire Dashboard** (ports are dynamically assigned):
 - **Aspire Dashboard**: https://localhost:17263
-- **Frontend**: http://localhost:4200
-- **API**: http://localhost:5000
-- **Swagger**: http://localhost:5000/swagger
+- **Frontend**: Click the "frontend" link in the dashboard
+- **API/Swagger**: Click the "myapi" link in the dashboard
+
+**Note**: Aspire automatically manages ports to avoid conflicts. Use the dashboard links instead of hardcoded URLs.
 
 #### Option 2: Run Frontend and Backend Separately
 
@@ -232,9 +237,9 @@ cd WarrantyApp.Web
 npm start
 ```
 
-- API will be available at `http://localhost:5000`
-- Frontend will be available at `http://localhost:4200`
-- API requests from frontend are proxied via `proxy.conf.json`
+- API will be available at `http://localhost:5000` (from Option 1) or a dynamic port
+- Frontend will be available at `http://localhost:4200` (standalone) or dynamic port (via Aspire)
+- API requests from frontend are automatically proxied to the correct backend URL
 
 #### Option 3: Run API Standalone
 
@@ -496,6 +501,10 @@ Detailed documentation is available in the `docs/` folder:
 - [26 - User Data Caching](docs/26-user-data-caching.md): Automatic user data preloading into cache on login for 10-30x faster response times
 - [27 - Design Reference](docs/27-design-reference.md): Comprehensive UI/UX design guidelines, color palette, typography, component specifications, and responsive design patterns
 - [28 - Frontend Workflows](docs/28-frontend-workflows.md): Complete frontend implementation plan with user workflows, component breakdown, and task lists for Angular development
+- [29 - Angular Aspire Integration](docs/29-angular-aspire-integration.md): Integrating Angular frontend with .NET Aspire orchestration
+- [30 - Frontend Setup Complete](docs/30-frontend-setup-complete.md): Frontend setup completion summary
+- [31 - Aspire Integration Complete](docs/31-aspire-integration-complete.md): Aspire integration completion summary
+- [32 - Aspire Angular Proxy Fix](docs/32-aspire-angular-proxy-fix.md): Detailed fix for Angular proxy configuration and port management with Aspire
 
 ## Contributing
 
@@ -543,6 +552,14 @@ Check Aspire Dashboard for SQL Server resource status
 Solution: Configure OpenAI API key in Aspire Dashboard Parameters or user secrets
 Verify key with: cd MyApi && dotnet user-secrets list
 See docs/09-ocr-openai-integration.md for detailed setup
+```
+
+**Issue**: Angular app stuck loading or can't reach API
+```
+Solution: The Angular app uses dynamic port assignment and proxy configuration
+- Ensure you're accessing via Aspire Dashboard links (not hardcoded URLs)
+- Check that proxy.conf.mjs and start-server.js are present in WarrantyApp.Web
+- See docs/32-aspire-angular-proxy-fix.md for details
 ```
 
 ## License

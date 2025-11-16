@@ -41,16 +41,23 @@ dotnet run
 **What happens:**
 - Aspire dashboard opens at `https://localhost:17263`
 - SQL Server container starts
-- MyApi starts at `http://localhost:5000`
-- **Angular frontend starts at `http://localhost:4200`** ✨
+- MyApi starts on a dynamic port (e.g., `http://localhost:54525`)
+- **Angular frontend starts on a dynamic port (e.g., `http://localhost:62809`)** ✨
 - Database migrations apply automatically
 - All logs visible in Aspire dashboard
 
+**Note**: Aspire assigns dynamic ports to avoid conflicts. Check the Aspire dashboard for the actual URLs.
+
 ### Step 3: Access the Application
 
-- **Aspire Dashboard**: https://localhost:17263
-- **Frontend**: http://localhost:4200
-- **Backend API**: http://localhost:5000
+**Option A - Via Aspire Dashboard (Recommended):**
+1. Open the Aspire Dashboard at `https://localhost:17263`
+2. Click the link for "frontend" resource to access the Angular app
+3. Click the link for "myapi" resource to access Swagger UI
+
+**Option B - Direct URLs (if running standalone):**
+- **Frontend**: http://localhost:4200 (when not using Aspire)
+- **Backend API**: http://localhost:5000 (when not using Aspire)
 - **Swagger UI**: http://localhost:5000/swagger
 
 ## Alternative: Run Frontend Separately
@@ -184,8 +191,8 @@ npm install
 
 ### CORS Issues
 - Ensure both backend and frontend are running
-- Check proxy.conf.json configuration
-- Verify API allows localhost:4200 origin
+- Check proxy.conf.mjs configuration (dynamic proxy)
+- Verify API allows localhost origins (CORS configured for any localhost port)
 
 ## Environment Variables
 

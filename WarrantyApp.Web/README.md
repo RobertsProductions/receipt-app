@@ -32,9 +32,14 @@ Run the development server:
 npm start
 ```
 
-Navigate to `http://localhost:4200/`. The app will automatically reload when you make changes.
+**When run standalone**: Navigate to `http://localhost:4200/`. The app will automatically reload when you make changes.
 
-**Note**: The `start` script includes a proxy configuration to forward `/api` requests to `http://localhost:5000` (the backend API).
+**When run via Aspire**: The PORT environment variable will be set by Aspire, and the app will start on the assigned port (visible in Aspire dashboard).
+
+**Note**: The `start` script uses `start-server.js` which:
+- Reads the PORT environment variable (set by Aspire) or defaults to 4200
+- Starts Angular dev server with dynamic proxy configuration
+- Proxy forwards `/api` requests to the backend API (dynamic URL from Aspire or localhost:5000)
 
 To run without the proxy:
 ```bash
@@ -98,20 +103,34 @@ The application uses environment files to manage configuration:
 
 ## API Proxy Configuration
 
-The `proxy.conf.json` file configures the dev server to proxy API requests to the backend:
+The `proxy.conf.mjs` file dynamically configures the dev server to proxy API requests to the backend:
 
-```json
-{
-  "/api": {
-    "target": "http://localhost:5000",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  }
+```javascript
+export default function() {
+  // Aspire injects service URLs in the format: services__<servicename>__http__0
+  const apiUrl = process.env.API_URL || 
+                 process.env.services__myapi__http__0 || 
+                 'http://localhost:5000';
+  
+  return {
+    '/api': {
+      target: apiUrl,
+      secure: false,
+      changeOrigin: true,
+      logLevel: 'debug'
+    }
+  };
 }
 ```
 
 This allows the frontend to make requests to `/api/*` which are automatically forwarded to the backend API.
+
+**How it works:**
+1. When run via Aspire: Reads `API_URL` or `services__myapi__http__0` from environment
+2. When run standalone: Falls back to `http://localhost:5000`
+3. Logs the proxy target for debugging
+
+See `../docs/32-aspire-angular-proxy-fix.md` for details on the dynamic proxy implementation.
 
 ## Code Style and Linting
 
@@ -154,7 +173,7 @@ See `../docs/29-angular-aspire-integration.md` for:
 
 | Script | Description |
 |--------|-------------|
-| `npm start` | Start dev server with API proxy on port 4200 |
+| `npm start` | Start dev server with dynamic API proxy (uses PORT from Aspire or defaults to 4200) |
 | `npm run start:no-proxy` | Start dev server without proxy |
 | `npm run build` | Build for development |
 | `npm run build:prod` | Build for production with optimizations |

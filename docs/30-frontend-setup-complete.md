@@ -1,7 +1,10 @@
 # Frontend Setup Completion Summary
 
 **Date**: November 16, 2025  
-**Status**: ✅ Complete
+**Status**: ✅ Complete  
+**Last Updated**: November 16, 2025
+
+> **Note**: This document summarizes the initial frontend setup. For Aspire integration improvements (proxy and port management), see [32-aspire-angular-proxy-fix.md](32-aspire-angular-proxy-fix.md).
 
 ## What Was Accomplished
 
@@ -30,19 +33,22 @@ Created environment files for API configuration:
 - `environment.prod.ts` - Production (uses relative `/api` path)
 
 ### 4. API Proxy Setup ✅
-- Created `proxy.conf.json` to forward `/api` requests to backend
-- Updated npm scripts to use proxy by default
+- Created `proxy.conf.mjs` to dynamically forward `/api` requests to backend
+- Proxy reads API_URL from environment (set by Aspire) or falls back to localhost:5000
+- Created `start-server.js` to handle dynamic PORT assignment from Aspire
+- Updated npm scripts to use dynamic proxy configuration
 - Added `start:no-proxy` option for flexibility
 
 ### 5. NPM Scripts Enhancement ✅
 Updated `package.json` with additional scripts:
 ```json
 {
-  "start": "ng serve --proxy-config proxy.conf.json",
+  "start": "node start-server.js",
   "start:no-proxy": "ng serve",
   "build:prod": "ng build --configuration production",
   "lint": "ng lint"
 }
+```
 ```
 
 ### 6. Documentation ✅
@@ -98,7 +104,8 @@ WarrantyApp.Web/
 ├── angular.json              # Angular CLI configuration
 ├── package.json              # NPM dependencies and scripts
 ├── eslint.config.js          # ESLint configuration
-├── proxy.conf.json           # Dev server proxy config
+├── proxy.conf.mjs            # Dynamic dev server proxy config
+├── start-server.js           # PORT management script for Aspire
 ├── tsconfig.json             # TypeScript configuration
 ├── tsconfig.app.json         # App TypeScript config
 ├── tsconfig.spec.json        # Test TypeScript config
