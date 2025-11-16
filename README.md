@@ -317,16 +317,16 @@ The port number will be displayed in the console or available in the Aspire Dash
 
 ## Testing
 
-The application includes comprehensive test coverage with **119 passing tests** across all critical components:
+The application includes comprehensive test coverage with **146 passing tests** across all critical components:
 
 ### Test Suite Overview
-- **Total Tests**: 119 (100% pass rate ✅)
+- **Total Tests**: 146 (100% pass rate ✅)
 - **Execution Time**: ~42 seconds
 - **Coverage**: Service layer and models
 
 ### Test Categories
 
-**Service Tests** (100 tests):
+**Service Tests** (117 tests):
 - TokenService (12): JWT generation, validation, refresh tokens
 - LocalFileStorageService (11): File operations, user isolation
 - EmailNotificationService (14): Email delivery, templates
@@ -335,10 +335,13 @@ The application includes comprehensive test coverage with **119 passing tests** 
 - LogNotificationService (12): Structured logging
 - PhoneVerificationService (10): SMS codes, verification
 - OpenAiOcrService (16): OCR processing, file handling
+- ChatbotService (17): Natural language processing, conversation history
+- SmsNotificationService (0): Thin wrapper around Twilio
 
-**Model Tests** (19 tests):
-- ApplicationUser and Receipt validation
-- Entity relationships and data annotations
+**Model Tests** (29 tests):
+- ApplicationUser (12): User entity with notification preferences
+- Receipt (7): Receipt tracking and validation
+- ReceiptShare (10): Receipt sharing functionality and access control
 
 ### Running Tests
 
@@ -359,8 +362,8 @@ dotnet list package --vulnerable
 ### Testing Strategy
 
 The application follows a pragmatic testing approach:
-- ✅ **Service Layer**: Complete with 100 tests covering all business logic
-- ✅ **Models**: Complete with 19 tests for validation and relationships
+- ✅ **Service Layer**: Complete with 117 tests covering all business logic
+- ✅ **Models**: Complete with 29 tests for validation and relationships
 - 🔮 **Controllers**: Deferred to E2E tests with Playwright (after frontend development)
 - 🔮 **E2E Tests**: Planned with Playwright for integration and UI workflows
 
@@ -400,14 +403,14 @@ builder.Build().Run();
 
 The project includes a GitHub Actions workflow that:
 
-1. **Build and Test**: Compiles the solution and runs all 119 tests (100% pass rate)
+1. **Build and Test**: Compiles the solution and runs all 146 tests (100% pass rate)
 2. **Code Quality**: Checks code formatting standards
 3. **Security Scan**: Scans for vulnerable dependencies
 4. **Artifacts**: Publishes build artifacts for deployment
 
-**Test Coverage Status**: ✅ 119 tests passing
-- Service Layer: 100 tests (TokenService, FileStorage, Notifications, Warranty, OCR, PhoneVerification)
-- Model Layer: 19 tests (ApplicationUser, Receipt validation)
+**Test Coverage Status**: ✅ 146 tests passing
+- Service Layer: 117 tests (TokenService, FileStorage, Notifications, Warranty, OCR, PhoneVerification, Chatbot)
+- Model Layer: 29 tests (ApplicationUser, Receipt, ReceiptShare validation)
 - Execution Time: ~42 seconds
 
 Pipeline triggers:
