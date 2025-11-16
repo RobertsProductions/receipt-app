@@ -49,13 +49,16 @@ MyAspireSolution/
 │   ├── 20-testing-strategy.md # Comprehensive testing strategy
 │   ├── 21-automated-deployment.md # Azure Container Apps deployment
 │   ├── 22-code-quality-improvements.md # XML documentation and error responses
-│   └── 23-receipt-sharing.md # Receipt sharing with read-only access
+│   ├── 23-receipt-sharing.md # Receipt sharing with read-only access
+│   └── 24-ai-chatbot-receipt-queries.md # AI chatbot for natural language queries
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
 │   │   ├── ReceiptsController.cs  # Receipt management & OCR
 │   │   ├── UserProfileController.cs    # User profile & preferences
-│   │   └── WarrantyNotificationsController.cs  # Warranty monitoring
+│   │   ├── WarrantyNotificationsController.cs  # Warranty monitoring
+│   │   ├── ReceiptSharingController.cs  # Receipt sharing
+│   │   └── ChatbotController.cs  # AI-powered receipt queries
 │   ├── HealthChecks/             # Health check implementations
 │   │   ├── OpenAiHealthCheck.cs  # OpenAI API connectivity check
 │   │   ├── SmtpHealthCheck.cs    # SMTP server connectivity check
@@ -68,10 +71,12 @@ MyAspireSolution/
 │   │   ├── LogNotificationService.cs           # Logging fallback
 │   │   ├── PhoneVerificationService.cs         # SMS phone verification
 │   │   ├── OpenAiOcrService.cs    # AI-powered OCR (image & PDF)
+│   │   ├── ChatbotService.cs     # AI chatbot for receipt queries
 │   │   ├── LocalFileStorageService.cs  # File storage management
 │   │   ├── TokenService.cs        # JWT token generation
 │   │   ├── WarrantyExpirationService.cs  # Background warranty monitoring
 │   │   ├── IPhoneVerificationService.cs        # Phone verification interface
+│   │   ├── IChatbotService.cs    # Chatbot interface
 │   │   ├── INotificationService.cs       # Notification interface
 │   │   ├── IOcrService.cs         # OCR interface
 │   │   ├── IFileStorageService.cs # Storage interface
@@ -79,7 +84,9 @@ MyAspireSolution/
 │   │   └── JwtSettings.cs         # JWT configuration
 │   ├── Models/                    # Data models
 │   │   ├── ApplicationUser.cs     # User entity (Identity + preferences)
-│   │   └── Receipt.cs             # Receipt entity
+│   │   ├── Receipt.cs             # Receipt entity
+│   │   ├── ReceiptShare.cs        # Receipt sharing entity
+│   │   └── ChatMessage.cs         # Chatbot conversation history
 │   ├── DTOs/                      # Data transfer objects
 │   │   ├── AuthResponseDto.cs     # Login/register response
 │   │   ├── LoginDto.cs            # Login request
@@ -541,17 +548,17 @@ For issues, questions, or contributions, please:
 - [x] Implement notifications for new shared receipts
 
 **AI Chatbot for Receipt Queries**
-- [ ] Design chatbot conversation interface and message format
-- [ ] Implement OpenAI integration for natural language processing
-- [ ] Create receipt query service (search by merchant, date, amount, product)
-- [ ] Add conversation history management and context tracking
-- [ ] Implement chat endpoints (send message, get history, clear conversation)
-- [ ] Add support for natural language date parsing (e.g., "last month", "this year")
-- [ ] Implement receipt statistics queries (total spending, category breakdown)
-- [ ] Add warranty status queries via chatbot
-- [ ] Create suggested questions/prompts for common queries
-- [ ] Add chat message persistence to database
-- [ ] Implement rate limiting for chatbot API calls
+- [x] Design chatbot conversation interface and message format
+- [x] Implement OpenAI integration for natural language processing
+- [x] Create receipt query service (search by merchant, date, amount, product)
+- [x] Add conversation history management and context tracking
+- [x] Implement chat endpoints (send message, get history, clear conversation)
+- [x] Add support for natural language date parsing (e.g., "last month", "this year")
+- [x] Implement receipt statistics queries (total spending, category breakdown)
+- [x] Add warranty status queries via chatbot
+- [x] Create suggested questions/prompts for common queries
+- [x] Add chat message persistence to database
+- [x] Implement rate limiting for chatbot API calls
 
 ### Frontend/UI Tasks 🎨
 - [ ] Choose frontend framework (React/Vue/Blazor/Angular)

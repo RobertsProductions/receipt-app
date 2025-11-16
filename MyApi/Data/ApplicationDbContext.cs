@@ -13,6 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Receipt> Receipts { get; set; }
     public DbSet<ReceiptShare> ReceiptShares { get; set; }
+    public DbSet<ChatMessage> ChatMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -65,6 +66,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.HasIndex(rs => rs.OwnerId);
             entity.HasIndex(rs => rs.SharedWithUserId);
             entity.HasIndex(rs => rs.SharedAt);
+        });
+
+        // Configure ChatMessage entity
+        builder.Entity<ChatMessage>(entity =>
+        {
+            entity.ToTable("ChatMessages");
+            
+            entity.HasOne(cm => cm.User)
+                .WithMany()
+                .HasForeignKey(cm => cm.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(cm => cm.UserId);
+            entity.HasIndex(cm => cm.CreatedAt);
         });
     }
 }
