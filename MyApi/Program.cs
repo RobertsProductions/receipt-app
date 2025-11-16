@@ -138,11 +138,24 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Register services
+// Register notification services
+// Choose ONE of the following notification service registrations:
+// 1. Log only (development/testing)
+// builder.Services.AddSingleton<INotificationService, LogNotificationService>();
+
+// 2. Email only (production without SMS)
+// builder.Services.AddSingleton<EmailNotificationService>();
+// builder.Services.AddSingleton<INotificationService>(sp => sp.GetRequiredService<EmailNotificationService>());
+
+// 3. Composite (Email + SMS) - recommended for production
+builder.Services.AddSingleton<EmailNotificationService>();
+builder.Services.AddSingleton<SmsNotificationService>();
+builder.Services.AddScoped<INotificationService, CompositeNotificationService>();
+
+// Register other services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IOcrService, OpenAiOcrService>();
-builder.Services.AddSingleton<INotificationService, LogNotificationService>();
 
 // Register background services
 builder.Services.AddHostedService<WarrantyExpirationService>();
