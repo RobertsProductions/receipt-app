@@ -157,6 +157,16 @@ The port number will be displayed in the console or available in the Aspire Dash
 - JWT-based authentication with ASP.NET Core Identity
 - User registration and login endpoints
 - Secure password requirements and validation
+- User profile management with preferences
+
+**User Profile Management**
+- Get and update profile information (FirstName, LastName)
+- Manage phone number for SMS notifications
+- Configure notification preferences (channel, threshold, opt-out)
+- User-specific notification thresholds (1-90 days)
+- Flexible notification channels (None, Email, SMS, Both)
+- Complete opt-out functionality
+- Phone number validation and privacy protection
 
 **Receipt Management**
 - Upload receipt images (JPG, PNG) and PDFs (max 10MB)
@@ -243,6 +253,7 @@ Detailed documentation is available in the `docs/` folder:
 - [09 - OpenAI OCR Integration](docs/09-ocr-openai-integration.md): AI-powered receipt data extraction setup and usage
 - [10 - Warranty Expiration Notifications](docs/10-warranty-expiration-notifications.md): Background service for warranty monitoring and notifications
 - [11 - Email and SMS Notifications](docs/11-email-sms-notifications.md): Email and SMS notification setup, configuration, and testing
+- [12 - User Profile Management](docs/12-user-profile-management.md): User profile API with notification preferences and phone number management
 
 ## Contributing
 
@@ -317,8 +328,9 @@ For issues, questions, or contributions, please:
 - [x] Automatic database migrations on startup
 - [x] Add warranty expiration notifications (background service with caching)
 - [x] Implement email/SMS notifications for warranty expirations (SMTP, Twilio)
-- [ ] Add user profile management API (update phone number, preferences)
+- [x] Add user profile management API (update phone number, preferences)
 - [ ] Implement notification preferences (email only, SMS only, both)
+- [ ] Add phone number verification (SMS confirmation code)
 - [ ] Implement PDF OCR support
 - [ ] Add batch OCR processing
 - [ ] Create frontend UI
