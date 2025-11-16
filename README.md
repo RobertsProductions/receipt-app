@@ -10,6 +10,7 @@ This application provides a comprehensive warranty tracking system with a REST A
 
 ## Technology Stack
 
+### Backend
 - **.NET 8.0** - Latest LTS version of .NET
 - **.NET Aspire 13.0** - Cloud-native orchestration and observability
 - **ASP.NET Core Web API** - RESTful API backend
@@ -18,6 +19,10 @@ This application provides a comprehensive warranty tracking system with a REST A
 - **OpenAI GPT-4o-mini** - AI-powered OCR for receipt processing
 - **Swagger/OpenAPI** - API documentation and testing
 - **GitHub Actions** - CI/CD pipeline
+
+### Frontend
+- **Angular** - Modern TypeScript-based framework for building web applications
+- **ESLint** - Pluggable linting utility for code quality and consistency
 
 ## Project Structure
 
@@ -593,7 +598,9 @@ For issues, questions, or contributions, please:
 - [x] Implement rate limiting for chatbot API calls
 
 ### Frontend/UI Tasks 🎨
-- [ ] Choose frontend framework (React/Vue/Blazor/Angular)
+- [x] Choose frontend framework (Angular selected)
+- [ ] Set up Angular project with TypeScript
+- [ ] Configure ESLint for code quality and consistency
 - [ ] Create UI wireframes and mockups
 - [ ] Implement authentication UI (login, register, 2FA)
 - [ ] Implement receipt management UI (upload, view, OCR)
