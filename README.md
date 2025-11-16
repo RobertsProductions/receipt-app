@@ -400,6 +400,7 @@ Detailed documentation is available in the `docs/` folder:
 - [19 - Monitoring and Alerting](docs/19-monitoring-and-alerting.md): Comprehensive health checks for all system components and dependencies
 - [20 - Testing Strategy](docs/20-testing-strategy.md): Comprehensive testing strategy with 119 passing tests (100% pass rate) covering services and models
 - [21 - Automated Deployment](docs/21-automated-deployment.md): Multi-platform deployment strategies with Azure Container Apps, Docker Compose, and CI/CD workflows
+- [22 - Code Quality Improvements](docs/22-code-quality-improvements.md): XML documentation for all API endpoints and standardized error response patterns
 
 ## Contributing
 
