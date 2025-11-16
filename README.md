@@ -196,7 +196,7 @@ MyAspireSolution/
 
 ### Running the Application
 
-#### Option 1: Using Aspire AppHost (Recommended - Backend Only)
+#### Option 1: Using Aspire AppHost (Recommended - Full Stack)
 
 ```bash
 cd AppHost
@@ -207,13 +207,18 @@ This will:
 - Start the Aspire Dashboard
 - Launch SQL Server container (persistent)
 - Automatically launch the MyApi service
+- **Launch Angular frontend dev server (port 4200)**
 - Apply database migrations automatically
 - Provide unified logging and telemetry
 - Open the dashboard in your browser
 
-**Note**: Currently, the Angular frontend is not integrated with Aspire. See [Angular + Aspire Integration](docs/29-angular-aspire-integration.md) for the task to add it.
+Access points:
+- **Aspire Dashboard**: https://localhost:17263
+- **Frontend**: http://localhost:4200
+- **API**: http://localhost:5000
+- **Swagger**: http://localhost:5000/swagger
 
-#### Option 2: Run Frontend and Backend Separately (Current Workflow)
+#### Option 2: Run Frontend and Backend Separately
 
 **Terminal 1 - Backend API via Aspire:**
 ```bash
@@ -651,7 +656,7 @@ For issues, questions, or contributions, please:
 - [x] Define frontend workflows and component structure
 - [x] Set up Angular project with TypeScript
 - [x] Configure ESLint for code quality and consistency
-- [ ] Integrate Angular app with .NET Aspire AppHost for orchestration
+- [x] Integrate Angular app with .NET Aspire AppHost for orchestration
 - [ ] Create UI wireframes and mockups based on design reference
 - [ ] Implement design system (colors, typography, components)
 - [ ] Implement authentication UI (login, register, 2FA)

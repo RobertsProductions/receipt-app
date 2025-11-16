@@ -11,6 +11,18 @@ using MyApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add CORS for Angular frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -264,7 +276,8 @@ app.UseMiddleware<RateLimitingMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+// Use CORS policy
+app.UseCors("AllowAngularDev");
 
 app.UseAuthentication();
 app.UseAuthorization();

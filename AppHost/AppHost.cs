@@ -25,4 +25,11 @@ var myApi = builder.AddProject<Projects.MyApi>("myapi")
     .WithEnvironment("OpenAI__ApiKey", openAiApiKey)
     .WaitFor(receiptdb);
 
+// Add Angular frontend as NPM app
+// Runs 'npm start' in the WarrantyApp.Web directory
+var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
+    .WithHttpEndpoint(port: 4200, env: "PORT")
+    .WithExternalHttpEndpoints()
+    .WaitFor(myApi);
+
 builder.Build().Run();

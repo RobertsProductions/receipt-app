@@ -1,6 +1,6 @@
 # Quick Start Guide - Warranty App
 
-## Start the Application (Current Setup)
+## Start the Application
 
 ### Prerequisites Check
 ```bash
@@ -30,7 +30,7 @@ cd ..
 dotnet restore
 ```
 
-### Step 2: Start Backend (Terminal 1)
+### Step 2: Start Everything with Aspire (Single Command! 🎉)
 
 ```bash
 # From solution root
@@ -39,30 +39,35 @@ dotnet run
 ```
 
 **What happens:**
-- Aspire dashboard opens at `http://localhost:15000`
+- Aspire dashboard opens at `https://localhost:17263`
 - SQL Server container starts
 - MyApi starts at `http://localhost:5000`
+- **Angular frontend starts at `http://localhost:4200`** ✨
 - Database migrations apply automatically
+- All logs visible in Aspire dashboard
 
-### Step 3: Start Frontend (Terminal 2)
+### Step 3: Access the Application
 
-```bash
-# From solution root (new terminal)
-cd WarrantyApp.Web
-npm start
-```
-
-**What happens:**
-- Angular dev server starts at `http://localhost:4200`
-- API requests automatically proxy to backend
-- Hot reload enabled for code changes
-
-### Step 4: Access the Application
-
+- **Aspire Dashboard**: https://localhost:17263
 - **Frontend**: http://localhost:4200
 - **Backend API**: http://localhost:5000
 - **Swagger UI**: http://localhost:5000/swagger
-- **Aspire Dashboard**: http://localhost:15000
+
+## Alternative: Run Frontend Separately
+
+If you prefer to run the frontend separately for better control:
+
+**Terminal 1 - Backend via Aspire:**
+```bash
+cd AppHost
+dotnet run
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd WarrantyApp.Web
+npm start
+```
 
 ## Development Workflow
 
@@ -200,9 +205,10 @@ Set in `src/environments/`:
 ## Next Steps
 
 1. ✅ Backend running with Aspire
-2. ✅ Frontend running standalone
-3. ⏳ Integrate frontend with Aspire (see docs/29-angular-aspire-integration.md)
+2. ✅ Frontend running with Aspire (integrated!)
+3. ✅ Full stack orchestration with single command
 4. ⏳ Implement authentication UI
+5. ⏳ Implement receipt management UI
 5. ⏳ Implement receipt management UI
 
 ## Useful Commands
