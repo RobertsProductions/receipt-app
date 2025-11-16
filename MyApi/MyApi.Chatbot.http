@@ -1,0 +1,90 @@
+### AI Chatbot Endpoints Testing
+
+@baseUrl = https://localhost:7777
+@token = your-jwt-token-here
+
+### 1. Get Suggested Questions
+GET {{baseUrl}}/api/chatbot/suggested-questions
+Authorization: Bearer {{token}}
+
+### 2. Send a Message to Chatbot
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "What receipts do I have?"
+}
+
+### 3. Ask about spending
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "How much have I spent this month?"
+}
+
+### 4. Ask about warranties
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "Which warranties are expiring soon?"
+}
+
+### 5. Get Conversation History
+GET {{baseUrl}}/api/chatbot/history?limit=10
+Authorization: Bearer {{token}}
+
+### 6. Clear Conversation History
+DELETE {{baseUrl}}/api/chatbot/history
+Authorization: Bearer {{token}}
+
+### Example Natural Language Queries
+
+### Find receipts from specific merchant
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "Show me receipts from Amazon"
+}
+
+### Date-based queries
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "What did I buy last month?"
+}
+
+### Amount-based queries
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "Show me receipts over $100"
+}
+
+### Statistics queries
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "What's my most expensive purchase?"
+}
+
+### Warranty queries
+POST {{baseUrl}}/api/chatbot/message
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "Do I have any warranties expiring this month?"
+}
