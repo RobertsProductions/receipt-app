@@ -25,93 +25,93 @@ This application provides a comprehensive warranty tracking system with a REST A
 MyAspireSolution/
 ├── .github/
 │   └── workflows/
-│       └── dotnet-ci.yml          # CI/CD pipeline configuration
-├── docs/                          # Documentation
-│   ├── 01-initial-setup.md        # Initial setup documentation
-│   ├── 02-api-registration.md     # API registration with Aspire
-│   ├── 03-cicd-setup.md           # GitHub Actions CI/CD pipeline
-│   ├── 04-authentication-authorization.md  # JWT authentication
-│   ├── 05-database-resources-aspire.md     # Aspire database resources
-│   ├── 06-docker-database-setup.md     # Docker and database configuration
-│   ├── 07-connection-fixes.md     # Database connection troubleshooting
-│   ├── 08-receipt-upload-feature.md   # Receipt upload and management
-│   ├── 09-ocr-openai-integration.md   # OpenAI OCR integration
-│   ├── 10-warranty-expiration-notifications.md   # Background notification service
-│   ├── 11-email-sms-notifications.md  # Email and SMS notification configuration
-│   ├── 12-user-profile-management.md   # User profile API
-│   ├── 13-pdf-ocr-support.md      # PDF receipt OCR processing
-│   ├── 14-phone-verification.md   # SMS phone number verification
-│   ├── 15-batch-ocr-processing.md # Batch OCR for multiple receipts
-│   ├── 16-refresh-token-support.md # JWT refresh tokens
-│   ├── 17-two-factor-authentication.md # 2FA with TOTP
-│   ├── 18-email-confirmation.md # Email address verification
-│   ├── 19-monitoring-and-alerting.md # Health checks and monitoring
-│   ├── 20-testing-strategy.md # Comprehensive testing strategy
-│   ├── 21-automated-deployment.md # Azure Container Apps deployment
-│   ├── 22-code-quality-improvements.md # XML documentation and error responses
-│   ├── 23-receipt-sharing.md # Receipt sharing with read-only access
-│   ├── 24-ai-chatbot-receipt-queries.md # AI chatbot for natural language queries
-│   └── 25-performance-optimization.md # Response caching, indexes, rate limiting, compression
-├── MyApi/                         # ASP.NET Core Web API
-│   ├── Controllers/               # API endpoints
-│   │   ├── AuthController.cs      # Authentication (register, login)
-│   │   ├── ReceiptsController.cs  # Receipt management & OCR
-│   │   ├── UserProfileController.cs    # User profile & preferences
-│   │   ├── WarrantyNotificationsController.cs  # Warranty monitoring
-│   │   ├── ReceiptSharingController.cs  # Receipt sharing
-│   │   └── ChatbotController.cs  # AI-powered receipt queries
-│   ├── HealthChecks/             # Health check implementations
-│   │   ├── OpenAiHealthCheck.cs  # OpenAI API connectivity check
-│   │   ├── SmtpHealthCheck.cs    # SMTP server connectivity check
-│   │   ├── TwilioHealthCheck.cs  # Twilio API connectivity check
-│   │   └── FileStorageHealthCheck.cs  # File storage and disk space check
-│   ├── Services/                  # Business logic services
-│   │   ├── CompositeNotificationService.cs     # Multi-channel notifications
-│   │   ├── EmailNotificationService.cs         # SMTP email service
-│   │   ├── SmsNotificationService.cs           # Twilio SMS service
-│   │   ├── LogNotificationService.cs           # Logging fallback
-│   │   ├── PhoneVerificationService.cs         # SMS phone verification
-│   │   ├── OpenAiOcrService.cs    # AI-powered OCR (image & PDF)
-│   │   ├── ChatbotService.cs     # AI chatbot for receipt queries
-│   │   ├── LocalFileStorageService.cs  # File storage management
-│   │   ├── TokenService.cs        # JWT token generation
-│   │   ├── WarrantyExpirationService.cs  # Background warranty monitoring
-│   │   ├── IPhoneVerificationService.cs        # Phone verification interface
-│   │   ├── IChatbotService.cs    # Chatbot interface
-│   │   ├── INotificationService.cs       # Notification interface
-│   │   ├── IOcrService.cs         # OCR interface
-│   │   ├── IFileStorageService.cs # Storage interface
-│   │   ├── ITokenService.cs       # Token interface
-│   │   └── JwtSettings.cs         # JWT configuration
-│   ├── Models/                    # Data models
-│   │   ├── ApplicationUser.cs     # User entity (Identity + preferences)
-│   │   ├── Receipt.cs             # Receipt entity
-│   │   ├── ReceiptShare.cs        # Receipt sharing entity
-│   │   └── ChatMessage.cs         # Chatbot conversation history
-│   ├── DTOs/                      # Data transfer objects
-│   │   ├── AuthResponseDto.cs     # Login/register response
-│   │   ├── LoginDto.cs            # Login request
-│   │   ├── RegisterDto.cs         # Registration request
-│   │   ├── RefreshTokenRequestDto.cs  # Refresh token request
-│   │   ├── ReceiptResponseDto.cs  # Receipt response
-│   │   ├── UploadReceiptDto.cs    # Receipt upload request
-│   │   ├── BatchOcrRequestDto.cs  # Batch OCR request
-│   │   ├── BatchOcrResultDto.cs   # Batch OCR response
-│   │   └── UserProfileDto.cs      # User profile, preferences, phone verification
-│   ├── Data/                      # EF Core DbContext
+│       └── dotnet-ci.yml                           # CI/CD pipeline configuration
+├── docs/                                           # Documentation
+│   ├── 01-initial-setup.md                         # Initial setup documentation
+│   ├── 02-api-registration.md                      # API registration with Aspire
+│   ├── 03-cicd-setup.md                            # GitHub Actions CI/CD pipeline
+│   ├── 04-authentication-authorization.md          # JWT authentication
+│   ├── 05-database-resources-aspire.md             # Aspire database resources
+│   ├── 06-docker-database-setup.md                 # Docker and database configuration
+│   ├── 07-connection-fixes.md                      # Database connection troubleshooting
+│   ├── 08-receipt-upload-feature.md                # Receipt upload and management
+│   ├── 09-ocr-openai-integration.md                # OpenAI OCR integration
+│   ├── 10-warranty-expiration-notifications.md     # Background notification service
+│   ├── 11-email-sms-notifications.md               # Email and SMS notification configuration
+│   ├── 12-user-profile-management.md               # User profile API
+│   ├── 13-pdf-ocr-support.md                       # PDF receipt OCR processing
+│   ├── 14-phone-verification.md                    # SMS phone number verification
+│   ├── 15-batch-ocr-processing.md                  # Batch OCR for multiple receipts
+│   ├── 16-refresh-token-support.md                 # JWT refresh tokens
+│   ├── 17-two-factor-authentication.md             # 2FA with TOTP
+│   ├── 18-email-confirmation.md                    # Email address verification
+│   ├── 19-monitoring-and-alerting.md               # Health checks and monitoring
+│   ├── 20-testing-strategy.md                      # Comprehensive testing strategy
+│   ├── 21-automated-deployment.md                  # Azure Container Apps deployment
+│   ├── 22-code-quality-improvements.md             # XML documentation and error responses
+│   ├── 23-receipt-sharing.md                       # Receipt sharing with read-only access
+│   ├── 24-ai-chatbot-receipt-queries.md            # AI chatbot for natural language queries
+│   └── 25-performance-optimization.md              # Response caching, indexes, rate limiting, compression
+├── MyApi/                                          # ASP.NET Core Web API
+│   ├── Controllers/                                # API endpoints
+│   │   ├── AuthController.cs                       # Authentication (register, login)
+│   │   ├── ReceiptsController.cs                   # Receipt management & OCR
+│   │   ├── UserProfileController.cs                # User profile & preferences
+│   │   ├── WarrantyNotificationsController.cs      # Warranty monitoring
+│   │   ├── ReceiptSharingController.cs             # Receipt sharing
+│   │   └── ChatbotController.cs                    # AI-powered receipt queries
+│   ├── HealthChecks/                               # Health check implementations
+│   │   ├── OpenAiHealthCheck.cs                    # OpenAI API connectivity check
+│   │   ├── SmtpHealthCheck.cs                      # SMTP server connectivity check
+│   │   ├── TwilioHealthCheck.cs                    # Twilio API connectivity check
+│   │   └── FileStorageHealthCheck.cs               # File storage and disk space check
+│   ├── Services/                                   # Business logic services
+│   │   ├── CompositeNotificationService.cs         # Multi-channel notifications
+│   │   ├── EmailNotificationService.cs             # SMTP email service
+│   │   ├── SmsNotificationService.cs               # Twilio SMS service
+│   │   ├── LogNotificationService.cs               # Logging fallback
+│   │   ├── PhoneVerificationService.cs             # SMS phone verification
+│   │   ├── OpenAiOcrService.cs                     # AI-powered OCR (image & PDF)
+│   │   ├── ChatbotService.cs                       # AI chatbot for receipt queries
+│   │   ├── LocalFileStorageService.cs              # File storage management
+│   │   ├── TokenService.cs                         # JWT token generation
+│   │   ├── WarrantyExpirationService.cs            # Background warranty monitoring
+│   │   ├── IPhoneVerificationService.cs            # Phone verification interface
+│   │   ├── IChatbotService.cs                      # Chatbot interface
+│   │   ├── INotificationService.cs                 # Notification interface
+│   │   ├── IOcrService.cs                          # OCR interface
+│   │   ├── IFileStorageService.cs                  # Storage interface
+│   │   ├── ITokenService.cs                        # Token interface
+│   │   └── JwtSettings.cs                          # JWT configuration
+│   ├── Models/                                     # Data models
+│   │   ├── ApplicationUser.cs                      # User entity (Identity + preferences)
+│   │   ├── Receipt.cs                              # Receipt entity
+│   │   ├── ReceiptShare.cs                         # Receipt sharing entity
+│   │   └── ChatMessage.cs                          # Chatbot conversation history
+│   ├── DTOs/                                       # Data transfer objects
+│   │   ├── AuthResponseDto.cs                      # Login/register response
+│   │   ├── LoginDto.cs                             # Login request
+│   │   ├── RegisterDto.cs                          # Registration request
+│   │   ├── RefreshTokenRequestDto.cs               # Refresh token request
+│   │   ├── ReceiptResponseDto.cs                   # Receipt response
+│   │   ├── UploadReceiptDto.cs                     # Receipt upload request
+│   │   ├── BatchOcrRequestDto.cs                   # Batch OCR request
+│   │   ├── BatchOcrResultDto.cs                    # Batch OCR response
+│   │   └── UserProfileDto.cs                       # User profile, preferences, phone verification
+│   ├── Data/                                       # EF Core DbContext
 │   │   ├── ApplicationDbContext.cs
-│   │   └── Migrations/            # Database migrations
-│   ├── uploads/receipts/          # Local file storage
-│   ├── Program.cs                 # Application entry point
+│   │   └── Migrations/                             # Database migrations
+│   ├── uploads/receipts/                           # Local file storage
+│   ├── Program.cs                                  # Application entry point
 │   ├── MyApi.csproj
-│   └── MyApi.http                 # HTTP request samples
-├── AppHost/                       # Aspire AppHost orchestrator
-│   ├── AppHost.cs                 # Service registration
+│   └── MyApi.http                                  # HTTP request samples
+├── AppHost/                                        # Aspire AppHost orchestrator
+│   ├── AppHost.cs                                  # Service registration
 │   ├── MyAspireApp.Host.csproj
 │   └── appsettings.json
-├── global.json                    # .NET SDK version pinning
-├── SetOpenAiKey.ps1               # Helper script for OpenAI API key setup
-├── ConfigureEmail.ps1             # Helper script for email notification setup
+├── global.json                                     # .NET SDK version pinning
+├── SetOpenAiKey.ps1                                # Helper script for OpenAI API key setup
+├── ConfigureEmail.ps1                              # Helper script for email notification setup
 ├── MyAspireSolution.sln
 └── README.md
 ```
@@ -284,6 +284,27 @@ The port number will be displayed in the console or available in the Aspire Dash
 - Support for Gmail, Outlook, SendGrid, custom SMTP
 - Production-ready with secure credential storage
 
+**Receipt Sharing**
+- Share receipts with other users (read-only access)
+- Share by email or username
+- List receipts shared with you
+- List receipts you've shared with others
+- Revoke sharing access at any time
+- Shared receipts included in warranty expiration monitoring
+- Audit logging for shared receipt access
+- Email notifications when receipts are shared with you
+
+**AI Chatbot for Receipt Queries**
+- Natural language queries about your receipts
+- Search by merchant, date range, amount, product name
+- Get spending statistics (total, average, by merchant)
+- Query warranty status and expiring warranties
+- Conversation history with context tracking
+- Suggested questions for common queries
+- Powered by OpenAI GPT-4o-mini for intelligent responses
+- Rate limited to prevent abuse
+- Chat messages persisted to database
+
 ## Testing
 
 The application includes comprehensive test coverage with **119 passing tests** across all critical components:
@@ -411,6 +432,8 @@ Detailed documentation is available in the `docs/` folder:
 - [21 - Automated Deployment](docs/21-automated-deployment.md): Multi-platform deployment strategies with Azure Container Apps, Docker Compose, and CI/CD workflows
 - [22 - Code Quality Improvements](docs/22-code-quality-improvements.md): XML documentation for all API endpoints and standardized error response patterns
 - [23 - Receipt Sharing](docs/23-receipt-sharing.md): Share receipts with other users (read-only access) with warranty monitoring integration
+- [24 - AI Chatbot Receipt Queries](docs/24-ai-chatbot-receipt-queries.md): Natural language receipt queries with AI-powered chatbot, conversation history, and suggested questions
+- [25 - Performance Optimization](docs/25-performance-optimization.md): Response caching, database indexes, rate limiting, and compression for improved performance and scalability
 
 ## Contributing
 
@@ -495,6 +518,8 @@ For issues, questions, or contributions, please:
 - [x] Add email confirmation (secure token verification with HTML templates)
 - [x] Implement monitoring and alerting (health checks for all components)
 - [x] Add receipt sharing (share receipts with read-only access and warranty monitoring)
+- [x] Implement AI chatbot for receipt queries (natural language queries, conversation history)
+- [x] Add performance optimizations (response caching, database indexes, rate limiting, compression)
 
 ### Backend Tasks (No UI Required) 🔧
 
