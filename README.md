@@ -41,7 +41,9 @@ MyAspireSolution/
 │   ├── 12-user-profile-management.md   # User profile API
 │   ├── 13-pdf-ocr-support.md      # PDF receipt OCR processing
 │   ├── 14-phone-verification.md   # SMS phone number verification
-│   └── 15-batch-ocr-processing.md # Batch OCR for multiple receipts
+│   ├── 15-batch-ocr-processing.md # Batch OCR for multiple receipts
+│   ├── 16-refresh-token-support.md # JWT refresh tokens
+│   └── 17-two-factor-authentication.md # 2FA with TOTP
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
@@ -198,6 +200,10 @@ The port number will be displayed in the console or available in the Aspire Dash
 - Secure password requirements and validation
 - **Refresh token support** for seamless token renewal (7-day expiry)
 - Token revocation for secure logout
+- **Two-factor authentication (2FA)** with TOTP (Time-based One-Time Password)
+- QR code setup for authenticator apps (Google Authenticator, Microsoft Authenticator, Authy)
+- 10 recovery codes for account recovery
+- Secure 2FA enable/disable with code verification
 - User profile management with preferences
 
 **User Profile Management**
@@ -308,6 +314,7 @@ Detailed documentation is available in the `docs/` folder:
 - [14 - Phone Verification](docs/14-phone-verification.md): SMS-based phone number verification with secure 6-digit codes
 - [15 - Batch OCR Processing](docs/15-batch-ocr-processing.md): Batch OCR functionality for processing multiple receipts at once
 - [16 - Refresh Token Support](docs/16-refresh-token-support.md): JWT refresh tokens for seamless authentication renewal
+- [17 - Two-Factor Authentication](docs/17-two-factor-authentication.md): TOTP-based 2FA with authenticator apps and recovery codes
 
 ## Contributing
 
@@ -388,9 +395,9 @@ For issues, questions, or contributions, please:
 - [x] Add phone number verification (SMS confirmation code with expiration)
 - [x] Add batch OCR processing (multiple receipts at once)
 - [x] Add refresh token support (JWT token renewal with 7-day expiry)
+- [x] Implement two-factor authentication (2FA with TOTP, QR codes, recovery codes)
 
 ### Backend Tasks (No UI Required) 🔧
-- [ ] Implement two-factor authentication (2FA)
 - [ ] Add email confirmation
 - [ ] Implement monitoring and alerting
 - [ ] Add comprehensive test coverage
