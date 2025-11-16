@@ -38,7 +38,7 @@ public class CompositeNotificationService : INotificationService
         _logger.LogInformation("Sending composite notification for user {UserId} - {Product} expiring in {Days} days",
             userId, productName, daysUntilExpiration);
 
-        // Fetch full user details to get phone number
+        // Fetch full user details to get phone number and preferences
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
@@ -46,26 +46,50 @@ public class CompositeNotificationService : INotificationService
             return;
         }
 
+        // Check if user opted out
+        if (user.OptOutOfNotifications)
+        {
+            _logger.LogInformation("User {UserId} has opted out of notifications, skipping", userId);
+            return;
+        }
+
+        // Check notification channel preference
+        var channel = user.NotificationChannel;
+        
+        if (channel == NotificationChannel.None)
+        {
+            _logger.LogInformation("User {UserId} has notifications disabled, skipping", userId);
+            return;
+        }
+
         var tasks = new List<Task>();
 
-        // Send email notification
-        if (!string.IsNullOrWhiteSpace(user.Email))
+        // Send email notification if enabled
+        if ((channel == NotificationChannel.EmailOnly || channel == NotificationChannel.EmailAndSms) 
+            && !string.IsNullOrWhiteSpace(user.Email))
         {
             tasks.Add(SendEmailNotificationAsync(user.Email, productName, expirationDate, receiptId));
         }
-        else
+        else if (channel == NotificationChannel.EmailOnly || channel == NotificationChannel.EmailAndSms)
         {
-            _logger.LogWarning("User {UserId} has no email address configured", userId);
+            _logger.LogWarning("User {UserId} wants email notifications but has no email address", userId);
         }
 
-        // Send SMS notification if phone number is configured
-        if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
+        // Send SMS notification if enabled and phone number is configured
+        if ((channel == NotificationChannel.SmsOnly || channel == NotificationChannel.EmailAndSms)
+            && !string.IsNullOrWhiteSpace(user.PhoneNumber))
         {
             tasks.Add(SendSmsNotificationAsync(user.PhoneNumber, productName, expirationDate, daysUntilExpiration));
         }
-        else
+        else if (channel == NotificationChannel.SmsOnly || channel == NotificationChannel.EmailAndSms)
         {
-            _logger.LogDebug("User {UserId} has no phone number configured, skipping SMS", userId);
+            _logger.LogDebug("User {UserId} wants SMS notifications but has no phone number configured", userId);
+        }
+
+        if (!tasks.Any())
+        {
+            _logger.LogWarning("No notification channels available for user {UserId}", userId);
+            return;
         }
 
         // Send all notifications in parallel

@@ -63,27 +63,31 @@ public class WarrantyExpirationService : BackgroundService
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
-        // Get current date and threshold date
+        // Get current date
         var today = DateTime.UtcNow.Date;
-        var thresholdDate = today.AddDays(_notificationDaysThreshold);
 
-        // Query receipts with warranties expiring within threshold
+        // Query receipts with warranties expiring soon
+        // We'll use the maximum threshold (90 days) to get all potentially expiring receipts
+        // Then filter by user-specific preferences
+        var maxThreshold = 90;
+        var maxThresholdDate = today.AddDays(maxThreshold);
+
         var expiringReceipts = await dbContext.Receipts
             .Include(r => r.User)
             .Where(r => r.WarrantyExpirationDate.HasValue 
                      && r.WarrantyExpirationDate.Value.Date > today
-                     && r.WarrantyExpirationDate.Value.Date <= thresholdDate)
+                     && r.WarrantyExpirationDate.Value.Date <= maxThresholdDate)
             .ToListAsync(cancellationToken);
 
         if (!expiringReceipts.Any())
         {
-            _logger.LogInformation("No warranties expiring within {Days} days", _notificationDaysThreshold);
+            _logger.LogInformation("No warranties expiring within {Days} days", maxThreshold);
             UpdateCache(new List<WarrantyNotification>());
             return;
         }
 
-        _logger.LogInformation("Found {Count} warranties expiring within {Days} days", 
-            expiringReceipts.Count, _notificationDaysThreshold);
+        _logger.LogInformation("Found {Count} warranties expiring within {Days} days (before user preference filtering)", 
+            expiringReceipts.Count, maxThreshold);
 
         // Get previously notified receipts from cache
         var notifiedReceipts = _cache.Get<HashSet<Guid>>("notified_receipts") ?? new HashSet<Guid>();
@@ -92,6 +96,23 @@ public class WarrantyExpirationService : BackgroundService
         foreach (var receipt in expiringReceipts)
         {
             var daysUntilExpiration = (receipt.WarrantyExpirationDate!.Value.Date - today).Days;
+            var user = receipt.User;
+
+            // Skip if user has opted out
+            if (user?.OptOutOfNotifications == true)
+            {
+                _logger.LogDebug("Skipping receipt {ReceiptId} - user {UserId} opted out", receipt.Id, receipt.UserId);
+                continue;
+            }
+
+            // Check if warranty is within user's notification threshold
+            var userThreshold = user?.NotificationThresholdDays ?? _notificationDaysThreshold;
+            if (daysUntilExpiration > userThreshold)
+            {
+                _logger.LogDebug("Skipping receipt {ReceiptId} - expires in {Days} days, user threshold is {Threshold} days",
+                    receipt.Id, daysUntilExpiration, userThreshold);
+                continue;
+            }
             
             // Create notification object for cache
             var notification = new WarrantyNotification
