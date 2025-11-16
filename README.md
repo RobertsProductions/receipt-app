@@ -2,11 +2,11 @@
 
 [![.NET CI/CD Pipeline](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml)
 
-A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction.
+A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction and proactive warranty expiration notifications.
 
 ## Overview
 
-This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, and AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts.
+This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts, and a background service that monitors and notifies users about expiring warranties.
 
 ## Technology Stack
 
@@ -34,7 +34,8 @@ MyAspireSolution/
 │   ├── 06-docker-database-setup.md     # Docker and database configuration
 │   ├── 07-connection-fixes.md     # Database connection troubleshooting
 │   ├── 08-receipt-upload-feature.md   # Receipt upload and management
-│   └── 09-ocr-openai-integration.md   # OpenAI OCR integration
+│   ├── 09-ocr-openai-integration.md   # OpenAI OCR integration
+│   └── 10-warranty-expiration-notifications.md   # Background notification service
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   ├── Services/                  # Business logic & OCR service
@@ -169,6 +170,15 @@ The port number will be displayed in the console or available in the Aspire Dash
 - Smart data merging (OCR only fills empty fields)
 - Uses OpenAI GPT-4o-mini vision model (~$0.00015 per image)
 
+**Warranty Expiration Notifications**
+- Background service monitors warranties 24/7
+- Configurable notification threshold (default: 7 days before expiration)
+- In-memory caching for fast API access
+- RESTful endpoints to query expiring warranties
+- Prevents duplicate notifications
+- Extensible notification system (logs, email, SMS)
+- User-isolated notifications
+
 ## Development
 
 ### Project Configuration
@@ -223,6 +233,7 @@ Detailed documentation is available in the `docs/` folder:
 - [07 - Connection Fixes](docs/07-connection-fixes.md): Troubleshooting database connection issues
 - [08 - Receipt Upload Feature](docs/08-receipt-upload-feature.md): Upload and manage receipt images and PDFs
 - [09 - OpenAI OCR Integration](docs/09-ocr-openai-integration.md): AI-powered receipt data extraction setup and usage
+- [10 - Warranty Expiration Notifications](docs/10-warranty-expiration-notifications.md): Background service for warranty monitoring and notifications
 
 ## Contributing
 
@@ -295,7 +306,8 @@ For issues, questions, or contributions, please:
 - [x] Add OCR for automatic receipt data extraction (OpenAI GPT-4o-mini)
 - [x] Configure Aspire parameters for secret management
 - [x] Automatic database migrations on startup
-- [ ] Add warranty expiration notifications
+- [x] Add warranty expiration notifications (background service with caching)
+- [ ] Implement email/SMS notifications for warranty expirations
 - [ ] Implement PDF OCR support
 - [ ] Add batch OCR processing
 - [ ] Create frontend UI
