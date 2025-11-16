@@ -57,7 +57,8 @@ MyAspireSolution/
 │   ├── 23-receipt-sharing.md                       # Receipt sharing with read-only access
 │   ├── 24-ai-chatbot-receipt-queries.md            # AI chatbot for natural language queries
 │   ├── 25-performance-optimization.md              # Response caching, indexes, rate limiting, compression
-│   └── 26-user-data-caching.md                     # Automatic user data caching on login
+│   ├── 26-user-data-caching.md                     # Automatic user data caching on login
+│   └── 27-design-reference.md                      # UI/UX design guidelines and style reference
 ├── MyApi/                                          # ASP.NET Core Web API
 │   ├── Controllers/                                # API endpoints
 │   │   ├── AuthController.cs                       # Authentication (register, login)
@@ -443,6 +444,7 @@ Detailed documentation is available in the `docs/` folder:
 - [24 - AI Chatbot Receipt Queries](docs/24-ai-chatbot-receipt-queries.md): Natural language receipt queries with AI-powered chatbot, conversation history, and suggested questions
 - [25 - Performance Optimization](docs/25-performance-optimization.md): Response caching, database indexes, rate limiting, and compression for improved performance and scalability
 - [26 - User Data Caching](docs/26-user-data-caching.md): Automatic user data preloading into cache on login for 10-30x faster response times
+- [27 - Design Reference](docs/27-design-reference.md): Comprehensive UI/UX design guidelines, color palette, typography, component specifications, and responsive design patterns
 
 ## Contributing
 
@@ -599,9 +601,11 @@ For issues, questions, or contributions, please:
 
 ### Frontend/UI Tasks 🎨
 - [x] Choose frontend framework (Angular selected)
+- [x] Create design reference document
 - [ ] Set up Angular project with TypeScript
 - [ ] Configure ESLint for code quality and consistency
-- [ ] Create UI wireframes and mockups
+- [ ] Create UI wireframes and mockups based on design reference
+- [ ] Implement design system (colors, typography, components)
 - [ ] Implement authentication UI (login, register, 2FA)
 - [ ] Implement receipt management UI (upload, view, OCR)
 - [ ] Implement warranty dashboard
