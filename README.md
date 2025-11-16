@@ -540,6 +540,19 @@ For issues, questions, or contributions, please:
 - [x] Create shared receipt access audit logging
 - [x] Implement notifications for new shared receipts
 
+**AI Chatbot for Receipt Queries**
+- [ ] Design chatbot conversation interface and message format
+- [ ] Implement OpenAI integration for natural language processing
+- [ ] Create receipt query service (search by merchant, date, amount, product)
+- [ ] Add conversation history management and context tracking
+- [ ] Implement chat endpoints (send message, get history, clear conversation)
+- [ ] Add support for natural language date parsing (e.g., "last month", "this year")
+- [ ] Implement receipt statistics queries (total spending, category breakdown)
+- [ ] Add warranty status queries via chatbot
+- [ ] Create suggested questions/prompts for common queries
+- [ ] Add chat message persistence to database
+- [ ] Implement rate limiting for chatbot API calls
+
 ### Frontend/UI Tasks 🎨
 - [ ] Choose frontend framework (React/Vue/Blazor/Angular)
 - [ ] Create UI wireframes and mockups
@@ -549,6 +562,7 @@ For issues, questions, or contributions, please:
 - [ ] Implement user profile and preferences UI
 - [ ] Implement phone verification flow UI
 - [ ] Implement receipt sharing UI (share modal, manage shares, shared receipts view)
+- [ ] Implement AI chatbot UI (chat window, message history, suggested queries)
 - [ ] Add responsive design for mobile
 - [ ] Add frontend deployment workflow
 
