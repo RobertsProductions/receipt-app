@@ -25,7 +25,11 @@ MyAspireSolution/
 │       └── dotnet-ci.yml          # CI/CD pipeline configuration
 ├── docs/                          # Documentation
 │   ├── 01-initial-setup.md        # Initial setup documentation
-│   └── 02-api-registration.md     # API registration with Aspire
+│   ├── 02-api-registration.md     # API registration with Aspire
+│   ├── 03-cicd-setup.md           # GitHub Actions CI/CD pipeline
+│   ├── 04-authentication-authorization.md  # JWT authentication
+│   ├── 06-docker-database-setup.md     # Docker and database configuration
+│   └── 07-connection-fixes.md     # Database connection troubleshooting
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/
 │   ├── Program.cs
@@ -161,6 +165,8 @@ Detailed documentation is available in the `docs/` folder:
 - [02 - API Registration](docs/02-api-registration.md): Registering services with Aspire
 - [03 - CI/CD Setup](docs/03-cicd-setup.md): GitHub Actions pipeline and repository setup
 - [04 - Authentication & Authorization](docs/04-authentication-authorization.md): JWT-based authentication implementation
+- [06 - Docker Database Setup](docs/06-docker-database-setup.md): Docker and database configuration guide
+- [07 - Connection Fixes](docs/07-connection-fixes.md): Troubleshooting database connection issues
 
 ## Contributing
 
@@ -212,6 +218,9 @@ For issues, questions, or contributions, please:
 
 - [x] Add authentication and authorization (JWT-based with ASP.NET Core Identity)
 - [x] Implement database integration (Entity Framework Core with SQL Server)
+- [x] Add SQL Server container orchestration with Aspire
+- [x] Implement connection resiliency and retry logic
+- [x] Configure dual database support (SQL Server & SQLite)
 - [ ] Add warranty tracking features
 - [ ] Create frontend UI
 - [ ] Add automated deployment

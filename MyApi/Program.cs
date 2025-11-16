@@ -55,13 +55,20 @@ var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider"
 var connectionString = databaseProvider switch
 {
     "Sqlite" => builder.Configuration.GetConnectionString("SqliteConnection") 
-                ?? builder.Configuration.GetConnectionString("sqlite") 
+                ?? builder.Configuration.GetConnectionString("sqlitedb") 
                 ?? "Data Source=receipts.db",
     "SqlServer" => builder.Configuration.GetConnectionString("SqlServerConnection") 
-                   ?? builder.Configuration.GetConnectionString("sqlserver") 
+                   ?? builder.Configuration.GetConnectionString("receiptdb") 
                    ?? builder.Configuration.GetConnectionString("DefaultConnection"),
     _ => builder.Configuration.GetConnectionString("DefaultConnection")
 } ?? throw new InvalidOperationException($"Connection string for {databaseProvider} not found");
+
+// Log which database provider and connection string is being used
+builder.Services.AddSingleton<ILogger>(sp => sp.GetRequiredService<ILogger<Program>>());
+var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole());
+var logger = loggerFactory.CreateLogger<Program>();
+logger.LogInformation("Using database provider: {Provider}", databaseProvider);
+logger.LogInformation("Connection string: {ConnectionString}", connectionString.Replace("Password=", "Password=***"));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -71,7 +78,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     }
     else
     {
-        options.UseSqlServer(connectionString);
+        // Add connection resiliency for SQL Server to handle transient failures
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+            sqlOptions.CommandTimeout(60); // Increase command timeout to 60 seconds
+        });
     }
 });
 

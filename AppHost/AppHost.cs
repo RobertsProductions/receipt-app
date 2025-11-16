@@ -1,16 +1,23 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Add SQL Server resource
+// Add SQL Server resource with persistent lifetime
+// The container will wait for SQL Server to be ready before starting dependent services
 var sqlServer = builder.AddSqlServer("sqlserver")
-    .WithLifetime(ContainerLifetime.Persistent)
-    .AddDatabase("receiptdb");
+    .WithLifetime(ContainerLifetime.Persistent);
+    
+var receiptdb = sqlServer.AddDatabase("receiptdb");
 
-// Add SQLite database (file-based, no container needed)
-var sqlite = builder.AddConnectionString("sqlite", "Data Source=receipts.db");
+// Add SQLite database reference from configuration/user secrets (file-based, no container needed)
+// Falls back to local file if not configured
+var sqliteConnectionString = builder.Configuration["ConnectionStrings:sqlitedb"] 
+    ?? "Data Source=receipts.db";
+var sqlitedb = builder.AddConnectionString("sqlitedb", sqliteConnectionString);
 
 // Add the API with database connections
+// WaitFor ensures SQL Server container is ready before starting the API
 var myApi = builder.AddProject<Projects.MyApi>("myapi")
-    .WithReference(sqlServer)
-    .WithReference(sqlite);
+    .WithReference(receiptdb)
+    .WithReference(sqlitedb)
+    .WaitFor(receiptdb);
 
 builder.Build().Run();
