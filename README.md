@@ -159,6 +159,8 @@ Detailed documentation is available in the `docs/` folder:
 
 - [01 - Initial Setup](docs/01-initial-setup.md): Environment setup and project creation
 - [02 - API Registration](docs/02-api-registration.md): Registering services with Aspire
+- [03 - CI/CD Setup](docs/03-cicd-setup.md): GitHub Actions pipeline and repository setup
+- [04 - Authentication & Authorization](docs/04-authentication-authorization.md): JWT-based authentication implementation
 
 ## Contributing
 
@@ -208,13 +210,16 @@ For issues, questions, or contributions, please:
 
 ## Roadmap
 
-- [ ] Add authentication and authorization
-- [ ] Implement database integration
+- [x] Add authentication and authorization (JWT-based with ASP.NET Core Identity)
+- [x] Implement database integration (Entity Framework Core with SQL Server)
 - [ ] Add warranty tracking features
 - [ ] Create frontend UI
 - [ ] Add automated deployment
 - [ ] Implement monitoring and alerting
 - [ ] Add comprehensive test coverage
+- [ ] Add refresh token support
+- [ ] Implement two-factor authentication (2FA)
+- [ ] Add email confirmation
 
 ---
 
