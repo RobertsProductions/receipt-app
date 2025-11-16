@@ -50,7 +50,8 @@ MyAspireSolution/
 │   ├── 21-automated-deployment.md # Azure Container Apps deployment
 │   ├── 22-code-quality-improvements.md # XML documentation and error responses
 │   ├── 23-receipt-sharing.md # Receipt sharing with read-only access
-│   └── 24-ai-chatbot-receipt-queries.md # AI chatbot for natural language queries
+│   ├── 24-ai-chatbot-receipt-queries.md # AI chatbot for natural language queries
+│   └── 25-performance-optimization.md # Response caching, indexes, rate limiting, compression
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
@@ -533,10 +534,10 @@ For issues, questions, or contributions, please:
 - [ ] Create operations runbook documentation
 
 **Performance & Optimization**
-- [ ] Add response caching for GET endpoints
-- [ ] Optimize database queries and add indexes
-- [ ] Implement rate limiting middleware
-- [ ] Add request/response compression
+- [x] Add response caching for GET endpoints
+- [x] Optimize database queries and add indexes
+- [x] Implement rate limiting middleware
+- [x] Add request/response compression
 
 **Receipt Sharing Features**
 - [x] Add receipt sharing data model (ReceiptShare entity with owner and recipient)

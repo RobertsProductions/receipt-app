@@ -35,8 +35,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Indexes for common queries
             entity.HasIndex(r => r.UserId);
             entity.HasIndex(r => r.UploadedAt);
+            entity.HasIndex(r => new { r.UserId, r.UploadedAt }); // Composite for paginated lists
+            entity.HasIndex(r => r.Merchant); // For merchant searches
+            entity.HasIndex(r => r.PurchaseDate); // For date-based queries
+            entity.HasIndex(r => r.WarrantyExpirationDate); // For warranty tracking
+            entity.HasIndex(r => new { r.UserId, r.WarrantyExpirationDate }); // For user warranty queries
         });
 
         // Configure ReceiptShare entity
@@ -78,8 +84,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .HasForeignKey(cm => cm.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Indexes for conversation history queries
             entity.HasIndex(cm => cm.UserId);
             entity.HasIndex(cm => cm.CreatedAt);
+            entity.HasIndex(cm => new { cm.UserId, cm.CreatedAt }); // Composite for history queries
         });
     }
 }

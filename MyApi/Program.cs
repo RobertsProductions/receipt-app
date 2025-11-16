@@ -7,12 +7,33 @@ using Microsoft.OpenApi.Models;
 using MyApi.Data;
 using MyApi.Models;
 using MyApi.Services;
+using MyApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Add Response Caching
+builder.Services.AddResponseCaching();
+
+// Add Response Compression
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.MimeTypes = new[]
+    {
+        "application/json",
+        "application/xml",
+        "text/plain",
+        "text/html",
+        "text/css",
+        "text/javascript",
+        "application/javascript",
+        "image/svg+xml"
+    };
+});
 
 // Configure Swagger with JWT support
 builder.Services.AddSwaggerGen(options =>
@@ -230,6 +251,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Add Response Compression (before static files and routing)
+app.UseResponseCompression();
+
+// Add Response Caching
+app.UseResponseCaching();
+
+// Add Rate Limiting
+app.UseMiddleware<RateLimitingMiddleware>();
 
 app.UseHttpsRedirection();
 

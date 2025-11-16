@@ -126,6 +126,7 @@ public class ChatbotController : ControllerBase
     /// </summary>
     /// <returns>List of suggested questions</returns>
     [HttpGet("suggested-questions")]
+    [ResponseCache(Duration = 3600)] // Cache for 1 hour (static content)
     [ProducesResponseType(typeof(SuggestedQuestionsDto), StatusCodes.Status200OK)]
     public ActionResult<SuggestedQuestionsDto> GetSuggestedQuestions()
     {

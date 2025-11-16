@@ -188,6 +188,7 @@ public class ReceiptsController : ControllerBase
     /// <param name="id">Receipt unique identifier</param>
     /// <returns>Receipt details including metadata and download URL</returns>
     [HttpGet("{id}")]
+    [ResponseCache(Duration = 300, VaryByQueryKeys = new[] { "id" })] // Cache for 5 minutes
     public async Task<ActionResult<ReceiptResponseDto>> GetReceipt(Guid id)
     {
         var userId = GetUserId();
@@ -210,6 +211,7 @@ public class ReceiptsController : ControllerBase
     /// <param name="pageSize">Number of receipts per page (default: 20, max: 100)</param>
     /// <returns>List of receipts ordered by upload date (newest first)</returns>
     [HttpGet]
+    [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "page", "pageSize" })] // Cache for 1 minute
     public async Task<ActionResult<IEnumerable<ReceiptResponseDto>>> GetReceipts(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
