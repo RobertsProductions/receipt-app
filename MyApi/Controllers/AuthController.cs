@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using MyApi.DTOs;
 using MyApi.Models;
 using MyApi.Services;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace MyApi.Controllers;
 
@@ -14,18 +17,24 @@ public class AuthController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ITokenService _tokenService;
+    private readonly EmailNotificationService _emailService;
     private readonly ILogger<AuthController> _logger;
+    private readonly IConfiguration _configuration;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ITokenService tokenService,
-        ILogger<AuthController> logger)
+        EmailNotificationService emailService,
+        ILogger<AuthController> logger,
+        IConfiguration configuration)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
+        _emailService = emailService;
         _logger = logger;
+        _configuration = configuration;
     }
 
     [HttpPost("register")]
@@ -54,6 +63,31 @@ public class AuthController : ControllerBase
                 ModelState.AddModelError(error.Code, error.Description);
             }
             return BadRequest(ModelState);
+        }
+
+        // Generate email confirmation token
+        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
+        
+        // Build confirmation URL
+        var baseUrl = _configuration["AppSettings:BaseUrl"] ?? $"{Request.Scheme}://{Request.Host}";
+        var confirmationLink = $"{baseUrl}/api/Auth/confirm-email?userId={user.Id}&token={encodedToken}";
+        
+        // Send confirmation email
+        try
+        {
+            var emailBody = GenerateConfirmationEmailBody(user.Email!, confirmationLink);
+            await _emailService.SendEmailAsync(
+                user.Email!,
+                "Confirm Your Email - Warranty App",
+                emailBody
+            );
+            _logger.LogInformation("Confirmation email sent to {Email}", model.Email);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to send confirmation email to {Email}", model.Email);
+            // Don't fail registration if email fails
         }
 
         _logger.LogInformation("User {Email} registered successfully", model.Email);
@@ -539,5 +573,155 @@ public class AuthController : ControllerBase
         }
 
         return result.ToString().ToLowerInvariant();
+    }
+
+    [HttpGet("confirm-email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+    {
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+        {
+            return BadRequest(new { message = "Invalid email confirmation request" });
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return BadRequest(new { message = "User not found" });
+        }
+
+        if (user.EmailConfirmed)
+        {
+            return Ok(new { message = "Email already confirmed", emailConfirmed = true });
+        }
+
+        // Decode the token
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        if (!result.Succeeded)
+        {
+            _logger.LogWarning("Email confirmation failed for user {UserId}: {Errors}", 
+                userId, string.Join(", ", result.Errors.Select(e => e.Description)));
+            return BadRequest(new { message = "Email confirmation failed", errors = result.Errors.Select(e => e.Description) });
+        }
+
+        _logger.LogInformation("User {Email} confirmed their email successfully", user.Email);
+
+        return Ok(new { message = "Email confirmed successfully", emailConfirmed = true });
+    }
+
+    [HttpPost("resend-confirmation-email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendConfirmationEmailDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            // Don't reveal that the user doesn't exist
+            return Ok(new { message = "If the email exists, a confirmation link has been sent" });
+        }
+
+        if (user.EmailConfirmed)
+        {
+            return BadRequest(new { message = "Email is already confirmed" });
+        }
+
+        // Generate new confirmation token
+        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
+        
+        // Build confirmation URL
+        var baseUrl = _configuration["AppSettings:BaseUrl"] ?? $"{Request.Scheme}://{Request.Host}";
+        var confirmationLink = $"{baseUrl}/api/Auth/confirm-email?userId={user.Id}&token={encodedToken}";
+        
+        // Send confirmation email
+        try
+        {
+            var emailBody = GenerateConfirmationEmailBody(user.Email!, confirmationLink);
+            await _emailService.SendEmailAsync(
+                user.Email!,
+                "Confirm Your Email - Warranty App",
+                emailBody
+            );
+            _logger.LogInformation("Resent confirmation email to {Email}", model.Email);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to resend confirmation email to {Email}", model.Email);
+            return StatusCode(500, new { message = "Failed to send confirmation email" });
+        }
+
+        return Ok(new { message = "If the email exists, a confirmation link has been sent" });
+    }
+
+    [Authorize]
+    [HttpGet("email-status")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetEmailStatus()
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            return Unauthorized();
+
+        return Ok(new
+        {
+            email = user.Email,
+            emailConfirmed = user.EmailConfirmed
+        });
+    }
+
+    private string GenerateConfirmationEmailBody(string email, string confirmationLink)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #4CAF50; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f9f9f9; }}
+        .button {{ display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0; }}
+        .footer {{ padding: 20px; text-align: center; font-size: 12px; color: #777; }}
+        .warning {{ background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin: 10px 0; }}
+    </style>
+</head>
+<body>
+    <div class=""container"">
+        <div class=""header"">
+            <h1>Welcome to Warranty App!</h1>
+        </div>
+        <div class=""content"">
+            <h2>Confirm Your Email Address</h2>
+            <p>Hi there,</p>
+            <p>Thank you for registering with Warranty App. To complete your registration and start managing your warranties, please confirm your email address by clicking the button below:</p>
+            <center>
+                <a href=""{HtmlEncoder.Default.Encode(confirmationLink)}"" class=""button"">Confirm Email Address</a>
+            </center>
+            <p>Or copy and paste this link into your browser:</p>
+            <p style=""word-break: break-all; color: #4CAF50;"">{HtmlEncoder.Default.Encode(confirmationLink)}</p>
+            <div class=""warning"">
+                <strong>Important:</strong> This confirmation link will expire in 24 hours for security reasons.
+            </div>
+            <p>If you didn't create an account with Warranty App, you can safely ignore this email.</p>
+        </div>
+        <div class=""footer"">
+            <p>© 2025 Warranty App. All rights reserved.</p>
+            <p>This is an automated email. Please do not reply to this message.</p>
+        </div>
+    </div>
+</body>
+</html>";
     }
 }

@@ -129,4 +129,44 @@ public class EmailNotificationService : INotificationService
 </body>
 </html>";
     }
+
+    /// <summary>
+    /// Send a generic email with custom subject and body
+    /// </summary>
+    public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
+    {
+        if (string.IsNullOrWhiteSpace(toEmail))
+        {
+            _logger.LogWarning("Cannot send email: No recipient email address provided");
+            return;
+        }
+
+        try
+        {
+            using var smtpClient = new System.Net.Mail.SmtpClient(_smtpHost, _smtpPort)
+            {
+                EnableSsl = _useSsl,
+                Credentials = new System.Net.NetworkCredential(_smtpUsername, _smtpPassword),
+                Timeout = 30000 // 30 seconds
+            };
+
+            var mailMessage = new System.Net.Mail.MailMessage
+            {
+                From = new System.Net.Mail.MailAddress(_fromEmail, _fromName),
+                Subject = subject,
+                Body = htmlBody,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(toEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
+            _logger.LogInformation("Email sent successfully to {Email} with subject: {Subject}", toEmail, subject);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send email to {Email}", toEmail);
+            throw;
+        }
+    }
 }

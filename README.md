@@ -43,7 +43,8 @@ MyAspireSolution/
 │   ├── 14-phone-verification.md   # SMS phone number verification
 │   ├── 15-batch-ocr-processing.md # Batch OCR for multiple receipts
 │   ├── 16-refresh-token-support.md # JWT refresh tokens
-│   └── 17-two-factor-authentication.md # 2FA with TOTP
+│   ├── 17-two-factor-authentication.md # 2FA with TOTP
+│   └── 18-email-confirmation.md # Email address verification
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
@@ -198,6 +199,9 @@ The port number will be displayed in the console or available in the Aspire Dash
 - JWT-based authentication with ASP.NET Core Identity
 - User registration and login endpoints
 - Secure password requirements and validation
+- **Email confirmation** with secure tokens and HTML templates
+- Automatic confirmation email on registration
+- Resend confirmation email functionality
 - **Refresh token support** for seamless token renewal (7-day expiry)
 - Token revocation for secure logout
 - **Two-factor authentication (2FA)** with TOTP (Time-based One-Time Password)
@@ -315,6 +319,7 @@ Detailed documentation is available in the `docs/` folder:
 - [15 - Batch OCR Processing](docs/15-batch-ocr-processing.md): Batch OCR functionality for processing multiple receipts at once
 - [16 - Refresh Token Support](docs/16-refresh-token-support.md): JWT refresh tokens for seamless authentication renewal
 - [17 - Two-Factor Authentication](docs/17-two-factor-authentication.md): TOTP-based 2FA with authenticator apps and recovery codes
+- [18 - Email Confirmation](docs/18-email-confirmation.md): Email address verification with secure tokens and professional HTML templates
 
 ## Contributing
 
@@ -396,9 +401,9 @@ For issues, questions, or contributions, please:
 - [x] Add batch OCR processing (multiple receipts at once)
 - [x] Add refresh token support (JWT token renewal with 7-day expiry)
 - [x] Implement two-factor authentication (2FA with TOTP, QR codes, recovery codes)
+- [x] Add email confirmation (secure token verification with HTML templates)
 
 ### Backend Tasks (No UI Required) 🔧
-- [ ] Add email confirmation
 - [ ] Implement monitoring and alerting
 - [ ] Add comprehensive test coverage
 - [ ] Add automated deployment
