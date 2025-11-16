@@ -21,14 +21,14 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
               ↓ validates
 ┌─────────────────────────────────────────┐
 │   Service Layer Tests (Current)         │ ← Business logic
-│   - 119 tests, 100% pass rate ✅        │
+│   - 100 tests, 100% pass rate ✅        │
 │   - Unit tests with mocking             │
 │   - Fast execution, reliable            │
 └─────────────────────────────────────────┘
               ↓ uses
 ┌─────────────────────────────────────────┐
 │   Model Tests (Current)                 │ ← Data validation
-│   - 19 tests, 100% pass rate ✅         │
+│   - 29 tests, 100% pass rate ✅         │
 │   - Property validation                 │
 │   - Entity relationships                │
 └─────────────────────────────────────────┘
@@ -40,8 +40,8 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
 
 ```
 ┌─────────────────────────────────────────┐
-│  Total Tests: 119                       │
-│  Passing: 119 (100%)                    │
+│  Total Tests: 129                       │
+│  Passing: 129 (100%)                    │
 │  Failing: 0                             │
 │  Skipped: 0                             │
 │  Execution Time: ~42 seconds            │
@@ -101,11 +101,11 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
 - Large file processing
 - API key security
 
-#### Model Tests (19 tests)
-- ApplicationUser properties and validation
-- Receipt entity relationships
-- NotificationChannel enumeration
-- Data annotations and constraints
+#### Model Tests (29 tests)
+- **ApplicationUser** (tests for user model with notification preferences)
+- **Receipt** (7 tests for receipt tracking model)
+- **ReceiptShare** (10 tests for receipt sharing functionality)
+- **NotificationChannel** (enum validation)
 
 ### ⏸️ Deferred: Controller Integration Tests
 
@@ -116,7 +116,7 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
 2. **Brittleness**: Break frequently with implementation changes
 3. **Maintenance Burden**: High overhead for mocking all dependencies
 4. **Redundant Coverage**: E2E tests provide better validation of endpoints
-5. **Service Coverage**: 119 service tests already validate business logic
+5. **Service Coverage**: 100 service tests already validate business logic
 
 **Alternative**: Playwright E2E tests after frontend development.
 
@@ -179,6 +179,14 @@ User enables 2FA → Gets recovery codes → Logs out → Login + 2FA code → S
                                               Test recovery code fallback
 ```
 
+**Receipt Sharing Flow**
+```
+User shares receipt → Recipient notified → Recipient views shared receipt
+         ↓                                              ↓
+   Access audit logged                      Read-only access enforced
+   Revocation available                     Warranty monitoring included
+```
+
 #### Planned Edge Case Tests
 
 - Invalid credentials and password reset
@@ -214,7 +222,7 @@ Tests run automatically on:
 - Every pull request
 - Manual workflow dispatch
 
-**Build Status**: ✅ All tests passing (119/119)
+**Build Status**: ✅ All tests passing (129/129)
 
 ## Coverage Goals
 
@@ -294,8 +302,9 @@ start coverage-report/index.html
 ## Conclusion
 
 The current testing strategy provides:
-- ✅ **Comprehensive service layer coverage** (119 tests)
-- ✅ **Fast, reliable test execution** (<10 seconds)
+- ✅ **Comprehensive service layer coverage** (100 service tests)
+- ✅ **Complete model coverage** (29 model tests including receipt sharing)
+- ✅ **Fast, reliable test execution** (~42 seconds for 129 tests)
 - ✅ **High maintainability** (focused unit tests)
 - ✅ **CI/CD integration** (automated on every commit)
 
