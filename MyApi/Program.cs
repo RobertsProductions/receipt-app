@@ -141,6 +141,7 @@ builder.Services.AddAuthorization();
 // Register services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IOcrService, OpenAiOcrService>();
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -154,6 +155,26 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Apply migrations automatically in development
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var migrationLogger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        try
+        {
+            migrationLogger.LogInformation("Applying database migrations...");
+            dbContext.Database.Migrate();
+            migrationLogger.LogInformation("Database migrations applied successfully.");
+        }
+        catch (Exception ex)
+        {
+            migrationLogger.LogError(ex, "An error occurred while applying migrations.");
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -24,4 +24,9 @@ public class UploadReceiptDto
 
     [MaxLength(2000)]
     public string? Notes { get; set; }
+
+    /// <summary>
+    /// Set to true to automatically extract receipt data using OCR
+    /// </summary>
+    public bool UseOcr { get; set; } = false;
 }

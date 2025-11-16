@@ -16,6 +16,7 @@ public class ReceiptsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly IFileStorageService _fileStorage;
+    private readonly IOcrService _ocrService;
     private readonly ILogger<ReceiptsController> _logger;
     private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".pdf" };
     private const long MaxFileSize = 10 * 1024 * 1024; // 10MB
@@ -23,10 +24,12 @@ public class ReceiptsController : ControllerBase
     public ReceiptsController(
         ApplicationDbContext context,
         IFileStorageService fileStorage,
+        IOcrService ocrService,
         ILogger<ReceiptsController> logger)
     {
         _context = context;
         _fileStorage = fileStorage;
+        _ocrService = ocrService;
         _logger = logger;
     }
 
@@ -60,6 +63,71 @@ public class ReceiptsController : ControllerBase
 
         try
         {
+            // Perform OCR if requested and file is an image
+            OcrResult? ocrResult = null;
+            if (dto.UseOcr && (extension == ".jpg" || extension == ".jpeg" || extension == ".png"))
+            {
+                _logger.LogInformation("OCR requested for file: {FileName}, extension: {Extension}", dto.File.FileName, extension);
+                _logger.LogInformation("Performing OCR on uploaded receipt");
+                
+                // Reset stream position for OCR
+                dto.File.OpenReadStream().Position = 0;
+                using var ocrStream = dto.File.OpenReadStream();
+                ocrResult = await _ocrService.ExtractReceiptDataAsync(ocrStream, dto.File.FileName);
+
+                if (ocrResult.Success)
+                {
+                    _logger.LogInformation("OCR successful. Extracted data - Merchant: {Merchant}, Amount: {Amount}, Date: {Date}, Product: {Product}",
+                        ocrResult.Merchant ?? "null", 
+                        ocrResult.Amount?.ToString() ?? "null", 
+                        ocrResult.PurchaseDate?.ToString("yyyy-MM-dd") ?? "null",
+                        ocrResult.ProductName ?? "null");
+                    
+                    // Use OCR results if fields aren't manually provided (treat empty strings as null)
+                    if (string.IsNullOrWhiteSpace(dto.Merchant) && !string.IsNullOrWhiteSpace(ocrResult.Merchant))
+                    {
+                        dto.Merchant = ocrResult.Merchant;
+                    }
+                    
+                    if (!dto.Amount.HasValue && ocrResult.Amount.HasValue)
+                    {
+                        dto.Amount = ocrResult.Amount;
+                    }
+                    
+                    if (!dto.PurchaseDate.HasValue && ocrResult.PurchaseDate.HasValue)
+                    {
+                        dto.PurchaseDate = ocrResult.PurchaseDate;
+                    }
+                    
+                    if (string.IsNullOrWhiteSpace(dto.ProductName) && !string.IsNullOrWhiteSpace(ocrResult.ProductName))
+                    {
+                        dto.ProductName = ocrResult.ProductName;
+                    }
+                    
+                    // Append OCR extracted text to notes if present
+                    if (!string.IsNullOrWhiteSpace(ocrResult.ExtractedText))
+                    {
+                        dto.Notes = string.IsNullOrWhiteSpace(dto.Notes)
+                            ? $"OCR: {ocrResult.ExtractedText}"
+                            : $"{dto.Notes}\n\nOCR: {ocrResult.ExtractedText}";
+                    }
+
+                    _logger.LogInformation("OCR data applied to DTO. Final values - Merchant: {Merchant}, Amount: {Amount}, Date: {Date}, Product: {Product}",
+                        dto.Merchant ?? "null", 
+                        dto.Amount?.ToString() ?? "null", 
+                        dto.PurchaseDate?.ToString("yyyy-MM-dd") ?? "null",
+                        dto.ProductName ?? "null");
+                }
+                else
+                {
+                    _logger.LogWarning("OCR failed: {Error}", ocrResult.ErrorMessage);
+                }
+            }
+            else if (dto.UseOcr)
+            {
+                _logger.LogWarning("OCR was requested but file type {Extension} is not supported for OCR", extension);
+            }
+
             // Save file to storage
             var storagePath = await _fileStorage.SaveFileAsync(dto.File, userId);
 
@@ -191,6 +259,93 @@ public class ReceiptsController : ControllerBase
         {
             _logger.LogError(ex, "Error deleting receipt {ReceiptId}", id);
             return StatusCode(500, new { message = "An error occurred while deleting the receipt" });
+        }
+    }
+
+    [HttpPost("{id}/ocr")]
+    public async Task<ActionResult<ReceiptResponseDto>> PerformOcr(Guid id)
+    {
+        var userId = GetUserId();
+
+        var receipt = await _context.Receipts
+            .FirstOrDefaultAsync(r => r.Id == id && r.UserId == userId);
+
+        if (receipt == null)
+        {
+            return NotFound(new { message = "Receipt not found" });
+        }
+
+        // Check if file is an image
+        var extension = Path.GetExtension(receipt.FileName).ToLowerInvariant();
+        if (extension != ".jpg" && extension != ".jpeg" && extension != ".png")
+        {
+            return BadRequest(new { message = "OCR is only supported for image files (JPG, PNG)" });
+        }
+
+        try
+        {
+            // Get the file and perform OCR
+            using var fileStream = await _fileStorage.GetFileAsync(receipt.StoragePath);
+            var ocrResult = await _ocrService.ExtractReceiptDataAsync(fileStream, receipt.FileName);
+
+            if (!ocrResult.Success)
+            {
+                return BadRequest(new { message = $"OCR failed: {ocrResult.ErrorMessage}" });
+            }
+
+            // Update receipt with OCR results (only update null fields)
+            var updated = false;
+
+            if (receipt.Merchant == null && !string.IsNullOrWhiteSpace(ocrResult.Merchant))
+            {
+                receipt.Merchant = ocrResult.Merchant;
+                updated = true;
+            }
+
+            if (receipt.Amount == null && ocrResult.Amount.HasValue)
+            {
+                receipt.Amount = ocrResult.Amount;
+                updated = true;
+            }
+
+            if (receipt.PurchaseDate == null && ocrResult.PurchaseDate.HasValue)
+            {
+                receipt.PurchaseDate = ocrResult.PurchaseDate;
+                updated = true;
+            }
+
+            if (receipt.ProductName == null && !string.IsNullOrWhiteSpace(ocrResult.ProductName))
+            {
+                receipt.ProductName = ocrResult.ProductName;
+                updated = true;
+            }
+
+            // Append OCR extracted text to notes
+            if (!string.IsNullOrWhiteSpace(ocrResult.ExtractedText))
+            {
+                receipt.Notes = string.IsNullOrWhiteSpace(receipt.Notes)
+                    ? $"OCR: {ocrResult.ExtractedText}"
+                    : $"{receipt.Notes}\n\nOCR: {ocrResult.ExtractedText}";
+                updated = true;
+            }
+
+            if (updated)
+            {
+                receipt.LastModifiedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Updated receipt {ReceiptId} with OCR data", id);
+            }
+
+            return MapToResponseDto(receipt);
+        }
+        catch (FileNotFoundException)
+        {
+            return NotFound(new { message = "Receipt file not found in storage" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error performing OCR on receipt {ReceiptId}", id);
+            return StatusCode(500, new { message = "An error occurred during OCR processing" });
         }
     }
 
