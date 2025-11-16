@@ -140,4 +140,108 @@ public class CompositeNotificationService : INotificationService
         
         return $"****{phoneNumber.Substring(phoneNumber.Length - 4)}";
     }
+
+    public async Task SendReceiptSharedNotificationAsync(
+        string recipientUserId,
+        string recipientEmail,
+        string ownerName,
+        string receiptFileName,
+        Guid receiptId,
+        string? shareNote)
+    {
+        _logger.LogInformation("Sending receipt shared notification to user {UserId} from {Owner}",
+            recipientUserId, ownerName);
+
+        // Fetch full user details to get phone number and preferences
+        var user = await _userManager.FindByIdAsync(recipientUserId);
+        if (user == null)
+        {
+            _logger.LogWarning("User {UserId} not found, cannot send receipt shared notification", recipientUserId);
+            return;
+        }
+
+        // Check if user opted out
+        if (user.OptOutOfNotifications)
+        {
+            _logger.LogInformation("User {UserId} has opted out of notifications, skipping receipt shared notification", recipientUserId);
+            return;
+        }
+
+        // Check notification channel preference
+        var channel = user.NotificationChannel;
+        
+        if (channel == NotificationChannel.None)
+        {
+            _logger.LogInformation("User {UserId} has notifications disabled, skipping receipt shared notification", recipientUserId);
+            return;
+        }
+
+        var tasks = new List<Task>();
+
+        // Send email notification if enabled
+        if ((channel == NotificationChannel.EmailOnly || channel == NotificationChannel.EmailAndSms) 
+            && !string.IsNullOrWhiteSpace(user.Email))
+        {
+            tasks.Add(SendReceiptSharedEmailAsync(user.Email, ownerName, receiptFileName, receiptId, shareNote));
+        }
+        else if (channel == NotificationChannel.EmailOnly || channel == NotificationChannel.EmailAndSms)
+        {
+            _logger.LogWarning("User {UserId} wants email notifications but has no email address", recipientUserId);
+        }
+
+        // Send SMS notification if enabled and phone number is configured
+        if ((channel == NotificationChannel.SmsOnly || channel == NotificationChannel.EmailAndSms)
+            && !string.IsNullOrWhiteSpace(user.PhoneNumber))
+        {
+            tasks.Add(SendReceiptSharedSmsAsync(user.PhoneNumber, ownerName, receiptFileName));
+        }
+        else if (channel == NotificationChannel.SmsOnly || channel == NotificationChannel.EmailAndSms)
+        {
+            _logger.LogDebug("User {UserId} wants SMS notifications but has no phone number configured", recipientUserId);
+        }
+
+        if (!tasks.Any())
+        {
+            _logger.LogWarning("No notification channels available for user {UserId}", recipientUserId);
+            return;
+        }
+
+        // Send all notifications in parallel
+        await Task.WhenAll(tasks);
+
+        _logger.LogInformation("Receipt shared notification completed for user {UserId}", recipientUserId);
+    }
+
+    private async Task SendReceiptSharedEmailAsync(string email, string ownerName, string receiptFileName, Guid receiptId, string? shareNote)
+    {
+        try
+        {
+            await _emailService.SendReceiptSharedNotificationAsync(
+                string.Empty, // userId not needed by email service
+                email,
+                ownerName,
+                receiptFileName,
+                receiptId,
+                shareNote);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send receipt shared email to {Email}", email);
+        }
+    }
+
+    private async Task SendReceiptSharedSmsAsync(string phoneNumber, string ownerName, string receiptFileName)
+    {
+        try
+        {
+            await _smsService.SendReceiptSharedSmsAsync(
+                phoneNumber,
+                ownerName,
+                receiptFileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send receipt shared SMS to {Phone}", MaskPhoneNumber(phoneNumber));
+        }
+    }
 }

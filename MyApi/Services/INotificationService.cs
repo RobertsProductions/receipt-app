@@ -3,6 +3,7 @@ namespace MyApi.Services;
 public interface INotificationService
 {
     Task SendWarrantyExpirationNotificationAsync(string userId, string userEmail, string productName, DateTime expirationDate, Guid receiptId);
+    Task SendReceiptSharedNotificationAsync(string recipientUserId, string recipientEmail, string ownerName, string receiptFileName, Guid receiptId, string? shareNote);
 }
 
 public class WarrantyNotification

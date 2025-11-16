@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
 using MyApi.DTOs;
 using MyApi.Models;
+using MyApi.Services;
 using System.Security.Claims;
 
 namespace MyApi.Controllers;
@@ -20,15 +21,18 @@ public class ReceiptSharingController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<ReceiptSharingController> _logger;
+    private readonly INotificationService _notificationService;
 
     public ReceiptSharingController(
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
-        ILogger<ReceiptSharingController> logger)
+        ILogger<ReceiptSharingController> logger,
+        INotificationService notificationService)
     {
         _context = context;
         _userManager = userManager;
         _logger = logger;
+        _notificationService = notificationService;
     }
 
     private string GetUserId()
@@ -100,6 +104,31 @@ public class ReceiptSharingController : ControllerBase
 
         _logger.LogInformation("User {UserId} shared receipt {ReceiptId} with user {SharedWithUserId}", 
             userId, receiptId, shareWithUser.Id);
+
+        // Send notification to the recipient
+        try
+        {
+            var owner = await _userManager.FindByIdAsync(userId);
+            var ownerName = owner != null 
+                ? $"{owner.FirstName} {owner.LastName}".Trim() 
+                : owner?.Email ?? "A user";
+
+            await _notificationService.SendReceiptSharedNotificationAsync(
+                shareWithUser.Id,
+                shareWithUser.Email!,
+                ownerName,
+                receipt.FileName,
+                receiptId,
+                dto.ShareNote);
+
+            _logger.LogInformation("Sent sharing notification to user {SharedWithUserId}", shareWithUser.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to send sharing notification to user {SharedWithUserId}, but share was created", 
+                shareWithUser.Id);
+            // Don't fail the share operation if notification fails
+        }
 
         return Ok(new ShareReceiptResponseDto
         {

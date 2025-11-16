@@ -36,4 +36,26 @@ public class LogNotificationService : INotificationService
         
         return Task.CompletedTask;
     }
+
+    public Task SendReceiptSharedNotificationAsync(
+        string recipientUserId,
+        string recipientEmail,
+        string ownerName,
+        string receiptFileName,
+        Guid receiptId,
+        string? shareNote)
+    {
+        var noteText = !string.IsNullOrWhiteSpace(shareNote) ? $" Note: \"{shareNote}\"" : string.Empty;
+        
+        _logger.LogWarning(
+            "RECEIPT SHARED NOTIFICATION: User {UserId} ({Email}) - Receipt '{FileName}' (ID: {ReceiptId}) shared by {Owner}.{Note}",
+            recipientUserId,
+            recipientEmail,
+            receiptFileName,
+            receiptId,
+            ownerName,
+            noteText);
+
+        return Task.CompletedTask;
+    }
 }

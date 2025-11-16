@@ -11,6 +11,7 @@ This document describes the receipt sharing functionality that allows users to s
 - **View shared receipts** - see all receipts shared with you
 - **Manage shares** - view who has access to your receipts
 - **Revoke access** - remove sharing at any time
+- **Automatic notifications** - recipients are notified via email/SMS when receipt is shared
 - **Warranty monitoring** - recipients receive notifications for expiring warranties on shared receipts
 - **Audit logging** - all sharing actions are logged for security
 
@@ -185,7 +186,59 @@ Gets detailed information about a specific shared receipt.
 }
 ```
 
-## Warranty Notification Integration
+## Automatic Notifications
+
+When a receipt is shared, the recipient automatically receives a notification based on their notification preferences.
+
+### Notification Channels
+
+Recipients receive notifications through their configured channels:
+- **Email Only** - HTML email with receipt details and share note
+- **SMS Only** - Text message with owner name and receipt filename  
+- **Email and SMS** - Both notification types
+- **None** - No notifications (user opted out)
+
+### Email Notification
+
+The email notification includes:
+- **Owner information** - Who shared the receipt
+- **Receipt details** - Filename and ID
+- **Share note** - Optional message from the owner
+- **Action button** - Link to view the shared receipt (when UI is ready)
+- **Access information** - Read-only access level
+
+**Example Email:**
+```
+From: Warranty App <noreply@warrantyapp.com>
+Subject: 📄 Receipt Shared With You: receipt.jpg
+
+[Owner Name] has shared a receipt with you:
+- Receipt: receipt.jpg
+- Note: "Shared warranty for our TV"
+- Access: Read-only (view and download)
+
+[View Shared Receipt Button]
+```
+
+### SMS Notification
+
+The SMS notification is brief and includes:
+- Owner name
+- Receipt filename
+- Call to action
+
+**Example SMS:**
+```
+📄 John Doe shared a receipt with you: 'TV_Receipt.jpg'. Check your Warranty App to view it.
+```
+
+### Notification Behavior
+
+- **Respects user preferences** - Only sends via user's configured channels
+- **Honors opt-out** - Users who opted out don't receive notifications
+- **Requires contact info** - SMS requires verified phone number
+- **Non-blocking** - Share succeeds even if notification fails
+- **Logged** - All notification attempts are logged
 
 Shared receipts are automatically included in the warranty expiration monitoring system:
 
@@ -322,8 +375,8 @@ Display shared receipts with:
 ### Notifications
 
 Show a badge or notification when:
-- New receipt is shared with you
-- Shared receipt warranty is expiring
+- ✅ **New receipt is shared with you** (implemented - email/SMS)
+- Shared receipt warranty is expiring (already implemented)
 - Access to a shared receipt is revoked
 
 ## Best Practices
@@ -386,4 +439,46 @@ Potential improvements for future releases:
 4. **Share Templates** - Save common sharing configurations
 5. **Share Analytics** - Track who views/downloads shared receipts
 6. **Comments** - Add discussion threads to shared receipts
-7. **Notifications for Shares** - Email/SMS when receipt is shared with you
+7. **Revocation Notifications** - Notify when access is revoked
+8. **In-app Notifications** - Real-time notifications in the UI
+
+## Implementation Notes
+
+### Notification Service Integration
+
+The sharing feature integrates with the existing `INotificationService` infrastructure:
+
+```csharp
+public interface INotificationService
+{
+    Task SendWarrantyExpirationNotificationAsync(...);
+    Task SendReceiptSharedNotificationAsync(
+        string recipientUserId,
+        string recipientEmail,
+        string ownerName,
+        string receiptFileName,
+        Guid receiptId,
+        string? shareNote);
+}
+```
+
+All three notification service implementations support receipt sharing:
+- `EmailNotificationService` - Sends HTML email with details
+- `SmsNotificationService` - Sends brief SMS message
+- `CompositeNotificationService` - Orchestrates both based on user preferences
+- `LogNotificationService` - Logs notifications for development
+
+### Error Handling
+
+Notification failures don't prevent the share operation:
+```csharp
+try
+{
+    await _notificationService.SendReceiptSharedNotificationAsync(...);
+}
+catch (Exception ex)
+{
+    _logger.LogWarning(ex, "Failed to send notification, but share was created");
+    // Share succeeds even if notification fails
+}
+```

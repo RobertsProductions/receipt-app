@@ -130,6 +130,116 @@ public class EmailNotificationService : INotificationService
 </html>";
     }
 
+    public async Task SendReceiptSharedNotificationAsync(
+        string recipientUserId,
+        string recipientEmail,
+        string ownerName,
+        string receiptFileName,
+        Guid receiptId,
+        string? shareNote)
+    {
+        if (string.IsNullOrWhiteSpace(recipientEmail))
+        {
+            _logger.LogWarning("Cannot send receipt shared email: User {UserId} has no email address", recipientUserId);
+            return;
+        }
+
+        try
+        {
+            using var smtpClient = new System.Net.Mail.SmtpClient(_smtpHost, _smtpPort)
+            {
+                EnableSsl = _useSsl,
+                Credentials = new System.Net.NetworkCredential(_smtpUsername, _smtpPassword),
+                Timeout = 30000
+            };
+
+            var subject = $"📄 Receipt Shared With You: {receiptFileName}";
+            var body = GenerateReceiptSharedEmailBody(ownerName, receiptFileName, receiptId, shareNote);
+
+            var mailMessage = new System.Net.Mail.MailMessage
+            {
+                From = new System.Net.Mail.MailAddress(_fromEmail, _fromName),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(recipientEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
+
+            _logger.LogInformation("Receipt shared notification sent to {Email} for receipt {ReceiptId} from {Owner}",
+                recipientEmail, receiptId, ownerName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send receipt shared notification to {Email} for receipt {ReceiptId}", 
+                recipientEmail, receiptId);
+            throw;
+        }
+    }
+
+    private string GenerateReceiptSharedEmailBody(string ownerName, string receiptFileName, Guid receiptId, string? shareNote)
+    {
+        var noteSection = !string.IsNullOrWhiteSpace(shareNote) 
+            ? $@"
+        <div style='background-color: #e7f3ff; padding: 15px; margin: 15px 0; border-left: 4px solid #0d6efd; border-radius: 4px;'>
+            <p style='margin: 0; font-style: italic;'>""{shareNote}""</p>
+            <p style='margin: 5px 0 0 0; font-size: 12px; color: #6c757d;'>- Note from {ownerName}</p>
+        </div>"
+            : string.Empty;
+
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+</head>
+<body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;'>
+    <div style='background-color: #0d6efd; color: white; padding: 15px; border-radius: 5px 5px 0 0;'>
+        <h2 style='margin: 0;'>📄 Receipt Shared With You</h2>
+    </div>
+    
+    <div style='background-color: #f8f9fa; padding: 20px; border: 1px solid #dee2e6; border-top: none; border-radius: 0 0 5px 5px;'>
+        <p style='font-size: 16px; margin-top: 0;'>
+            <strong>{ownerName}</strong> has shared a receipt with you:
+        </p>
+        
+        <div style='background-color: white; padding: 15px; margin: 15px 0; border-left: 4px solid #0d6efd; border-radius: 4px;'>
+            <p style='margin: 0; font-size: 18px;'><strong>{receiptFileName}</strong></p>
+            <p style='margin: 5px 0 0 0; color: #6c757d; font-size: 14px;'>Receipt ID: {receiptId}</p>
+        </div>
+
+        {noteSection}
+        
+        <h3>What you can do:</h3>
+        <ul style='padding-left: 20px;'>
+            <li>View receipt details and warranty information</li>
+            <li>Download the receipt for your records</li>
+            <li>Receive notifications about warranty expiration</li>
+            <li>Access shared receipt anytime from your account</li>
+        </ul>
+        
+        <div style='margin-top: 25px; text-align: center;'>
+            <a href='#' style='display: inline-block; background-color: #0d6efd; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;'>
+                View Shared Receipt
+            </a>
+        </div>
+        
+        <div style='margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 14px; color: #6c757d;'>
+            <p style='margin: 5px 0;'><strong>Shared by:</strong> {ownerName}</p>
+            <p style='margin: 5px 0;'><strong>Access level:</strong> Read-only (view and download)</p>
+            <p style='margin: 5px 0;'>This is an automated notification from your Warranty Management System.</p>
+        </div>
+    </div>
+    
+    <div style='margin-top: 20px; text-align: center; font-size: 12px; color: #6c757d;'>
+        <p>© {DateTime.UtcNow.Year} Warranty App. All rights reserved.</p>
+    </div>
+</body>
+</html>";
+    }
+
     /// <summary>
     /// Send a generic email with custom subject and body
     /// </summary>

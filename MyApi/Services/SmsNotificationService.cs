@@ -157,6 +157,61 @@ public class SmsNotificationService : INotificationService
         await Task.CompletedTask;
     }
 
+    public async Task SendReceiptSharedNotificationAsync(
+        string recipientUserId,
+        string recipientEmail,
+        string ownerName,
+        string receiptFileName,
+        Guid receiptId,
+        string? shareNote)
+    {
+        if (!_isConfigured)
+        {
+            _logger.LogDebug("SMS notifications disabled - Twilio not configured");
+            return;
+        }
+
+        _logger.LogInformation("SMS notification for receipt sharing not implemented - phone number needs to be passed");
+        _logger.LogDebug("Receipt {ReceiptId} shared with user {UserId} by {Owner}", receiptId, recipientUserId, ownerName);
+        
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Send SMS notification for receipt sharing to a specific phone number
+    /// </summary>
+    public async Task SendReceiptSharedSmsAsync(
+        string phoneNumber,
+        string ownerName,
+        string receiptFileName)
+    {
+        if (!_isConfigured)
+        {
+            _logger.LogDebug("SMS notifications disabled - Twilio not configured");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+        {
+            _logger.LogDebug("SMS notification skipped - no phone number provided");
+            return;
+        }
+
+        try
+        {
+            var message = $"📄 {ownerName} shared a receipt with you: '{receiptFileName}'. Check your Warranty App to view it.";
+
+            _logger.LogInformation("Receipt shared SMS (simulated) sent to {Phone}: {Message}", 
+                MaskPhoneNumber(phoneNumber), message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send receipt shared SMS to {Phone}", MaskPhoneNumber(phoneNumber));
+        }
+
+        await Task.CompletedTask;
+    }
+
     private string GenerateSmsMessage(string productName, DateTime expirationDate, int daysUntilExpiration)
     {
         var urgency = daysUntilExpiration <= 3 ? "URGENT: " : "";
