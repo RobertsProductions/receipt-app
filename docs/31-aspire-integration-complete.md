@@ -45,7 +45,7 @@ app.UseCors("AllowAngularDev");
 ### 3. Documentation Updates ✅
 - Updated README with unified startup
 - Marked integration task as complete
-- Updated QUICKSTART guide
+- Updated Quick Start guide (docs/00-quickstart.md)
 - Added implementation summary
 
 ## Before vs After
@@ -163,7 +163,7 @@ Aspire AppHost (dotnet run)
 2. `AppHost/MyAspireApp.Host.csproj` - Added Node.js package
 3. `MyApi/Program.cs` - Added CORS configuration
 4. `README.md` - Updated startup instructions
-5. `QUICKSTART.md` - Simplified workflow
+5. `docs/00-quickstart.md` - Simplified workflow
 6. `docs/29-angular-aspire-integration.md` - Marked complete
 
 ## Verification

@@ -4,6 +4,10 @@
 
 A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction, proactive warranty expiration notifications via email and SMS, secure phone number verification, and comprehensive user management.
 
+## Quick Start
+
+**Want to get started quickly?** See the [Quick Start Guide](docs/00-quickstart.md) for streamlined setup instructions.
+
 ## Overview
 
 This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts, a background service that monitors and notifies users about expiring warranties via email and optional SMS, SMS-based phone number verification with 6-digit codes, and full user profile management leveraging ASP.NET Core Identity's built-in fields for seamless integration.
@@ -32,6 +36,7 @@ MyAspireSolution/
 │   └── workflows/
 │       └── dotnet-ci.yml                           # CI/CD pipeline configuration
 ├── docs/                                           # Documentation
+│   ├── 00-quickstart.md                            # Quick start guide
 │   ├── 01-initial-setup.md                         # Initial setup documentation
 │   ├── 02-api-registration.md                      # API registration with Aspire
 │   ├── 03-cicd-setup.md                            # GitHub Actions CI/CD pipeline
@@ -473,6 +478,7 @@ Pipeline triggers:
 
 Detailed documentation is available in the `docs/` folder:
 
+- [00 - Quick Start Guide](docs/00-quickstart.md): Streamlined setup and run instructions
 - [01 - Initial Setup](docs/01-initial-setup.md): Environment setup and project creation
 - [02 - API Registration](docs/02-api-registration.md): Registering services with Aspire
 - [03 - CI/CD Setup](docs/03-cicd-setup.md): GitHub Actions pipeline and repository setup
