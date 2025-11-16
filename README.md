@@ -177,10 +177,13 @@ The port number will be displayed in the console or available in the Aspire Dash
 
 **AI-Powered OCR**
 - Automatic extraction of merchant, amount, purchase date, and product name
+- Support for both images (JPG, PNG) and PDF documents
+- PDF text extraction with PdfPig library
 - Optional OCR during upload (`UseOcr=true` parameter)
 - Run OCR on existing receipts via dedicated endpoint
 - Smart data merging (OCR only fills empty fields)
-- Uses OpenAI GPT-4o-mini vision model (~$0.00015 per image)
+- Image OCR uses OpenAI GPT-4o-mini vision model (~$0.00015 per image)
+- PDF OCR uses text extraction + GPT-4o-mini (~$0.00005 per PDF, more cost-effective)
 
 **Warranty Expiration Notifications**
 - Background service monitors warranties 24/7
@@ -254,6 +257,7 @@ Detailed documentation is available in the `docs/` folder:
 - [10 - Warranty Expiration Notifications](docs/10-warranty-expiration-notifications.md): Background service for warranty monitoring and notifications
 - [11 - Email and SMS Notifications](docs/11-email-sms-notifications.md): Email and SMS notification setup, configuration, and testing
 - [12 - User Profile Management](docs/12-user-profile-management.md): User profile API with notification preferences and phone number management
+- [13 - PDF OCR Support](docs/13-pdf-ocr-support.md): PDF receipt processing with text extraction and AI-powered data extraction
 
 ## Contributing
 
@@ -329,9 +333,9 @@ For issues, questions, or contributions, please:
 - [x] Add warranty expiration notifications (background service with caching)
 - [x] Implement email/SMS notifications for warranty expirations (SMTP, Twilio)
 - [x] Add user profile management API (update phone number, preferences)
-- [ ] Implement notification preferences (email only, SMS only, both)
+- [x] Implement PDF OCR support (PdfPig + OpenAI text extraction)
+- [ ] Implement notification preferences UI/documentation improvements
 - [ ] Add phone number verification (SMS confirmation code)
-- [ ] Implement PDF OCR support
 - [ ] Add batch OCR processing
 - [ ] Create frontend UI
 - [ ] Add automated deployment
