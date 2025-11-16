@@ -21,7 +21,7 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
               ↓ validates
 ┌─────────────────────────────────────────┐
 │   Service Layer Tests (Current)         │ ← Business logic
-│   - 100 tests, 100% pass rate ✅        │
+│   - 117 tests, 100% pass rate ✅        │
 │   - Unit tests with mocking             │
 │   - Fast execution, reliable            │
 └─────────────────────────────────────────┘
@@ -40,15 +40,15 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
 
 ```
 ┌─────────────────────────────────────────┐
-│  Total Tests: 129                       │
-│  Passing: 129 (100%)                    │
+│  Total Tests: 146                       │
+│  Passing: 146 (100%)                    │
 │  Failing: 0                             │
 │  Skipped: 0                             │
 │  Execution Time: ~42 seconds            │
 └─────────────────────────────────────────┘
 ```
 
-### ✅ Completed: Service Layer (100 Tests)
+### ✅ Completed: Service Layer (117 Tests)
 
 #### TokenService (12 tests)
 - JWT token generation with claims
@@ -101,6 +101,20 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
 - Large file processing
 - API key security
 
+#### ChatbotService (17 tests)
+- API key configuration validation
+- Conversation history management
+- Message persistence to database
+- Rate limiting and token tracking
+- User message isolation
+- Suggested questions generation
+- History retrieval with limits
+- Conversation clearing
+
+#### SmsNotificationService (0 tests)
+- Thin wrapper around Twilio SDK
+- Tested via CompositeNotificationService integration
+
 #### Model Tests (29 tests)
 - **ApplicationUser** (tests for user model with notification preferences)
 - **Receipt** (7 tests for receipt tracking model)
@@ -116,7 +130,7 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
 2. **Brittleness**: Break frequently with implementation changes
 3. **Maintenance Burden**: High overhead for mocking all dependencies
 4. **Redundant Coverage**: E2E tests provide better validation of endpoints
-5. **Service Coverage**: 100 service tests already validate business logic
+5. **Service Coverage**: 117 service tests already validate business logic
 
 **Alternative**: Playwright E2E tests after frontend development.
 
@@ -222,7 +236,7 @@ Tests run automatically on:
 - Every pull request
 - Manual workflow dispatch
 
-**Build Status**: ✅ All tests passing (129/129)
+**Build Status**: ✅ All tests passing (146/146)
 
 ## Coverage Goals
 
@@ -302,9 +316,9 @@ start coverage-report/index.html
 ## Conclusion
 
 The current testing strategy provides:
-- ✅ **Comprehensive service layer coverage** (100 service tests)
-- ✅ **Complete model coverage** (29 model tests including receipt sharing)
-- ✅ **Fast, reliable test execution** (~42 seconds for 129 tests)
+- ✅ **Comprehensive service layer coverage** (117 service tests - all services covered)
+- ✅ **Complete model coverage** (29 model tests including receipt sharing and chat messages)
+- ✅ **Fast, reliable test execution** (~42 seconds for 146 tests)
 - ✅ **High maintainability** (focused unit tests)
 - ✅ **CI/CD integration** (automated on every commit)
 
