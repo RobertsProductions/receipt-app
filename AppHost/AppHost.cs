@@ -27,8 +27,9 @@ var myApi = builder.AddProject<Projects.MyApi>("myapi")
 
 // Add Angular frontend as NPM app
 // Runs 'npm start' in the WarrantyApp.Web directory
+// Angular CLI natively reads PORT environment variable (defaults to 4200)
 var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
-    .WithHttpEndpoint(env: "PORT")
+    .WithHttpEndpoint(port: 4200, env: "PORT")
     .WithExternalHttpEndpoints()
     .WaitFor(myApi);
 
