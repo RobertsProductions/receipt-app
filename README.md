@@ -337,6 +337,7 @@ Detailed documentation is available in the `docs/` folder:
 - [17 - Two-Factor Authentication](docs/17-two-factor-authentication.md): TOTP-based 2FA with authenticator apps and recovery codes
 - [18 - Email Confirmation](docs/18-email-confirmation.md): Email address verification with secure tokens and professional HTML templates
 - [19 - Monitoring and Alerting](docs/19-monitoring-and-alerting.md): Comprehensive health checks for all system components and dependencies
+- [20 - Test Coverage](docs/20-test-coverage.md): Comprehensive unit and integration testing strategy with current status and recommendations
 
 ## Contributing
 
@@ -422,7 +423,8 @@ For issues, questions, or contributions, please:
 - [x] Implement monitoring and alerting (health checks for all components)
 
 ### Backend Tasks (No UI Required) 🔧
-- [ ] Add comprehensive test coverage
+- [x] Add comprehensive test coverage (Phase 1: Model tests complete - 100% coverage)
+- [ ] Add comprehensive test coverage (Phase 2: Service and controller tests - in progress)
 - [ ] Add automated deployment
 
 ### Frontend/UI Tasks 🎨
