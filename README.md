@@ -364,6 +364,7 @@ For issues, questions, or contributions, please:
 
 ## Roadmap
 
+### Completed Features ✅
 - [x] Add authentication and authorization (JWT-based with ASP.NET Core Identity)
 - [x] Implement database integration (Entity Framework Core with SQL Server)
 - [x] Add SQL Server container orchestration with Aspire
@@ -379,15 +380,19 @@ For issues, questions, or contributions, please:
 - [x] Add user profile management API (update phone number, preferences)
 - [x] Implement PDF OCR support (PdfPig + OpenAI text extraction)
 - [x] Add phone number verification (SMS confirmation code with expiration)
-- [ ] Implement notification preferences UI/documentation improvements
-- [ ] Add batch OCR processing
-- [ ] Create frontend UI
-- [ ] Add automated deployment
-- [ ] Implement monitoring and alerting
-- [ ] Add comprehensive test coverage
+- [x] Add batch OCR processing (multiple receipts at once)
+
+### Backend Tasks (No UI Required) 🔧
 - [ ] Add refresh token support
 - [ ] Implement two-factor authentication (2FA)
 - [ ] Add email confirmation
+- [ ] Implement monitoring and alerting
+- [ ] Add comprehensive test coverage
+- [ ] Add automated deployment
+
+### Frontend/UI Tasks 🎨
+- [ ] Create frontend UI
+- [ ] Implement notification preferences UI/documentation improvements
 
 ---
 
