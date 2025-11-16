@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using UglyToad.PdfPig;
 
 namespace MyApi.Services;
 
@@ -46,6 +47,33 @@ public class OpenAiOcrService : IOcrService
         try
         {
             _logger.LogInformation("Starting OCR processing for file: {FileName}", fileName);
+            
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            
+            // Handle PDF files differently
+            if (extension == ".pdf")
+            {
+                return await ExtractFromPdfAsync(imageStream, fileName);
+            }
+            
+            // Handle image files
+            return await ExtractFromImageAsync(imageStream, fileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error performing OCR on file: {FileName}", fileName);
+            return new OcrResult
+            {
+                Success = false,
+                ErrorMessage = $"OCR processing failed: {ex.Message}"
+            };
+        }
+    }
+
+    private async Task<OcrResult> ExtractFromImageAsync(Stream imageStream, string fileName)
+    {
+        try
+        {
             // Convert image to base64
             using var memoryStream = new MemoryStream();
             await imageStream.CopyToAsync(memoryStream);
@@ -101,63 +129,157 @@ Important: Return ONLY the JSON object, no additional text or explanation."
                 temperature = 0.1
             };
 
-            var jsonContent = JsonSerializer.Serialize(requestBody);
-            var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-            _logger.LogDebug("Sending request to OpenAI API");
-            var response = await _httpClient.PostAsync(OpenAiApiUrl, httpContent);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogError("OpenAI API error: {StatusCode} - {Content}", response.StatusCode, responseContent);
-                return new OcrResult
-                {
-                    Success = false,
-                    ErrorMessage = $"OpenAI API error: {response.StatusCode}"
-                };
-            }
-
-            _logger.LogDebug("Received response from OpenAI API, parsing results");
-
-            // Parse OpenAI response
-            using var document = JsonDocument.Parse(responseContent);
-            var root = document.RootElement;
-            
-            if (!root.TryGetProperty("choices", out var choices) || choices.GetArrayLength() == 0)
-            {
-                _logger.LogWarning("No choices in OpenAI response");
-                return new OcrResult { Success = false, ErrorMessage = "No response from OpenAI" };
-            }
-
-            var messageContent = choices[0]
-                .GetProperty("message")
-                .GetProperty("content")
-                .GetString();
-
-            if (string.IsNullOrWhiteSpace(messageContent))
-            {
-                return new OcrResult { Success = false, ErrorMessage = "Empty response from OpenAI" };
-            }
-
-            // Parse the extracted data from GPT response
-            var extractedData = ParseExtractedData(messageContent);
-            extractedData.Success = true;
-            
-            _logger.LogInformation("Successfully extracted receipt data: Merchant={Merchant}, Amount={Amount}", 
-                extractedData.Merchant, extractedData.Amount);
-
-            return extractedData;
+            return await SendToOpenAiAsync(requestBody, fileName);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during OCR processing for file {FileName}", fileName);
+            _logger.LogError(ex, "Error during image OCR processing for file {FileName}", fileName);
             return new OcrResult
             {
                 Success = false,
-                ErrorMessage = $"OCR processing failed: {ex.Message}"
+                ErrorMessage = $"Image OCR processing failed: {ex.Message}"
             };
         }
+    }
+
+    private async Task<OcrResult> ExtractFromPdfAsync(Stream pdfStream, string fileName)
+    {
+        _logger.LogInformation("Extracting text from PDF: {FileName}", fileName);
+        
+        try
+        {
+            // Read PDF and extract text
+            using var memoryStream = new MemoryStream();
+            await pdfStream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+            
+            var extractedText = new StringBuilder();
+            
+            using (var document = PdfDocument.Open(memoryStream))
+            {
+                _logger.LogDebug("PDF has {PageCount} pages", document.NumberOfPages);
+                
+                // Extract text from first 3 pages (receipts are usually 1-2 pages)
+                var pagesToProcess = Math.Min(3, document.NumberOfPages);
+                
+                for (int i = 1; i <= pagesToProcess; i++)
+                {
+                    var page = document.GetPage(i);
+                    var text = page.Text;
+                    extractedText.AppendLine(text);
+                    
+                    if (extractedText.Length > 5000) // Limit text length
+                    {
+                        _logger.LogDebug("Text extraction stopped at page {Page} due to length limit", i);
+                        break;
+                    }
+                }
+            }
+            
+            var pdfText = extractedText.ToString();
+            
+            if (string.IsNullOrWhiteSpace(pdfText))
+            {
+                _logger.LogWarning("No text extracted from PDF: {FileName}", fileName);
+                return new OcrResult
+                {
+                    Success = false,
+                    ErrorMessage = "PDF appears to be empty or contains only images. Try converting to image format."
+                };
+            }
+            
+            _logger.LogDebug("Extracted {Length} characters from PDF", pdfText.Length);
+            
+            // Send extracted text to OpenAI for structured extraction
+            var requestBody = new
+            {
+                model = "gpt-4o-mini",
+                messages = new[]
+                {
+                    new
+                    {
+                        role = "user",
+                        content = $@"Extract the following information from this receipt text and return ONLY a valid JSON object with these exact fields (use null for missing values):
+{{
+  ""merchant"": ""store or merchant name"",
+  ""amount"": 0.00,
+  ""purchaseDate"": ""YYYY-MM-DD"",
+  ""productName"": ""main product or category"",
+  ""extractedText"": ""brief summary of the receipt""
+}}
+
+Important: Return ONLY the JSON object, no additional text or explanation.
+
+Receipt text:
+{pdfText.Substring(0, Math.Min(pdfText.Length, 4000))}"
+                    }
+                },
+                max_tokens = 500,
+                temperature = 0.1
+            };
+            
+            return await SendToOpenAiAsync(requestBody, fileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error extracting text from PDF: {FileName}", fileName);
+            return new OcrResult
+            {
+                Success = false,
+                ErrorMessage = $"PDF processing failed: {ex.Message}"
+            };
+        }
+    }
+
+    private async Task<OcrResult> SendToOpenAiAsync(object requestBody, string fileName)
+    {
+        var jsonContent = JsonSerializer.Serialize(requestBody);
+        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        _logger.LogDebug("Sending request to OpenAI API for {FileName}", fileName);
+        var response = await _httpClient.PostAsync(OpenAiApiUrl, httpContent);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("OpenAI API error: {StatusCode} - {Content}", response.StatusCode, responseContent);
+            return new OcrResult
+            {
+                Success = false,
+                ErrorMessage = $"OpenAI API error: {response.StatusCode}"
+            };
+        }
+
+        _logger.LogDebug("Received response from OpenAI API, parsing results");
+
+        // Parse OpenAI response
+        using var document = JsonDocument.Parse(responseContent);
+        var root = document.RootElement;
+        
+        if (!root.TryGetProperty("choices", out var choices) || choices.GetArrayLength() == 0)
+        {
+            _logger.LogWarning("No choices in OpenAI response");
+            return new OcrResult { Success = false, ErrorMessage = "No response from OpenAI" };
+        }
+
+        var messageContent = choices[0]
+            .GetProperty("message")
+            .GetProperty("content")
+            .GetString();
+
+        if (string.IsNullOrWhiteSpace(messageContent))
+        {
+            return new OcrResult { Success = false, ErrorMessage = "Empty response from OpenAI" };
+        }
+
+        // Parse the extracted data from GPT response
+        var extractedData = ParseExtractedData(messageContent);
+        extractedData.Success = true;
+        
+        _logger.LogInformation("Successfully extracted receipt data from {FileName}: Merchant={Merchant}, Amount={Amount}", 
+            fileName, extractedData.Merchant, extractedData.Amount);
+
+        return extractedData;
     }
 
     private OcrResult ParseExtractedData(string jsonResponse)
