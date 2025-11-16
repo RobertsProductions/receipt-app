@@ -31,20 +31,52 @@ MyAspireSolution/
 │   ├── 02-api-registration.md     # API registration with Aspire
 │   ├── 03-cicd-setup.md           # GitHub Actions CI/CD pipeline
 │   ├── 04-authentication-authorization.md  # JWT authentication
+│   ├── 05-database-resources-aspire.md     # Aspire database resources
 │   ├── 06-docker-database-setup.md     # Docker and database configuration
 │   ├── 07-connection-fixes.md     # Database connection troubleshooting
 │   ├── 08-receipt-upload-feature.md   # Receipt upload and management
 │   ├── 09-ocr-openai-integration.md   # OpenAI OCR integration
 │   ├── 10-warranty-expiration-notifications.md   # Background notification service
-│   └── 11-email-sms-notifications.md  # Email and SMS notification configuration
+│   ├── 11-email-sms-notifications.md  # Email and SMS notification configuration
+│   ├── 12-user-profile-management.md   # User profile API
+│   └── 13-pdf-ocr-support.md      # PDF receipt OCR processing
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
-│   ├── Services/                  # Business logic & OCR service
+│   │   ├── AuthController.cs      # Authentication (register, login)
+│   │   ├── ReceiptsController.cs  # Receipt management & OCR
+│   │   ├── UserProfileController.cs    # User profile & preferences
+│   │   └── WarrantyNotificationsController.cs  # Warranty monitoring
+│   ├── Services/                  # Business logic services
+│   │   ├── CompositeNotificationService.cs     # Multi-channel notifications
+│   │   ├── EmailNotificationService.cs         # SMTP email service
+│   │   ├── SmsNotificationService.cs           # Twilio SMS service
+│   │   ├── LogNotificationService.cs           # Logging fallback
+│   │   ├── OpenAiOcrService.cs    # AI-powered OCR (image & PDF)
+│   │   ├── LocalFileStorageService.cs  # File storage management
+│   │   ├── TokenService.cs        # JWT token generation
+│   │   ├── WarrantyExpirationService.cs  # Background warranty monitoring
+│   │   ├── INotificationService.cs       # Notification interface
+│   │   ├── IOcrService.cs         # OCR interface
+│   │   ├── IFileStorageService.cs # Storage interface
+│   │   ├── ITokenService.cs       # Token interface
+│   │   └── JwtSettings.cs         # JWT configuration
 │   ├── Models/                    # Data models
+│   │   ├── ApplicationUser.cs     # User entity (Identity + preferences)
+│   │   └── Receipt.cs             # Receipt entity
 │   ├── DTOs/                      # Data transfer objects
+│   │   ├── AuthResponseDto.cs     # Login/register response
+│   │   ├── LoginDto.cs            # Login request
+│   │   ├── RegisterDto.cs         # Registration request
+│   │   ├── ReceiptResponseDto.cs  # Receipt response
+│   │   ├── UploadReceiptDto.cs    # Receipt upload request
+│   │   └── UserProfileDto.cs      # User profile & preferences
 │   ├── Data/                      # EF Core DbContext
-│   ├── Program.cs
-│   └── MyApi.csproj
+│   │   ├── ApplicationDbContext.cs
+│   │   └── Migrations/            # Database migrations
+│   ├── uploads/receipts/          # Local file storage
+│   ├── Program.cs                 # Application entry point
+│   ├── MyApi.csproj
+│   └── MyApi.http                 # HTTP request samples
 ├── AppHost/                       # Aspire AppHost orchestrator
 │   ├── AppHost.cs                 # Service registration
 │   ├── MyAspireApp.Host.csproj
@@ -250,6 +282,7 @@ Detailed documentation is available in the `docs/` folder:
 - [02 - API Registration](docs/02-api-registration.md): Registering services with Aspire
 - [03 - CI/CD Setup](docs/03-cicd-setup.md): GitHub Actions pipeline and repository setup
 - [04 - Authentication & Authorization](docs/04-authentication-authorization.md): JWT-based authentication implementation
+- [05 - Database Resources in Aspire](docs/05-database-resources-aspire.md): Aspire SQL Server container configuration
 - [06 - Docker Database Setup](docs/06-docker-database-setup.md): Docker and database configuration guide
 - [07 - Connection Fixes](docs/07-connection-fixes.md): Troubleshooting database connection issues
 - [08 - Receipt Upload Feature](docs/08-receipt-upload-feature.md): Upload and manage receipt images and PDFs
