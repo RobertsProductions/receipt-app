@@ -183,7 +183,7 @@ builder.Build().Run();
 
 - [x] Angular app starts automatically when running Aspire AppHost
 - [x] Frontend appears in Aspire dashboard with proper health status
-- [x] Angular dev server is accessible at port 4200
+- [x] Angular dev server is accessible at port 4201
 - [x] API endpoint is accessible from Angular app (CORS configured)
 - [x] Logs from Angular dev server appear in Aspire dashboard
 - [x] Hot reload works for Angular code changes
@@ -215,7 +215,7 @@ var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
 - Angular CLI automatically uses PORT environment variable without explicit --port flag
 
 **3. Updated package.json**
-Simplified the npm start script to let Angular CLI handle PORT natively:
+Simplified the npm start script for local development:
 ```json
 {
   "scripts": {
@@ -225,10 +225,10 @@ Simplified the npm start script to let Angular CLI handle PORT natively:
 ```
 
 **Key Changes:**
-- Removed explicit `--port` flag from npm script
-- Angular CLI natively reads PORT environment variable when present
-- Defaults to port 4200 when PORT is not set
-- Avoids Windows compatibility issues with shell variable expansion syntax
+- No explicit `--port` or `--host` flags - uses Angular defaults
+- Angular CLI natively reads PORT environment variable when Aspire sets it
+- Defaults to localhost:4200 when PORT is not set
+- Avoids security warnings and localhost connectivity issues from `--host 0.0.0.0`
 
 **4. Configured CORS in MyApi**
 Added CORS policy to allow requests from Angular dev server:
