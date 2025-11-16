@@ -6,6 +6,9 @@ using System.Security.Claims;
 
 namespace MyApi.Controllers;
 
+/// <summary>
+/// Warranty notification endpoints for retrieving expiring warranties.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -30,8 +33,12 @@ public class WarrantyNotificationsController : ControllerBase
     }
 
     /// <summary>
-    /// Get warranties expiring soon for the current user
+    /// Retrieves warranties that are expiring soon for the authenticated user.
     /// </summary>
+    /// <returns>List of expiring warranties ordered by expiration date (soonest first)</returns>
+    /// <remarks>
+    /// Results are based on user's notification threshold preference and cached for performance.
+    /// </remarks>
     [HttpGet("expiring")]
     public ActionResult<IEnumerable<WarrantyNotification>> GetExpiringWarranties()
     {
@@ -52,8 +59,9 @@ public class WarrantyNotificationsController : ControllerBase
     }
 
     /// <summary>
-    /// Get count of warranties expiring soon for the current user
+    /// Gets the count of warranties expiring soon for the authenticated user.
     /// </summary>
+    /// <returns>Number of warranties expiring within the user's notification threshold</returns>
     [HttpGet("expiring/count")]
     public ActionResult<int> GetExpiringWarrantiesCount()
     {

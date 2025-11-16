@@ -9,6 +9,9 @@ using System.Security.Claims;
 
 namespace MyApi.Controllers;
 
+/// <summary>
+/// Receipt management endpoints for uploading, viewing, downloading, and processing receipts with OCR.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -39,6 +42,14 @@ public class ReceiptsController : ControllerBase
             ?? throw new UnauthorizedAccessException("User ID not found in token");
     }
 
+    /// <summary>
+    /// Uploads a receipt image or PDF file with optional OCR processing.
+    /// </summary>
+    /// <param name="dto">Receipt details including file, metadata, and OCR option</param>
+    /// <returns>Uploaded receipt details with OCR-extracted data if requested</returns>
+    /// <remarks>
+    /// Supports JPG, PNG, and PDF files up to 10MB. OCR can automatically extract merchant, amount, date, and product information.
+    /// </remarks>
     [HttpPost("upload")]
     public async Task<ActionResult<ReceiptResponseDto>> UploadReceipt([FromForm] UploadReceiptDto dto)
     {
@@ -171,6 +182,11 @@ public class ReceiptsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves a specific receipt by ID.
+    /// </summary>
+    /// <param name="id">Receipt unique identifier</param>
+    /// <returns>Receipt details including metadata and download URL</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<ReceiptResponseDto>> GetReceipt(Guid id)
     {
@@ -187,6 +203,12 @@ public class ReceiptsController : ControllerBase
         return MapToResponseDto(receipt);
     }
 
+    /// <summary>
+    /// Retrieves a paginated list of receipts for the authenticated user.
+    /// </summary>
+    /// <param name="page">Page number (default: 1)</param>
+    /// <param name="pageSize">Number of receipts per page (default: 20, max: 100)</param>
+    /// <returns>List of receipts ordered by upload date (newest first)</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ReceiptResponseDto>>> GetReceipts(
         [FromQuery] int page = 1,
@@ -208,6 +230,11 @@ public class ReceiptsController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Downloads the original receipt file (image or PDF).
+    /// </summary>
+    /// <param name="id">Receipt unique identifier</param>
+    /// <returns>Receipt file with original filename and content type</returns>
     [HttpGet("{id}/download")]
     public async Task<IActionResult> DownloadReceipt(Guid id)
     {
@@ -233,6 +260,11 @@ public class ReceiptsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Deletes a receipt and its associated file from storage.
+    /// </summary>
+    /// <param name="id">Receipt unique identifier</param>
+    /// <returns>No content on successful deletion</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteReceipt(Guid id)
     {
@@ -262,6 +294,14 @@ public class ReceiptsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Performs OCR on an existing receipt to extract data (merchant, amount, date, product).
+    /// </summary>
+    /// <param name="id">Receipt unique identifier</param>
+    /// <returns>Updated receipt with OCR-extracted data appended to existing fields</returns>
+    /// <remarks>
+    /// OCR only works on image files (JPG, PNG). Extracted data only fills empty fields to preserve manual entries.
+    /// </remarks>
     [HttpPost("{id}/ocr")]
     public async Task<ActionResult<ReceiptResponseDto>> PerformOcr(Guid id)
     {
@@ -349,6 +389,14 @@ public class ReceiptsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Performs OCR on multiple receipts in a single batch operation.
+    /// </summary>
+    /// <param name="request">List of receipt IDs to process</param>
+    /// <returns>Batch processing results showing success, failure, and skipped counts with details</returns>
+    /// <remarks>
+    /// Processes multiple receipts efficiently. Each receipt is processed independently; failures don't affect other receipts.
+    /// </remarks>
     [HttpPost("batch-ocr")]
     public async Task<ActionResult<BatchOcrResultDto>> PerformBatchOcr([FromBody] BatchOcrRequestDto request)
     {

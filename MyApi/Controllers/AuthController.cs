@@ -10,6 +10,9 @@ using System.Text.Encodings.Web;
 
 namespace MyApi.Controllers;
 
+/// <summary>
+/// Authentication and authorization endpoints for user registration, login, 2FA, and email confirmation.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -37,6 +40,11 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Registers a new user account and sends an email confirmation link.
+    /// </summary>
+    /// <param name="model">Registration details including username, email, password, and name</param>
+    /// <returns>JWT token and refresh token for the newly registered user</returns>
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -112,6 +120,11 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Authenticates a user with email and password. Redirects to 2FA endpoint if enabled.
+    /// </summary>
+    /// <param name="model">Login credentials (email and password)</param>
+    /// <returns>JWT token and refresh token on successful authentication</returns>
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -176,6 +189,10 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Retrieves the currently authenticated user's profile information.
+    /// </summary>
+    /// <returns>User profile including id, email, username, name, and timestamps</returns>
     [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -202,6 +219,10 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Logs out the current user by signing them out of the session.
+    /// </summary>
+    /// <returns>Success message confirming logout</returns>
     [Authorize]
     [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -211,6 +232,11 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Logged out successfully" });
     }
 
+    /// <summary>
+    /// Refreshes an expired access token using a valid refresh token.
+    /// </summary>
+    /// <param name="model">Access token and refresh token pair</param>
+    /// <returns>New JWT token and refresh token pair</returns>
     [HttpPost("refresh")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -264,6 +290,10 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Revokes the current user's refresh token, requiring a new login.
+    /// </summary>
+    /// <returns>Success message confirming token revocation</returns>
     [Authorize]
     [HttpPost("revoke")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -287,6 +317,10 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Refresh token revoked successfully" });
     }
 
+    /// <summary>
+    /// Initiates 2FA setup by generating a shared key and QR code URI for authenticator apps.
+    /// </summary>
+    /// <returns>Shared key and QR code URI for TOTP authenticator setup</returns>
     [Authorize]
     [HttpPost("2fa/enable")]
     [ProducesResponseType(typeof(Enable2FADto), StatusCodes.Status200OK)]
@@ -329,6 +363,11 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Verifies the 2FA code from authenticator app and completes 2FA setup, returning recovery codes.
+    /// </summary>
+    /// <param name="model">Six-digit verification code from authenticator app</param>
+    /// <returns>Recovery codes for account recovery if authenticator is lost</returns>
     [Authorize]
     [HttpPost("2fa/verify")]
     [ProducesResponseType(typeof(Enable2FADto), StatusCodes.Status200OK)]
@@ -374,6 +413,11 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Disables 2FA for the user account after verifying a valid 2FA code.
+    /// </summary>
+    /// <param name="model">Six-digit verification code from authenticator app</param>
+    /// <returns>Success message confirming 2FA has been disabled</returns>
     [Authorize]
     [HttpPost("2fa/disable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -417,6 +461,11 @@ public class AuthController : ControllerBase
         return Ok(new { message = "2FA disabled successfully" });
     }
 
+    /// <summary>
+    /// Authenticates a user with email, password, and 2FA code.
+    /// </summary>
+    /// <param name="model">Login credentials including email, password, and six-digit 2FA code</param>
+    /// <returns>JWT token and refresh token on successful authentication</returns>
     [HttpPost("login/2fa")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -481,6 +530,10 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Gets the current 2FA status and number of recovery codes remaining.
+    /// </summary>
+    /// <returns>2FA enabled status and count of remaining recovery codes</returns>
     [Authorize]
     [HttpGet("2fa/status")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -504,6 +557,11 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Regenerates 2FA recovery codes after verifying a valid 2FA code.
+    /// </summary>
+    /// <param name="model">Six-digit verification code from authenticator app</param>
+    /// <returns>New set of 10 recovery codes (old codes are invalidated)</returns>
     [Authorize]
     [HttpPost("2fa/recovery-codes/regenerate")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -575,6 +633,12 @@ public class AuthController : ControllerBase
         return result.ToString().ToLowerInvariant();
     }
 
+    /// <summary>
+    /// Confirms a user's email address using a token sent via email.
+    /// </summary>
+    /// <param name="userId">User ID from the confirmation email</param>
+    /// <param name="token">Base64-encoded confirmation token from the email</param>
+    /// <returns>Success message if email is confirmed, error if token is invalid or expired</returns>
     [HttpGet("confirm-email")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -612,6 +676,11 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Email confirmed successfully", emailConfirmed = true });
     }
 
+    /// <summary>
+    /// Resends the email confirmation link to the specified email address.
+    /// </summary>
+    /// <param name="model">Email address to resend confirmation to</param>
+    /// <returns>Success message (same response whether email exists or not for security)</returns>
     [HttpPost("resend-confirmation-email")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -660,6 +729,10 @@ public class AuthController : ControllerBase
         return Ok(new { message = "If the email exists, a confirmation link has been sent" });
     }
 
+    /// <summary>
+    /// Gets the current user's email and confirmation status.
+    /// </summary>
+    /// <returns>Email address and whether it has been confirmed</returns>
     [Authorize]
     [HttpGet("email-status")]
     [ProducesResponseType(StatusCodes.Status200OK)]

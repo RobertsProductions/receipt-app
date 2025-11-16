@@ -8,6 +8,9 @@ using System.Security.Claims;
 
 namespace MyApi.Controllers;
 
+/// <summary>
+/// User profile management endpoints for updating personal information, phone verification, and notification preferences.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -34,8 +37,9 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Get current user profile
+    /// Retrieves the current authenticated user's complete profile.
     /// </summary>
+    /// <returns>User profile including personal info, phone status, and notification preferences</returns>
     [HttpGet]
     public async Task<ActionResult<UserProfileDto>> GetProfile()
     {
@@ -69,8 +73,10 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Update user profile (FirstName, LastName)
+    /// Updates user profile information (first name and last name).
     /// </summary>
+    /// <param name="dto">Updated first name and last name</param>
+    /// <returns>Success message on successful update</returns>
     [HttpPut]
     public async Task<ActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
     {
@@ -95,8 +101,10 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Update user phone number
+    /// Updates or removes the user's phone number (requires re-verification after change).
     /// </summary>
+    /// <param name="dto">New phone number (or empty to remove)</param>
+    /// <returns>Updated phone number and confirmation status</returns>
     [HttpPut("phone")]
     public async Task<ActionResult> UpdatePhoneNumber([FromBody] UpdatePhoneNumberDto dto)
     {
@@ -140,8 +148,10 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Send verification code to phone number
+    /// Sends a 6-digit verification code via SMS to the specified phone number.
     /// </summary>
+    /// <param name="dto">Phone number to verify</param>
+    /// <returns>Success message with masked phone number and expiration time (5 minutes)</returns>
     [HttpPost("phone/verify/send")]
     public async Task<ActionResult> SendPhoneVerification([FromBody] SendPhoneVerificationDto dto)
     {
@@ -176,8 +186,10 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Verify phone number with code
+    /// Verifies phone number using the SMS code sent earlier.
     /// </summary>
+    /// <param name="dto">6-digit verification code received via SMS</param>
+    /// <returns>Success message on successful verification (3 attempts max, 5 minute expiration)</returns>
     [HttpPost("phone/verify/confirm")]
     public async Task<ActionResult> VerifyPhoneNumber([FromBody] VerifyPhoneDto dto)
     {
@@ -216,8 +228,9 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Get notification preferences
+    /// Retrieves the user's notification preferences.
     /// </summary>
+    /// <returns>Notification channel, threshold days, and opt-out status</returns>
     [HttpGet("preferences")]
     public async Task<ActionResult<NotificationPreferencesDto>> GetPreferences()
     {
@@ -238,8 +251,13 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Update notification preferences
+    /// Updates notification preferences for warranty expiration alerts.
     /// </summary>
+    /// <param name="dto">Notification channel (EmailOnly, SmsOnly, EmailAndSms), threshold days, and opt-out flag</param>
+    /// <returns>Updated notification preferences</returns>
+    /// <remarks>
+    /// SMS channels require a verified phone number. Threshold determines how many days before expiration to send notifications.
+    /// </remarks>
     [HttpPut("preferences")]
     public async Task<ActionResult> UpdatePreferences([FromBody] UpdateNotificationPreferencesDto dto)
     {
@@ -294,8 +312,12 @@ public class UserProfileController : ControllerBase
     }
 
     /// <summary>
-    /// Delete user account (soft delete - just opt out)
+    /// Requests account deletion by opting out of notifications (soft delete).
     /// </summary>
+    /// <returns>Success message with instructions for full account deletion</returns>
+    /// <remarks>
+    /// Currently opts user out of notifications. For full GDPR-compliant deletion, contact support.
+    /// </remarks>
     [HttpDelete]
     public async Task<ActionResult> DeleteAccount()
     {
