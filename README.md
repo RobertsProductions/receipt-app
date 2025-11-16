@@ -59,7 +59,8 @@ MyAspireSolution/
 │   ├── 25-performance-optimization.md              # Response caching, indexes, rate limiting, compression
 │   ├── 26-user-data-caching.md                     # Automatic user data caching on login
 │   ├── 27-design-reference.md                      # UI/UX design guidelines and style reference
-│   └── 28-frontend-workflows.md                    # Frontend implementation workflows and task breakdown
+│   ├── 28-frontend-workflows.md                    # Frontend implementation workflows and task breakdown
+│   └── 29-angular-aspire-integration.md            # Angular + Aspire integration guide
 ├── MyApi/                                          # ASP.NET Core Web API
 │   ├── Controllers/                                # API endpoints
 │   │   ├── AuthController.cs                       # Authentication (register, login)
@@ -119,6 +120,18 @@ MyAspireSolution/
 │   ├── AppHost.cs                                  # Service registration
 │   ├── MyAspireApp.Host.csproj
 │   └── appsettings.json
+├── WarrantyApp.Web/                                # Angular 18 Frontend
+│   ├── src/
+│   │   ├── app/                                    # Application components
+│   │   ├── environments/                           # Environment configs
+│   │   ├── index.html
+│   │   ├── main.ts
+│   │   └── styles.scss
+│   ├── angular.json                                # Angular CLI config
+│   ├── package.json                                # npm dependencies
+│   ├── eslint.config.js                            # ESLint configuration
+│   ├── proxy.conf.json                             # API proxy for dev server
+│   └── README.md                                   # Frontend documentation
 ├── global.json                                     # .NET SDK version pinning
 ├── SetOpenAiKey.ps1                                # Helper script for OpenAI API key setup
 ├── ConfigureEmail.ps1                              # Helper script for email notification setup
@@ -131,6 +144,7 @@ MyAspireSolution/
 ### Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (version 8.0.302 or higher)
+- [Node.js 18+](https://nodejs.org/) and npm 10+ (for Angular frontend)
 - [PowerShell 7+](https://aka.ms/powershell) (for Windows users)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop) (required for SQL Server container)
 - [Git](https://git-scm.com/downloads)
@@ -149,12 +163,19 @@ MyAspireSolution/
    dotnet restore
    ```
 
-3. **Build the solution**
+3. **Install Angular dependencies**
+   ```bash
+   cd WarrantyApp.Web
+   npm install
+   cd ..
+   ```
+
+4. **Build the solution**
    ```bash
    dotnet build
    ```
 
-4. **Configure OpenAI API Key (Optional, for OCR features)**
+5. **Configure OpenAI API Key (Optional, for OCR features)**
    
    Use the provided PowerShell script:
    ```powershell
@@ -175,7 +196,7 @@ MyAspireSolution/
 
 ### Running the Application
 
-#### Option 1: Using Aspire AppHost (Recommended)
+#### Option 1: Using Aspire AppHost (Recommended - Backend Only)
 
 ```bash
 cd AppHost
@@ -190,7 +211,27 @@ This will:
 - Provide unified logging and telemetry
 - Open the dashboard in your browser
 
-#### Option 2: Run API Standalone
+**Note**: Currently, the Angular frontend is not integrated with Aspire. See [Angular + Aspire Integration](docs/29-angular-aspire-integration.md) for the task to add it.
+
+#### Option 2: Run Frontend and Backend Separately (Current Workflow)
+
+**Terminal 1 - Backend API via Aspire:**
+```bash
+cd AppHost
+dotnet run
+```
+
+**Terminal 2 - Angular Frontend:**
+```bash
+cd WarrantyApp.Web
+npm start
+```
+
+- API will be available at `http://localhost:5000`
+- Frontend will be available at `http://localhost:4200`
+- API requests from frontend are proxied via `proxy.conf.json`
+
+#### Option 3: Run API Standalone
 
 ```bash
 cd MyApi
@@ -608,8 +649,9 @@ For issues, questions, or contributions, please:
 - [x] Choose frontend framework (Angular selected)
 - [x] Create design reference document
 - [x] Define frontend workflows and component structure
-- [ ] Set up Angular project with TypeScript
-- [ ] Configure ESLint for code quality and consistency
+- [x] Set up Angular project with TypeScript
+- [x] Configure ESLint for code quality and consistency
+- [ ] Integrate Angular app with .NET Aspire AppHost for orchestration
 - [ ] Create UI wireframes and mockups based on design reference
 - [ ] Implement design system (colors, typography, components)
 - [ ] Implement authentication UI (login, register, 2FA)
