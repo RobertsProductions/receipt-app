@@ -142,6 +142,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IOcrService, OpenAiOcrService>();
+builder.Services.AddSingleton<INotificationService, LogNotificationService>();
+
+// Register background services
+builder.Services.AddHostedService<WarrantyExpirationService>();
+
+// Add memory cache for warranty notifications
+builder.Services.AddMemoryCache();
 
 // Add CORS
 builder.Services.AddCors(options =>
