@@ -48,7 +48,8 @@ MyAspireSolution/
 │   ├── 19-monitoring-and-alerting.md # Health checks and monitoring
 │   ├── 20-testing-strategy.md # Comprehensive testing strategy
 │   ├── 21-automated-deployment.md # Azure Container Apps deployment
-│   └── 22-code-quality-improvements.md # XML documentation and error responses
+│   ├── 22-code-quality-improvements.md # XML documentation and error responses
+│   └── 23-receipt-sharing.md # Receipt sharing with read-only access
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
@@ -401,6 +402,7 @@ Detailed documentation is available in the `docs/` folder:
 - [20 - Testing Strategy](docs/20-testing-strategy.md): Comprehensive testing strategy with 119 passing tests (100% pass rate) covering services and models
 - [21 - Automated Deployment](docs/21-automated-deployment.md): Multi-platform deployment strategies with Azure Container Apps, Docker Compose, and CI/CD workflows
 - [22 - Code Quality Improvements](docs/22-code-quality-improvements.md): XML documentation for all API endpoints and standardized error response patterns
+- [23 - Receipt Sharing](docs/23-receipt-sharing.md): Share receipts with other users (read-only access) with warranty monitoring integration
 
 ## Contributing
 
@@ -484,6 +486,7 @@ For issues, questions, or contributions, please:
 - [x] Implement two-factor authentication (2FA with TOTP, QR codes, recovery codes)
 - [x] Add email confirmation (secure token verification with HTML templates)
 - [x] Implement monitoring and alerting (health checks for all components)
+- [x] Add receipt sharing (share receipts with read-only access and warranty monitoring)
 
 ### Backend Tasks (No UI Required) 🔧
 
@@ -529,13 +532,13 @@ For issues, questions, or contributions, please:
 - [ ] Add request/response compression
 
 **Receipt Sharing Features**
-- [ ] Add receipt sharing data model (ReceiptShare entity with owner and recipient)
-- [ ] Implement share receipt API (share by email/username with read-only access)
-- [ ] Add shared receipts endpoints (list shared with me, list my shares)
-- [ ] Implement revoke sharing functionality
+- [x] Add receipt sharing data model (ReceiptShare entity with owner and recipient)
+- [x] Implement share receipt API (share by email/username with read-only access)
+- [x] Add shared receipts endpoints (list shared with me, list my shares)
+- [x] Implement revoke sharing functionality
+- [x] Add shared receipts to warranty expiration monitoring
+- [x] Create shared receipt access audit logging
 - [ ] Implement notifications for new shared receipts
-- [ ] Add shared receipts to warranty expiration monitoring
-- [ ] Create shared receipt access audit logging
 
 ### Frontend/UI Tasks 🎨
 - [ ] Choose frontend framework (React/Vue/Blazor/Angular)

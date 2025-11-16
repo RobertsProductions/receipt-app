@@ -12,6 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<Receipt> Receipts { get; set; }
+    public DbSet<ReceiptShare> ReceiptShares { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -35,6 +36,35 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasIndex(r => r.UserId);
             entity.HasIndex(r => r.UploadedAt);
+        });
+
+        // Configure ReceiptShare entity
+        builder.Entity<ReceiptShare>(entity =>
+        {
+            entity.ToTable("ReceiptShares");
+            
+            entity.HasOne(rs => rs.Receipt)
+                .WithMany()
+                .HasForeignKey(rs => rs.ReceiptId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(rs => rs.Owner)
+                .WithMany()
+                .HasForeignKey(rs => rs.OwnerId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(rs => rs.SharedWithUser)
+                .WithMany()
+                .HasForeignKey(rs => rs.SharedWithUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Prevent duplicate shares: same receipt cannot be shared with the same user twice
+            entity.HasIndex(rs => new { rs.ReceiptId, rs.SharedWithUserId })
+                .IsUnique();
+
+            entity.HasIndex(rs => rs.OwnerId);
+            entity.HasIndex(rs => rs.SharedWithUserId);
+            entity.HasIndex(rs => rs.SharedAt);
         });
     }
 }

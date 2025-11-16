@@ -79,15 +79,24 @@ public class WarrantyExpirationService : BackgroundService
                      && r.WarrantyExpirationDate.Value.Date <= maxThresholdDate)
             .ToListAsync(cancellationToken);
 
-        if (!expiringReceipts.Any())
+        // Also get shared receipts that are expiring
+        var expiringSharedReceipts = await dbContext.ReceiptShares
+            .Include(rs => rs.Receipt)
+            .Include(rs => rs.SharedWithUser)
+            .Where(rs => rs.Receipt.WarrantyExpirationDate.HasValue
+                      && rs.Receipt.WarrantyExpirationDate.Value.Date > today
+                      && rs.Receipt.WarrantyExpirationDate.Value.Date <= maxThresholdDate)
+            .ToListAsync(cancellationToken);
+
+        if (!expiringReceipts.Any() && !expiringSharedReceipts.Any())
         {
             _logger.LogInformation("No warranties expiring within {Days} days", maxThreshold);
             UpdateCache(new List<WarrantyNotification>());
             return;
         }
 
-        _logger.LogInformation("Found {Count} warranties expiring within {Days} days (before user preference filtering)", 
-            expiringReceipts.Count, maxThreshold);
+        _logger.LogInformation("Found {Count} owned and {SharedCount} shared warranties expiring within {Days} days (before user preference filtering)", 
+            expiringReceipts.Count, expiringSharedReceipts.Count, maxThreshold);
 
         // Get previously notified receipts from cache
         var notifiedReceipts = _cache.Get<HashSet<Guid>>("notified_receipts") ?? new HashSet<Guid>();
@@ -144,6 +153,67 @@ public class WarrantyExpirationService : BackgroundService
             else
             {
                 _logger.LogDebug("Skipping notification for receipt {ReceiptId} - already notified", receipt.Id);
+            }
+        }
+
+        // Process shared receipts
+        foreach (var share in expiringSharedReceipts)
+        {
+            var receipt = share.Receipt;
+            var user = share.SharedWithUser;
+            var daysUntilExpiration = (receipt.WarrantyExpirationDate!.Value.Date - today).Days;
+
+            // Skip if user has opted out
+            if (user?.OptOutOfNotifications == true)
+            {
+                _logger.LogDebug("Skipping shared receipt {ReceiptId} - user {UserId} opted out", receipt.Id, user.Id);
+                continue;
+            }
+
+            // Check if warranty is within user's notification threshold
+            var userThreshold = user?.NotificationThresholdDays ?? _notificationDaysThreshold;
+            if (daysUntilExpiration > userThreshold)
+            {
+                _logger.LogDebug("Skipping shared receipt {ReceiptId} - expires in {Days} days, user threshold is {Threshold} days",
+                    receipt.Id, daysUntilExpiration, userThreshold);
+                continue;
+            }
+            
+            // Create notification object for cache
+            var notification = new WarrantyNotification
+            {
+                UserId = user!.Id,
+                UserEmail = user.Email ?? "unknown@example.com",
+                ProductName = receipt.ProductName ?? receipt.Description ?? "Shared Product",
+                ExpirationDate = receipt.WarrantyExpirationDate.Value,
+                ReceiptId = receipt.Id,
+                DaysUntilExpiration = daysUntilExpiration
+            };
+            notifications.Add(notification);
+
+            // Only send notification if we haven't notified this user for this receipt
+            var notificationKey = $"{user.Id}_{receipt.Id}";
+            var userNotifiedReceipts = _cache.Get<HashSet<string>>($"notified_shared_{user.Id}") ?? new HashSet<string>();
+            
+            if (!userNotifiedReceipts.Contains(notificationKey))
+            {
+                await notificationService.SendWarrantyExpirationNotificationAsync(
+                    user.Id,
+                    user.Email ?? "unknown@example.com",
+                    $"[Shared] {receipt.ProductName ?? receipt.Description ?? "Product"}",
+                    receipt.WarrantyExpirationDate.Value,
+                    receipt.Id);
+
+                userNotifiedReceipts.Add(notificationKey);
+                _cache.Set($"notified_shared_{user.Id}", userNotifiedReceipts, TimeSpan.FromDays(30));
+                
+                _logger.LogInformation("Sent notification for shared receipt {ReceiptId} to user {UserId} - {Product} expiring in {Days} days",
+                    receipt.Id, user.Id, notification.ProductName, daysUntilExpiration);
+            }
+            else
+            {
+                _logger.LogDebug("Skipping notification for shared receipt {ReceiptId} to user {UserId} - already notified", 
+                    receipt.Id, user.Id);
             }
         }
 
