@@ -338,6 +338,7 @@ Detailed documentation is available in the `docs/` folder:
 - [18 - Email Confirmation](docs/18-email-confirmation.md): Email address verification with secure tokens and professional HTML templates
 - [19 - Monitoring and Alerting](docs/19-monitoring-and-alerting.md): Comprehensive health checks for all system components and dependencies
 - [20 - Test Coverage](docs/20-test-coverage.md): Comprehensive unit and integration testing strategy with current status and recommendations
+- [21 - Automated Deployment](docs/21-automated-deployment.md): Multi-platform deployment strategies with Azure Container Apps, Docker Compose, and CI/CD workflows
 
 ## Contributing
 
@@ -425,7 +426,7 @@ For issues, questions, or contributions, please:
 ### Backend Tasks (No UI Required) 🔧
 - [x] Add comprehensive test coverage (Phase 1: Model tests complete - 100% coverage)
 - [ ] Add comprehensive test coverage (Phase 2: Service and controller tests - in progress)
-- [ ] Add automated deployment
+- [x] Add automated deployment (Azure Container Apps, Docker Compose, GitHub Actions workflows)
 
 ### Frontend/UI Tasks 🎨
 - [ ] Create frontend UI
