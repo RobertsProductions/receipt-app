@@ -59,14 +59,22 @@ public class AuthController : ControllerBase
         _logger.LogInformation("User {Email} registered successfully", model.Email);
 
         var token = _tokenService.GenerateToken(user);
+        var refreshToken = _tokenService.GenerateRefreshToken();
         var expiresAt = DateTime.UtcNow.AddMinutes(60);
+        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = refreshTokenExpiresAt;
+        await _userManager.UpdateAsync(user);
 
         return Ok(new AuthResponseDto
         {
             Token = token,
+            RefreshToken = refreshToken,
             Email = user.Email!,
             Username = user.UserName!,
-            ExpiresAt = expiresAt
+            ExpiresAt = expiresAt,
+            RefreshTokenExpiresAt = refreshTokenExpiresAt
         });
     }
 
@@ -93,19 +101,26 @@ public class AuthController : ControllerBase
         }
 
         user.LastLoginAt = DateTime.UtcNow;
+        
+        var token = _tokenService.GenerateToken(user);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+        var expiresAt = DateTime.UtcNow.AddMinutes(60);
+        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = refreshTokenExpiresAt;
         await _userManager.UpdateAsync(user);
 
         _logger.LogInformation("User {Email} logged in successfully", model.Email);
 
-        var token = _tokenService.GenerateToken(user);
-        var expiresAt = DateTime.UtcNow.AddMinutes(60);
-
         return Ok(new AuthResponseDto
         {
             Token = token,
+            RefreshToken = refreshToken,
             Email = user.Email!,
             Username = user.UserName!,
-            ExpiresAt = expiresAt
+            ExpiresAt = expiresAt,
+            RefreshTokenExpiresAt = refreshTokenExpiresAt
         });
     }
 
@@ -142,5 +157,81 @@ public class AuthController : ControllerBase
     {
         await _signInManager.SignOutAsync();
         return Ok(new { message = "Logged out successfully" });
+    }
+
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var principal = _tokenService.GetPrincipalFromExpiredToken(model.AccessToken);
+        if (principal == null)
+        {
+            return Unauthorized(new { message = "Invalid access token" });
+        }
+
+        var userId = principal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "Invalid access token" });
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null || user.RefreshToken != model.RefreshToken)
+        {
+            return Unauthorized(new { message = "Invalid refresh token" });
+        }
+
+        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            return Unauthorized(new { message = "Refresh token expired" });
+        }
+
+        var newAccessToken = _tokenService.GenerateToken(user);
+        var newRefreshToken = _tokenService.GenerateRefreshToken();
+        var expiresAt = DateTime.UtcNow.AddMinutes(60);
+        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = refreshTokenExpiresAt;
+        await _userManager.UpdateAsync(user);
+
+        _logger.LogInformation("User {Email} refreshed token successfully", user.Email);
+
+        return Ok(new AuthResponseDto
+        {
+            Token = newAccessToken,
+            RefreshToken = newRefreshToken,
+            Email = user.Email!,
+            Username = user.UserName!,
+            ExpiresAt = expiresAt,
+            RefreshTokenExpiresAt = refreshTokenExpiresAt
+        });
+    }
+
+    [Authorize]
+    [HttpPost("revoke")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Revoke()
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            return Unauthorized();
+
+        user.RefreshToken = null;
+        user.RefreshTokenExpiryTime = null;
+        await _userManager.UpdateAsync(user);
+
+        _logger.LogInformation("User {Email} revoked refresh token", user.Email);
+
+        return Ok(new { message = "Refresh token revoked successfully" });
     }
 }

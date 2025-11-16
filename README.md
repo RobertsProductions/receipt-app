@@ -71,6 +71,7 @@ MyAspireSolution/
 │   │   ├── AuthResponseDto.cs     # Login/register response
 │   │   ├── LoginDto.cs            # Login request
 │   │   ├── RegisterDto.cs         # Registration request
+│   │   ├── RefreshTokenRequestDto.cs  # Refresh token request
 │   │   ├── ReceiptResponseDto.cs  # Receipt response
 │   │   ├── UploadReceiptDto.cs    # Receipt upload request
 │   │   ├── BatchOcrRequestDto.cs  # Batch OCR request
@@ -195,6 +196,8 @@ The port number will be displayed in the console or available in the Aspire Dash
 - JWT-based authentication with ASP.NET Core Identity
 - User registration and login endpoints
 - Secure password requirements and validation
+- **Refresh token support** for seamless token renewal (7-day expiry)
+- Token revocation for secure logout
 - User profile management with preferences
 
 **User Profile Management**
@@ -302,6 +305,9 @@ Detailed documentation is available in the `docs/` folder:
 - [11 - Email and SMS Notifications](docs/11-email-sms-notifications.md): Email and SMS notification setup, configuration, and testing
 - [12 - User Profile Management](docs/12-user-profile-management.md): User profile API with notification preferences and phone number management
 - [13 - PDF OCR Support](docs/13-pdf-ocr-support.md): PDF receipt processing with text extraction and AI-powered data extraction
+- [14 - Phone Verification](docs/14-phone-verification.md): SMS-based phone number verification with secure 6-digit codes
+- [15 - Batch OCR Processing](docs/15-batch-ocr-processing.md): Batch OCR functionality for processing multiple receipts at once
+- [16 - Refresh Token Support](docs/16-refresh-token-support.md): JWT refresh tokens for seamless authentication renewal
 
 ## Contributing
 
@@ -381,9 +387,9 @@ For issues, questions, or contributions, please:
 - [x] Implement PDF OCR support (PdfPig + OpenAI text extraction)
 - [x] Add phone number verification (SMS confirmation code with expiration)
 - [x] Add batch OCR processing (multiple receipts at once)
+- [x] Add refresh token support (JWT token renewal with 7-day expiry)
 
 ### Backend Tasks (No UI Required) 🔧
-- [ ] Add refresh token support
 - [ ] Implement two-factor authentication (2FA)
 - [ ] Add email confirmation
 - [ ] Implement monitoring and alerting

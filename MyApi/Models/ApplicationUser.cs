@@ -13,6 +13,10 @@ public class ApplicationUser : IdentityUser
     public NotificationChannel NotificationChannel { get; set; } = NotificationChannel.EmailAndSms;
     public int NotificationThresholdDays { get; set; } = 7;
     public bool OptOutOfNotifications { get; set; } = false;
+    
+    // Refresh token support
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
 }
 
 public enum NotificationChannel
