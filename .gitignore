@@ -90,3 +90,7 @@ receipts.db
 ReceiptAppDb.mdf
 ReceiptAppDb_log.ldf
 
+# Uploaded files
+uploads/
+MyApi/uploads/
+

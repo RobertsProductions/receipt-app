@@ -140,6 +140,7 @@ builder.Services.AddAuthorization();
 
 // Register services
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 // Add CORS
 builder.Services.AddCors(options =>

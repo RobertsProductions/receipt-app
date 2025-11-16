@@ -29,7 +29,8 @@ MyAspireSolution/
 │   ├── 03-cicd-setup.md           # GitHub Actions CI/CD pipeline
 │   ├── 04-authentication-authorization.md  # JWT authentication
 │   ├── 06-docker-database-setup.md     # Docker and database configuration
-│   └── 07-connection-fixes.md     # Database connection troubleshooting
+│   ├── 07-connection-fixes.md     # Database connection troubleshooting
+│   └── 08-receipt-upload-feature.md   # Receipt upload and management
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/
 │   ├── Program.cs
@@ -167,6 +168,7 @@ Detailed documentation is available in the `docs/` folder:
 - [04 - Authentication & Authorization](docs/04-authentication-authorization.md): JWT-based authentication implementation
 - [06 - Docker Database Setup](docs/06-docker-database-setup.md): Docker and database configuration guide
 - [07 - Connection Fixes](docs/07-connection-fixes.md): Troubleshooting database connection issues
+- [08 - Receipt Upload Feature](docs/08-receipt-upload-feature.md): Upload and manage receipt images and PDFs
 
 ## Contributing
 
@@ -221,7 +223,10 @@ For issues, questions, or contributions, please:
 - [x] Add SQL Server container orchestration with Aspire
 - [x] Implement connection resiliency and retry logic
 - [x] Configure dual database support (SQL Server & SQLite)
-- [ ] Add warranty tracking features
+- [x] Add receipt upload and storage functionality
+- [x] Implement file storage service for receipt images/PDFs
+- [ ] Add OCR for automatic receipt data extraction
+- [ ] Add warranty expiration notifications
 - [ ] Create frontend UI
 - [ ] Add automated deployment
 - [ ] Implement monitoring and alerting
