@@ -156,6 +156,7 @@ builder.Services.AddScoped<INotificationService, CompositeNotificationService>()
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IOcrService, OpenAiOcrService>();
+builder.Services.AddScoped<IPhoneVerificationService, PhoneVerificationService>();
 
 // Register background services
 builder.Services.AddHostedService<WarrantyExpirationService>();

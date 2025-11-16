@@ -2,11 +2,11 @@
 
 [![.NET CI/CD Pipeline](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml)
 
-A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction, proactive warranty expiration notifications via email and SMS, and comprehensive user management.
+A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction, proactive warranty expiration notifications via email and SMS, secure phone number verification, and comprehensive user management.
 
 ## Overview
 
-This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts, a background service that monitors and notifies users about expiring warranties via email and optional SMS, leveraging ASP.NET Core Identity's built-in fields for seamless integration.
+This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts, a background service that monitors and notifies users about expiring warranties via email and optional SMS, SMS-based phone number verification with 6-digit codes, and full user profile management leveraging ASP.NET Core Identity's built-in fields for seamless integration.
 
 ## Technology Stack
 
@@ -39,7 +39,8 @@ MyAspireSolution/
 │   ├── 10-warranty-expiration-notifications.md   # Background notification service
 │   ├── 11-email-sms-notifications.md  # Email and SMS notification configuration
 │   ├── 12-user-profile-management.md   # User profile API
-│   └── 13-pdf-ocr-support.md      # PDF receipt OCR processing
+│   ├── 13-pdf-ocr-support.md      # PDF receipt OCR processing
+│   └── 14-phone-verification.md   # SMS phone number verification
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
@@ -51,10 +52,12 @@ MyAspireSolution/
 │   │   ├── EmailNotificationService.cs         # SMTP email service
 │   │   ├── SmsNotificationService.cs           # Twilio SMS service
 │   │   ├── LogNotificationService.cs           # Logging fallback
+│   │   ├── PhoneVerificationService.cs         # SMS phone verification
 │   │   ├── OpenAiOcrService.cs    # AI-powered OCR (image & PDF)
 │   │   ├── LocalFileStorageService.cs  # File storage management
 │   │   ├── TokenService.cs        # JWT token generation
 │   │   ├── WarrantyExpirationService.cs  # Background warranty monitoring
+│   │   ├── IPhoneVerificationService.cs        # Phone verification interface
 │   │   ├── INotificationService.cs       # Notification interface
 │   │   ├── IOcrService.cs         # OCR interface
 │   │   ├── IFileStorageService.cs # Storage interface
@@ -69,7 +72,7 @@ MyAspireSolution/
 │   │   ├── RegisterDto.cs         # Registration request
 │   │   ├── ReceiptResponseDto.cs  # Receipt response
 │   │   ├── UploadReceiptDto.cs    # Receipt upload request
-│   │   └── UserProfileDto.cs      # User profile & preferences
+│   │   └── UserProfileDto.cs      # User profile, preferences, phone verification
 │   ├── Data/                      # EF Core DbContext
 │   │   ├── ApplicationDbContext.cs
 │   │   └── Migrations/            # Database migrations
@@ -194,11 +197,14 @@ The port number will be displayed in the console or available in the Aspire Dash
 **User Profile Management**
 - Get and update profile information (FirstName, LastName)
 - Manage phone number for SMS notifications
+- SMS-based phone number verification with 6-digit codes
+- Secure verification code generation and validation
+- 5-minute code expiration with max 3 attempts
 - Configure notification preferences (channel, threshold, opt-out)
 - User-specific notification thresholds (1-90 days)
 - Flexible notification channels (None, Email, SMS, Both)
 - Complete opt-out functionality
-- Phone number validation and privacy protection
+- Phone number validation and privacy protection (masking)
 
 **Receipt Management**
 - Upload receipt images (JPG, PNG) and PDFs (max 10MB)
@@ -367,8 +373,8 @@ For issues, questions, or contributions, please:
 - [x] Implement email/SMS notifications for warranty expirations (SMTP, Twilio)
 - [x] Add user profile management API (update phone number, preferences)
 - [x] Implement PDF OCR support (PdfPig + OpenAI text extraction)
+- [x] Add phone number verification (SMS confirmation code with expiration)
 - [ ] Implement notification preferences UI/documentation improvements
-- [ ] Add phone number verification (SMS confirmation code)
 - [ ] Add batch OCR processing
 - [ ] Create frontend UI
 - [ ] Add automated deployment

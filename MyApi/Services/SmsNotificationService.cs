@@ -62,6 +62,53 @@ public class SmsNotificationService : INotificationService
         await Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Send SMS to a specific phone number with custom message.
+    /// Used for verification codes and custom notifications.
+    /// </summary>
+    public async Task<bool> SendSmsAsync(string phoneNumber, string message)
+    {
+        if (!_isConfigured)
+        {
+            _logger.LogDebug("SMS not sent - Twilio not configured");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+        {
+            _logger.LogDebug("SMS not sent - no phone number provided");
+            return false;
+        }
+
+        try
+        {
+            // In a real implementation with Twilio SDK:
+            // var twilio = new TwilioRestClient(_accountSid, _authToken);
+            // var result = await twilio.MessageResource.CreateAsync(
+            //     to: new PhoneNumber(phoneNumber),
+            //     from: new PhoneNumber(_fromPhoneNumber),
+            //     body: message
+            // );
+
+            // For now, we'll just log it (simulated SMS)
+            _logger.LogInformation("SMS (simulated) sent to {Phone}: {Message}", 
+                MaskPhoneNumber(phoneNumber), message);
+
+            // To enable actual SMS sending:
+            // 1. Add Twilio NuGet package: Twilio
+            // 2. Uncomment the code above
+            // 3. Configure Twilio credentials in appsettings or user secrets
+            // 4. Return result.Status == "sent" or similar
+
+            return true; // Simulated success
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send SMS to {Phone}", MaskPhoneNumber(phoneNumber));
+            return false;
+        }
+    }
+
     // Alternative method that accepts phone number explicitly
     public async Task SendWarrantyExpirationSmsAsync(
         string phoneNumber,

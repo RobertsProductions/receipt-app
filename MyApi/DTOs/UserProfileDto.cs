@@ -50,3 +50,18 @@ public class UpdateNotificationPreferencesDto
     
     public bool OptOutOfNotifications { get; set; } = false;
 }
+
+public class SendPhoneVerificationDto
+{
+    [Required]
+    [Phone]
+    [StringLength(20)]
+    public string PhoneNumber { get; set; } = string.Empty;
+}
+
+public class VerifyPhoneDto
+{
+    [Required]
+    [StringLength(6, MinimumLength = 6)]
+    public string VerificationCode { get; set; } = string.Empty;
+}

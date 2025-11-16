@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyApi.DTOs;
 using MyApi.Models;
+using MyApi.Services;
 using System.Security.Claims;
 
 namespace MyApi.Controllers;
@@ -14,13 +15,16 @@ public class UserProfileController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<UserProfileController> _logger;
+    private readonly IPhoneVerificationService _phoneVerificationService;
 
     public UserProfileController(
         UserManager<ApplicationUser> userManager,
-        ILogger<UserProfileController> logger)
+        ILogger<UserProfileController> logger,
+        IPhoneVerificationService phoneVerificationService)
     {
         _userManager = userManager;
         _logger = logger;
+        _phoneVerificationService = phoneVerificationService;
     }
 
     private string GetUserId()
@@ -133,6 +137,82 @@ public class UserProfileController : ControllerBase
         }
 
         return BadRequest(new { message = "Failed to update phone number", errors = result.Errors });
+    }
+
+    /// <summary>
+    /// Send verification code to phone number
+    /// </summary>
+    [HttpPost("phone/verify/send")]
+    public async Task<ActionResult> SendPhoneVerification([FromBody] SendPhoneVerificationDto dto)
+    {
+        var userId = GetUserId();
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+            return NotFound(new { message = "User not found" });
+
+        // Validate phone number format
+        if (string.IsNullOrWhiteSpace(dto.PhoneNumber))
+        {
+            return BadRequest(new { message = "Phone number is required" });
+        }
+
+        var phoneNumber = dto.PhoneNumber.Trim();
+
+        // Send verification code
+        var (success, message) = await _phoneVerificationService.SendVerificationCodeAsync(userId, phoneNumber);
+
+        if (success)
+        {
+            _logger.LogInformation("Verification code sent to user {UserId}", userId);
+            return Ok(new { 
+                message = message,
+                phoneNumber = MaskPhoneNumber(phoneNumber),
+                expiresIn = "5 minutes"
+            });
+        }
+
+        return BadRequest(new { message = message });
+    }
+
+    /// <summary>
+    /// Verify phone number with code
+    /// </summary>
+    [HttpPost("phone/verify/confirm")]
+    public async Task<ActionResult> VerifyPhoneNumber([FromBody] VerifyPhoneDto dto)
+    {
+        var userId = GetUserId();
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+            return NotFound(new { message = "User not found" });
+
+        // Verify the code
+        var isValid = await _phoneVerificationService.VerifyCodeAsync(userId, dto.VerificationCode);
+
+        if (isValid)
+        {
+            // Mark phone number as confirmed
+            user.PhoneNumberConfirmed = true;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("Phone number verified for user {UserId}", userId);
+                return Ok(new { 
+                    message = "Phone number verified successfully",
+                    phoneNumber = MaskPhoneNumber(user.PhoneNumber ?? ""),
+                    phoneNumberConfirmed = true
+                });
+            }
+
+            return BadRequest(new { message = "Failed to update verification status", errors = result.Errors });
+        }
+
+        return BadRequest(new { 
+            message = "Invalid or expired verification code",
+            hint = "Please request a new code if yours has expired or you've exceeded the maximum attempts (3)"
+        });
     }
 
     /// <summary>
