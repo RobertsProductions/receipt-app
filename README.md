@@ -44,13 +44,19 @@ MyAspireSolution/
 │   ├── 15-batch-ocr-processing.md # Batch OCR for multiple receipts
 │   ├── 16-refresh-token-support.md # JWT refresh tokens
 │   ├── 17-two-factor-authentication.md # 2FA with TOTP
-│   └── 18-email-confirmation.md # Email address verification
+│   ├── 18-email-confirmation.md # Email address verification
+│   └── 19-monitoring-and-alerting.md # Health checks and monitoring
 ├── MyApi/                         # ASP.NET Core Web API
 │   ├── Controllers/               # API endpoints
 │   │   ├── AuthController.cs      # Authentication (register, login)
 │   │   ├── ReceiptsController.cs  # Receipt management & OCR
 │   │   ├── UserProfileController.cs    # User profile & preferences
 │   │   └── WarrantyNotificationsController.cs  # Warranty monitoring
+│   ├── HealthChecks/             # Health check implementations
+│   │   ├── OpenAiHealthCheck.cs  # OpenAI API connectivity check
+│   │   ├── SmtpHealthCheck.cs    # SMTP server connectivity check
+│   │   ├── TwilioHealthCheck.cs  # Twilio API connectivity check
+│   │   └── FileStorageHealthCheck.cs  # File storage and disk space check
 │   ├── Services/                  # Business logic services
 │   │   ├── CompositeNotificationService.cs     # Multi-channel notifications
 │   │   ├── EmailNotificationService.cs         # SMTP email service
@@ -210,6 +216,16 @@ The port number will be displayed in the console or available in the Aspire Dash
 - Secure 2FA enable/disable with code verification
 - User profile management with preferences
 
+**Health Checks & Monitoring**
+- Comprehensive health check endpoints (`/health`, `/health/ready`, `/health/live`)
+- Database connectivity and query execution monitoring
+- External service health checks (OpenAI, SMTP, Twilio)
+- File storage health and disk space monitoring
+- Detailed health status with response times and metrics
+- Integration with Aspire Dashboard for real-time monitoring
+- Kubernetes-ready liveness and readiness probes
+- JSON health check responses with detailed component status
+
 **User Profile Management**
 - Get and update profile information (FirstName, LastName)
 - Manage phone number for SMS notifications
@@ -320,6 +336,7 @@ Detailed documentation is available in the `docs/` folder:
 - [16 - Refresh Token Support](docs/16-refresh-token-support.md): JWT refresh tokens for seamless authentication renewal
 - [17 - Two-Factor Authentication](docs/17-two-factor-authentication.md): TOTP-based 2FA with authenticator apps and recovery codes
 - [18 - Email Confirmation](docs/18-email-confirmation.md): Email address verification with secure tokens and professional HTML templates
+- [19 - Monitoring and Alerting](docs/19-monitoring-and-alerting.md): Comprehensive health checks for all system components and dependencies
 
 ## Contributing
 
@@ -402,9 +419,9 @@ For issues, questions, or contributions, please:
 - [x] Add refresh token support (JWT token renewal with 7-day expiry)
 - [x] Implement two-factor authentication (2FA with TOTP, QR codes, recovery codes)
 - [x] Add email confirmation (secure token verification with HTML templates)
+- [x] Implement monitoring and alerting (health checks for all components)
 
 ### Backend Tasks (No UI Required) 🔧
-- [ ] Implement monitoring and alerting
 - [ ] Add comprehensive test coverage
 - [ ] Add automated deployment
 

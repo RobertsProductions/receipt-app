@@ -175,6 +175,27 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Add HttpClient for health checks
+builder.Services.AddHttpClient();
+
+// Add Health Checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>(
+        name: "database",
+        tags: new[] { "db", "sql" })
+    .AddCheck<MyApi.HealthChecks.OpenAiHealthCheck>(
+        name: "openai",
+        tags: new[] { "external", "ocr" })
+    .AddCheck<MyApi.HealthChecks.SmtpHealthCheck>(
+        name: "smtp",
+        tags: new[] { "external", "email" })
+    .AddCheck<MyApi.HealthChecks.TwilioHealthCheck>(
+        name: "twilio",
+        tags: new[] { "external", "sms" })
+    .AddCheck<MyApi.HealthChecks.FileStorageHealthCheck>(
+        name: "filestorage",
+        tags: new[] { "storage" });
+
 var app = builder.Build();
 
 // Apply migrations automatically in development
@@ -212,6 +233,58 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Map Health Check Endpoints
+app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var response = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                description = entry.Value.Description,
+                duration = entry.Value.Duration.TotalMilliseconds,
+                data = entry.Value.Data,
+                tags = entry.Value.Tags
+            }),
+            totalDuration = report.TotalDuration.TotalMilliseconds
+        };
+        await context.Response.WriteAsJsonAsync(response);
+    }
+});
+
+// Detailed health check endpoint
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("db") || check.Tags.Contains("storage"),
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var response = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                description = entry.Value.Description,
+                duration = entry.Value.Duration.TotalMilliseconds
+            })
+        };
+        await context.Response.WriteAsJsonAsync(response);
+    }
+});
+
+// Liveness check (basic ping)
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => false // No checks, just returns 200 OK if app is running
+});
 
 // Keep the weather forecast endpoint for testing
 var summaries = new[]
