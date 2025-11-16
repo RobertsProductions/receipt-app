@@ -2,17 +2,20 @@
 
 [![.NET CI/CD Pipeline](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/RobertsProductions/receipt-app/actions/workflows/dotnet-ci.yml)
 
-A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration.
+A modern warranty management application built with .NET 8 and .NET Aspire for cloud-native orchestration, featuring OpenAI-powered OCR for automatic receipt data extraction.
 
 ## Overview
 
-This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment.
+This application provides a comprehensive warranty tracking system with a REST API backend orchestrated through .NET Aspire for simplified local development and deployment. Features include JWT authentication, receipt image/PDF upload, and AI-powered OCR to automatically extract merchant, amount, date, and product information from receipts.
 
 ## Technology Stack
 
 - **.NET 8.0** - Latest LTS version of .NET
 - **.NET Aspire 13.0** - Cloud-native orchestration and observability
 - **ASP.NET Core Web API** - RESTful API backend
+- **Entity Framework Core** - ORM with SQL Server support
+- **ASP.NET Core Identity** - User authentication and authorization
+- **OpenAI GPT-4o-mini** - AI-powered OCR for receipt processing
 - **Swagger/OpenAPI** - API documentation and testing
 - **GitHub Actions** - CI/CD pipeline
 
@@ -30,9 +33,14 @@ MyAspireSolution/
 │   ├── 04-authentication-authorization.md  # JWT authentication
 │   ├── 06-docker-database-setup.md     # Docker and database configuration
 │   ├── 07-connection-fixes.md     # Database connection troubleshooting
-│   └── 08-receipt-upload-feature.md   # Receipt upload and management
+│   ├── 08-receipt-upload-feature.md   # Receipt upload and management
+│   └── 09-ocr-openai-integration.md   # OpenAI OCR integration
 ├── MyApi/                         # ASP.NET Core Web API
-│   ├── Controllers/
+│   ├── Controllers/               # API endpoints
+│   ├── Services/                  # Business logic & OCR service
+│   ├── Models/                    # Data models
+│   ├── DTOs/                      # Data transfer objects
+│   ├── Data/                      # EF Core DbContext
 │   ├── Program.cs
 │   └── MyApi.csproj
 ├── AppHost/                       # Aspire AppHost orchestrator
@@ -40,6 +48,7 @@ MyAspireSolution/
 │   ├── MyAspireApp.Host.csproj
 │   └── appsettings.json
 ├── global.json                    # .NET SDK version pinning
+├── SetOpenAiKey.ps1               # Helper script for OpenAI API key setup
 ├── MyAspireSolution.sln
 └── README.md
 ```
@@ -50,8 +59,9 @@ MyAspireSolution/
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (version 8.0.302 or higher)
 - [PowerShell 7+](https://aka.ms/powershell) (for Windows users)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (optional, for containerized resources)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) (required for SQL Server container)
 - [Git](https://git-scm.com/downloads)
+- [OpenAI API Key](https://platform.openai.com/api-keys) (optional, for OCR features)
 
 ### Installation
 
@@ -71,6 +81,25 @@ MyAspireSolution/
    dotnet build
    ```
 
+4. **Configure OpenAI API Key (Optional, for OCR features)**
+   
+   Use the provided PowerShell script:
+   ```powershell
+   .\SetOpenAiKey.ps1
+   ```
+   
+   Or manually via user secrets:
+   ```bash
+   cd MyApi
+   dotnet user-secrets set "OpenAI:ApiKey" "your-openai-api-key"
+   ```
+   
+   Or configure via Aspire Dashboard (recommended for testing):
+   - Start the application
+   - Open Aspire Dashboard
+   - Navigate to Parameters
+   - Set `openai-apikey` parameter
+
 ### Running the Application
 
 #### Option 1: Using Aspire AppHost (Recommended)
@@ -82,7 +111,9 @@ dotnet run
 
 This will:
 - Start the Aspire Dashboard
+- Launch SQL Server container (persistent)
 - Automatically launch the MyApi service
+- Apply database migrations automatically
 - Provide unified logging and telemetry
 - Open the dashboard in your browser
 
@@ -102,10 +133,11 @@ When running through the AppHost, access the Aspire Dashboard at:
 - The login token will be displayed in the console output
 
 The dashboard provides:
-- **Resources**: View all running services and their status
+- **Resources**: View all running services and their status (API, SQL Server)
 - **Console Logs**: Real-time logs from all services
 - **Traces**: Distributed tracing information
 - **Metrics**: Performance metrics and monitoring
+- **Parameters**: Configure secrets like OpenAI API key
 
 ## API Documentation
 
@@ -115,6 +147,27 @@ Once the application is running, access the API documentation:
 - **OpenAPI JSON**: `https://localhost:{port}/swagger/v1/swagger.json`
 
 The port number will be displayed in the console or available in the Aspire Dashboard.
+
+### Key Features
+
+**Authentication & Authorization**
+- JWT-based authentication with ASP.NET Core Identity
+- User registration and login endpoints
+- Secure password requirements and validation
+
+**Receipt Management**
+- Upload receipt images (JPG, PNG) and PDFs (max 10MB)
+- Store receipt metadata (merchant, amount, date, warranty info)
+- Download original receipt files
+- Delete receipts with automatic file cleanup
+- User-isolated storage (users only access their own receipts)
+
+**AI-Powered OCR**
+- Automatic extraction of merchant, amount, purchase date, and product name
+- Optional OCR during upload (`UseOcr=true` parameter)
+- Run OCR on existing receipts via dedicated endpoint
+- Smart data merging (OCR only fills empty fields)
+- Uses OpenAI GPT-4o-mini vision model (~$0.00015 per image)
 
 ## Development
 
@@ -169,6 +222,7 @@ Detailed documentation is available in the `docs/` folder:
 - [06 - Docker Database Setup](docs/06-docker-database-setup.md): Docker and database configuration guide
 - [07 - Connection Fixes](docs/07-connection-fixes.md): Troubleshooting database connection issues
 - [08 - Receipt Upload Feature](docs/08-receipt-upload-feature.md): Upload and manage receipt images and PDFs
+- [09 - OpenAI OCR Integration](docs/09-ocr-openai-integration.md): AI-powered receipt data extraction setup and usage
 
 ## Contributing
 
@@ -205,6 +259,19 @@ Solution: Change the port in launchSettings.json or stop the conflicting process
 Solution: Check the console output for the correct URL and token
 ```
 
+**Issue**: Database connection errors
+```
+Solution: Ensure Docker Desktop is running and SQL Server container is started
+Check Aspire Dashboard for SQL Server resource status
+```
+
+**Issue**: OCR not working
+```
+Solution: Configure OpenAI API key in Aspire Dashboard Parameters or user secrets
+Verify key with: cd MyApi && dotnet user-secrets list
+See docs/09-ocr-openai-integration.md for detailed setup
+```
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -225,8 +292,12 @@ For issues, questions, or contributions, please:
 - [x] Configure dual database support (SQL Server & SQLite)
 - [x] Add receipt upload and storage functionality
 - [x] Implement file storage service for receipt images/PDFs
-- [ ] Add OCR for automatic receipt data extraction
+- [x] Add OCR for automatic receipt data extraction (OpenAI GPT-4o-mini)
+- [x] Configure Aspire parameters for secret management
+- [x] Automatic database migrations on startup
 - [ ] Add warranty expiration notifications
+- [ ] Implement PDF OCR support
+- [ ] Add batch OCR processing
 - [ ] Create frontend UI
 - [ ] Add automated deployment
 - [ ] Implement monitoring and alerting
