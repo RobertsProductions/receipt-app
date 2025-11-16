@@ -71,13 +71,13 @@ public class SmsNotificationService : INotificationService
         if (!_isConfigured)
         {
             _logger.LogDebug("SMS not sent - Twilio not configured");
-            return false;
+            return await Task.FromResult(false);
         }
 
         if (string.IsNullOrWhiteSpace(phoneNumber))
         {
             _logger.LogDebug("SMS not sent - no phone number provided");
-            return false;
+            return await Task.FromResult(false);
         }
 
         try
@@ -100,12 +100,12 @@ public class SmsNotificationService : INotificationService
             // 3. Configure Twilio credentials in appsettings or user secrets
             // 4. Return result.Status == "sent" or similar
 
-            return true; // Simulated success
+            return await Task.FromResult(true); // Simulated success
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to send SMS to {Phone}", MaskPhoneNumber(phoneNumber));
-            return false;
+            return await Task.FromResult(false);
         }
     }
 
