@@ -529,11 +529,10 @@ For issues, questions, or contributions, please:
 - [ ] Add request/response compression
 
 **Receipt Sharing Features**
-- [ ] Add receipt sharing data model (ReceiptShare entity with owner, recipient, permissions)
-- [ ] Implement share receipt API (share by email/username with read-only or edit permissions)
+- [ ] Add receipt sharing data model (ReceiptShare entity with owner and recipient)
+- [ ] Implement share receipt API (share by email/username with read-only access)
 - [ ] Add shared receipts endpoints (list shared with me, list my shares)
 - [ ] Implement revoke sharing functionality
-- [ ] Add share permissions management (read-only vs edit access)
 - [ ] Implement notifications for new shared receipts
 - [ ] Add shared receipts to warranty expiration monitoring
 - [ ] Create shared receipt access audit logging
