@@ -23,14 +23,18 @@ var myApi = builder.AddProject<Projects.MyApi>("myapi")
     .WithReference(receiptdb)
     .WithReference(sqlitedb)
     .WithEnvironment("OpenAI__ApiKey", openAiApiKey)
+    .WithExternalHttpEndpoints()
     .WaitFor(receiptdb);
 
 // Add Angular frontend as NPM app
 // Runs 'npm start' in the WarrantyApp.Web directory
-// Angular CLI natively reads PORT environment variable (defaults to 4200)
+// Aspire will allocate a port and pass it via PORT environment variable
+// Angular will use that port (no --port 0, just let Aspire control it)
 var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
-    .WithHttpEndpoint(port: 4200, env: "PORT")
+    .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
+    .WithReference(myApi)
+    .WithEnvironment("API_URL", myApi.GetEndpoint("http"))
     .WaitFor(myApi);
 
 builder.Build().Run();
