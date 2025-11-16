@@ -77,3 +77,16 @@ $RECYCLE.BIN/
 
 # Aspire
 *.AppHost.*.pubxml
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite3
+receipts.db
+ReceiptAppDb.mdf
+ReceiptAppDb_log.ldf
+

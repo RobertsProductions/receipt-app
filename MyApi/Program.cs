@@ -51,8 +51,29 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Configure Database
+var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
+var connectionString = databaseProvider switch
+{
+    "Sqlite" => builder.Configuration.GetConnectionString("SqliteConnection") 
+                ?? builder.Configuration.GetConnectionString("sqlite") 
+                ?? "Data Source=receipts.db",
+    "SqlServer" => builder.Configuration.GetConnectionString("SqlServerConnection") 
+                   ?? builder.Configuration.GetConnectionString("sqlserver") 
+                   ?? builder.Configuration.GetConnectionString("DefaultConnection"),
+    _ => builder.Configuration.GetConnectionString("DefaultConnection")
+} ?? throw new InvalidOperationException($"Connection string for {databaseProvider} not found");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (databaseProvider == "Sqlite")
+    {
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseSqlServer(connectionString);
+    }
+});
 
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
