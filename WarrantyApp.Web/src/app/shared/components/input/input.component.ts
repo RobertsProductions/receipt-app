@@ -32,6 +32,7 @@ export class InputComponent implements ControlValueAccessor {
   value: string = '';
   showPassword: boolean = false;
   isFocused: boolean = false;
+  inputId: string = `input-${Math.random().toString(36).substr(2, 9)}`;
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};

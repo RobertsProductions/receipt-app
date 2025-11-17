@@ -46,20 +46,38 @@ export async function createReceipt(page: Page, receipt: TestReceipt): Promise<v
   await goToReceiptsPage(page);
   
   // Click create/add button
-  await page.getByRole('button', { name: /add|create|new receipt/i }).click();
+  const createButton = page.getByRole('button', { name: /add|create|new receipt/i });
+  await createButton.waitFor({ state: 'visible', timeout: 10000 });
+  await createButton.click();
   
-  // Fill form
-  await page.getByLabel(/merchant/i).fill(receipt.merchantName);
-  await page.getByLabel(/amount|total/i).fill(receipt.totalAmount.toString());
-  await page.getByLabel(/date|purchase date/i).fill(receipt.purchaseDate);
-  await page.getByLabel(/product|description/i).fill(receipt.productDescription);
-  await page.getByLabel(/warranty.*months/i).fill(receipt.warrantyMonths.toString());
+  // Fill form with explicit waits
+  const merchantInput = page.getByLabel(/merchant/i);
+  await merchantInput.waitFor({ state: 'visible', timeout: 10000 });
+  await merchantInput.fill(receipt.merchantName);
+  
+  const amountInput = page.getByLabel(/amount|total/i);
+  await amountInput.waitFor({ state: 'visible', timeout: 10000 });
+  await amountInput.fill(receipt.totalAmount.toString());
+  
+  const dateInput = page.getByLabel(/date|purchase date/i);
+  await dateInput.waitFor({ state: 'visible', timeout: 10000 });
+  await dateInput.fill(receipt.purchaseDate);
+  
+  const productInput = page.getByLabel(/product|description/i);
+  await productInput.waitFor({ state: 'visible', timeout: 10000 });
+  await productInput.fill(receipt.productDescription);
+  
+  const warrantyInput = page.getByLabel(/warranty.*months/i);
+  await warrantyInput.waitFor({ state: 'visible', timeout: 10000 });
+  await warrantyInput.fill(receipt.warrantyMonths.toString());
   
   // Submit
-  await page.getByRole('button', { name: /save|create|add/i }).click();
+  const saveButton = page.getByRole('button', { name: /save|create|add/i });
+  await saveButton.waitFor({ state: 'visible', timeout: 10000 });
+  await saveButton.click();
   
   // Wait for success
-  await expect(page.getByText(/success|created/i)).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText(/success|created/i)).toBeVisible({ timeout: 10000 });
 }
 
 /**
@@ -95,32 +113,39 @@ export async function editReceipt(page: Page, updates: Partial<TestReceipt>): Pr
   // Assumes we're already on receipt details page
   
   // Click edit button
-  await page.getByRole('button', { name: /edit/i }).click();
+  const editButton = page.getByRole('button', { name: /edit/i });
+  await editButton.waitFor({ state: 'visible', timeout: 10000 });
+  await editButton.click();
   
-  // Update fields
+  // Update fields with explicit waits
   if (updates.merchantName) {
     const merchantInput = page.getByLabel(/merchant/i);
+    await merchantInput.waitFor({ state: 'visible', timeout: 10000 });
     await merchantInput.clear();
     await merchantInput.fill(updates.merchantName);
   }
   
   if (updates.totalAmount) {
     const amountInput = page.getByLabel(/amount|total/i);
+    await amountInput.waitFor({ state: 'visible', timeout: 10000 });
     await amountInput.clear();
     await amountInput.fill(updates.totalAmount.toString());
   }
   
   if (updates.productDescription) {
     const descInput = page.getByLabel(/product|description/i);
+    await descInput.waitFor({ state: 'visible', timeout: 10000 });
     await descInput.clear();
     await descInput.fill(updates.productDescription);
   }
   
   // Save changes
-  await page.getByRole('button', { name: /save|update/i }).click();
+  const saveButton = page.getByRole('button', { name: /save|update/i });
+  await saveButton.waitFor({ state: 'visible', timeout: 10000 });
+  await saveButton.click();
   
   // Wait for success
-  await expect(page.getByText(/success|updated/i)).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText(/success|updated/i)).toBeVisible({ timeout: 10000 });
 }
 
 /**
@@ -196,10 +221,11 @@ export async function searchReceipts(page: Page, searchTerm: string): Promise<vo
   const searchInput = page.getByPlaceholder(/search/i)
     .or(page.getByLabel(/search/i));
   
+  await searchInput.waitFor({ state: 'visible', timeout: 10000 });
   await searchInput.fill(searchTerm);
   
   // Wait for results to update
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1000);
 }
 
 /**

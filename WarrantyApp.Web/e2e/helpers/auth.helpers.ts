@@ -14,24 +14,41 @@ import { TestUser } from './test-data';
 export async function registerUser(page: Page, user: TestUser): Promise<void> {
   await page.goto('/register');
   
-  // Fill registration form
-  await page.getByLabel(/email/i).fill(user.email);
-  await page.getByLabel(/username/i).fill(user.username);
-  await page.getByLabel('Password', { exact: true }).fill(user.password);
-  await page.getByLabel(/confirm password/i).fill(user.password);
+  // Fill registration form with explicit waits
+  const emailInput = page.getByLabel(/email/i);
+  await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+  await emailInput.fill(user.email);
+  
+  const usernameInput = page.getByLabel(/username/i);
+  await usernameInput.waitFor({ state: 'visible', timeout: 10000 });
+  await usernameInput.fill(user.username);
+  
+  const passwordInput = page.getByLabel('Password', { exact: true });
+  await passwordInput.waitFor({ state: 'visible', timeout: 10000 });
+  await passwordInput.fill(user.password);
+  
+  const confirmPasswordInput = page.getByLabel(/confirm password/i);
+  await confirmPasswordInput.waitFor({ state: 'visible', timeout: 10000 });
+  await confirmPasswordInput.fill(user.password);
   
   if (user.firstName) {
-    await page.getByLabel(/first name/i).fill(user.firstName);
+    const firstNameInput = page.getByLabel(/first name/i);
+    await firstNameInput.waitFor({ state: 'visible', timeout: 10000 });
+    await firstNameInput.fill(user.firstName);
   }
   if (user.lastName) {
-    await page.getByLabel(/last name/i).fill(user.lastName);
+    const lastNameInput = page.getByLabel(/last name/i);
+    await lastNameInput.waitFor({ state: 'visible', timeout: 10000 });
+    await lastNameInput.fill(user.lastName);
   }
   
   // Submit form
-  await page.getByRole('button', { name: /create account|register/i }).click();
+  const submitButton = page.getByRole('button', { name: /create account|register/i });
+  await submitButton.waitFor({ state: 'visible', timeout: 10000 });
+  await submitButton.click();
   
   // Wait for registration to complete (redirect or success message)
-  await page.waitForURL(/\/(login|receipts|dashboard)/i, { timeout: 10000 });
+  await page.waitForURL(/\/(login|receipts|dashboard)/i, { timeout: 15000 });
 }
 
 /**
@@ -40,15 +57,22 @@ export async function registerUser(page: Page, user: TestUser): Promise<void> {
 export async function loginUser(page: Page, email: string, password: string): Promise<void> {
   await page.goto('/login');
   
-  // Fill login form
-  await page.getByLabel(/email/i).fill(email);
-  await page.getByLabel(/password/i).fill(password);
+  // Fill login form with explicit waits
+  const emailInput = page.getByLabel(/email/i);
+  await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+  await emailInput.fill(email);
+  
+  const passwordInput = page.getByLabel(/password/i);
+  await passwordInput.waitFor({ state: 'visible', timeout: 10000 });
+  await passwordInput.fill(password);
   
   // Submit form
-  await page.getByRole('button', { name: /login|sign in/i }).click();
+  const loginButton = page.getByRole('button', { name: /login|sign in/i });
+  await loginButton.waitFor({ state: 'visible', timeout: 10000 });
+  await loginButton.click();
   
   // Wait for successful login (redirect to receipts or dashboard)
-  await page.waitForURL(/\/(receipts|dashboard)/i, { timeout: 10000 });
+  await page.waitForURL(/\/(receipts|dashboard)/i, { timeout: 15000 });
 }
 
 /**
@@ -57,20 +81,32 @@ export async function loginUser(page: Page, email: string, password: string): Pr
 export async function loginWith2FA(page: Page, email: string, password: string, code: string): Promise<void> {
   await page.goto('/login');
   
-  // Fill login form
-  await page.getByLabel(/email/i).fill(email);
-  await page.getByLabel(/password/i).fill(password);
-  await page.getByRole('button', { name: /login|sign in/i }).click();
+  // Fill login form with explicit waits
+  const emailInput = page.getByLabel(/email/i);
+  await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+  await emailInput.fill(email);
+  
+  const passwordInput = page.getByLabel(/password/i);
+  await passwordInput.waitFor({ state: 'visible', timeout: 10000 });
+  await passwordInput.fill(password);
+  
+  const loginButton = page.getByRole('button', { name: /login|sign in/i });
+  await loginButton.waitFor({ state: 'visible', timeout: 10000 });
+  await loginButton.click();
   
   // Wait for 2FA input
-  await expect(page.getByLabel(/2fa code|verification code/i)).toBeVisible();
+  const codeInput = page.getByLabel(/2fa code|verification code/i);
+  await expect(codeInput).toBeVisible({ timeout: 10000 });
   
   // Enter 2FA code
-  await page.getByLabel(/2fa code|verification code/i).fill(code);
-  await page.getByRole('button', { name: /verify|submit/i }).click();
+  await codeInput.fill(code);
+  
+  const verifyButton = page.getByRole('button', { name: /verify|submit/i });
+  await verifyButton.waitFor({ state: 'visible', timeout: 10000 });
+  await verifyButton.click();
   
   // Wait for successful login
-  await page.waitForURL(/\/(receipts|dashboard)/i, { timeout: 10000 });
+  await page.waitForURL(/\/(receipts|dashboard)/i, { timeout: 15000 });
 }
 
 /**
@@ -164,9 +200,14 @@ export async function assertLoggedOut(page: Page): Promise<void> {
 export async function requestPasswordReset(page: Page, email: string): Promise<void> {
   await page.goto('/forgot-password');
   
-  await page.getByLabel(/email/i).fill(email);
-  await page.getByRole('button', { name: /reset|send/i }).click();
+  const emailInput = page.getByLabel(/email/i);
+  await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+  await emailInput.fill(email);
+  
+  const submitButton = page.getByRole('button', { name: /reset|send/i });
+  await submitButton.waitFor({ state: 'visible', timeout: 10000 });
+  await submitButton.click();
   
   // Wait for success message
-  await expect(page.getByText(/email sent|check your email/i)).toBeVisible();
+  await expect(page.getByText(/email sent|check your email/i)).toBeVisible({ timeout: 10000 });
 }

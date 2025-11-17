@@ -1,16 +1,20 @@
 <div class="input-wrapper">
-  <label *ngIf="label" class="input-label" [class.input-label-required]="required">
+  <label *ngIf="label" [for]="inputId" class="input-label" [class.input-label-required]="required">
     {{ label }}
     <span *ngIf="required" class="required-asterisk">*</span>
   </label>
   
   <div class="input-container" [class.input-error]="error" [class.input-focused]="isFocused">
     <input
+      [id]="inputId"
       [type]="inputType"
       [value]="value"
       [placeholder]="placeholder"
       [disabled]="disabled"
       [required]="required"
+      [attr.aria-label]="label"
+      [attr.aria-required]="required"
+      [attr.aria-invalid]="!!error"
       [autocomplete]="autocomplete || 'off'"
       class="input-field"
       (input)="onInput($event)"
