@@ -1,0 +1,148 @@
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+  padding: var(--space-4);
+}
+
+.register-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.register-card {
+  background-color: var(--background);
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.register-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.register-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.password-strength {
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.strength-bar {
+  flex: 1;
+  height: 4px;
+  background-color: var(--neutral-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.strength-fill {
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.strength-fill.weak {
+  width: 33%;
+  background-color: var(--error);
+}
+
+.strength-fill.medium {
+  width: 66%;
+  background-color: var(--warning);
+}
+
+.strength-fill.strong {
+  width: 100%;
+  background-color: var(--success);
+}
+
+.strength-text {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  min-width: 60px;
+}
+
+.strength-weak {
+  color: var(--error);
+}
+
+.strength-medium {
+  color: var(--warning);
+}
+
+.strength-strong {
+  color: var(--success);
+}
+
+.register-footer {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--neutral-200);
+  text-align: center;
+}
+
+.login-prompt {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.login-link {
+  color: var(--primary-500);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: var(--space-1);
+  transition: var(--transition-base);
+
+  &:hover {
+    color: var(--primary-600);
+    text-decoration: underline;
+  }
+}
+
+.back-home {
+  text-align: center;
+  margin-top: var(--space-4);
+}
+
+.back-link {
+  font-size: 14px;
+  color: var(--primary-600);
+  text-decoration: none;
+  transition: var(--transition-base);
+
+  &:hover {
+    color: var(--primary-700);
+    text-decoration: underline;
+  }
+}
+
+@media (max-width: 640px) {
+  .register-title {
+    font-size: 24px;
+  }
+
+  .register-subtitle {
+    font-size: 14px;
+  }
+}

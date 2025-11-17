@@ -1,0 +1,66 @@
+<div class='login-page'>
+  <div class='login-container'>
+    <app-card class='login-card' padding='lg'>
+      <div class='login-header'>
+        <h1 class='login-title'>Welcome Back</h1>
+        <p class='login-subtitle'>Sign in to your account to continue</p>
+      </div>
+
+      <form [formGroup]='loginForm' (ngSubmit)='onSubmit()' class='login-form'>
+        <app-input
+          type='email'
+          label='Email Address'
+          placeholder='you@example.com'
+          formControlName='email'
+          [error]='emailError'
+          autocomplete='email'
+          required>
+        </app-input>
+
+        <app-input
+          type='password'
+          label='Password'
+          placeholder='Enter your password'
+          formControlName='password'
+          [error]='passwordError'
+          autocomplete='current-password'
+          required>
+        </app-input>
+
+        <app-input
+          *ngIf='show2FAInput'
+          type='text'
+          label='Two-Factor Code'
+          placeholder='000000'
+          formControlName='twoFactorCode'
+          hint='Enter the 6-digit code from your authenticator app'>
+        </app-input>
+
+        <div class='form-actions'>
+          <a routerLink='/forgot-password' class='forgot-link'>Forgot password?</a>
+        </div>
+
+        <app-button
+          type='submit'
+          variant='primary'
+          size='lg'
+          [fullWidth]='true'
+          [loading]='loading'
+          [disabled]='loading'>
+          Sign In
+        </app-button>
+      </form>
+
+      <div class='login-footer'>
+        <p class='signup-prompt'>
+          Don't have an account?
+          <a routerLink='/register' class='signup-link'>Sign up</a>
+        </p>
+      </div>
+    </app-card>
+
+    <div class='back-home'>
+      <a routerLink='/' class='back-link'>← Back to Home</a>
+    </div>
+  </div>
+</div>
