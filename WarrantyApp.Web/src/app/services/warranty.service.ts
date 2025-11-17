@@ -8,7 +8,7 @@ import { ExpiringWarranty } from '../models';
   providedIn: 'root',
 })
 export class WarrantyService {
-  private readonly apiUrl = `${environment.apiUrl}/warranty-notifications`;
+  private readonly apiUrl = `${environment.apiUrl}/WarrantyNotifications`;
 
   constructor(private http: HttpClient) {}
 

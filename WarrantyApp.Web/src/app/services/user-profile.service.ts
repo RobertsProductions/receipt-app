@@ -8,7 +8,7 @@ import { UserProfile } from '../models';
   providedIn: 'root',
 })
 export class UserProfileService {
-  private readonly apiUrl = `${environment.apiUrl}/user-profile`;
+  private readonly apiUrl = `${environment.apiUrl}/UserProfile`;
 
   constructor(private http: HttpClient) {}
 

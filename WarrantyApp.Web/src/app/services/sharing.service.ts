@@ -8,7 +8,7 @@ import { ReceiptShare, ShareReceiptRequest, SharedReceipt } from '../models';
   providedIn: 'root',
 })
 export class SharingService {
-  private readonly apiUrl = `${environment.apiUrl}/receipt-sharing`;
+  private readonly apiUrl = `${environment.apiUrl}/ReceiptSharing`;
 
   constructor(private http: HttpClient) {}
 

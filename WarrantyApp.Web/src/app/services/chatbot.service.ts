@@ -13,7 +13,7 @@ import {
   providedIn: 'root',
 })
 export class ChatbotService {
-  private readonly apiUrl = `${environment.apiUrl}/chatbot`;
+  private readonly apiUrl = `${environment.apiUrl}/Chatbot`;
 
   constructor(private http: HttpClient) {}
 

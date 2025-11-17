@@ -14,7 +14,7 @@ import {
   providedIn: 'root',
 })
 export class ReceiptService {
-  private readonly apiUrl = `${environment.apiUrl}/receipts`;
+  private readonly apiUrl = `${environment.apiUrl}/Receipts`;
 
   constructor(private http: HttpClient) {}
 
