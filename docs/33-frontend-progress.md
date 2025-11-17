@@ -409,8 +409,9 @@ According to doc 28-frontend-workflows.md:
 ---
 
 **Next Session Goals**:
-1. Create authentication pages and forms
-2. Implement routing with guards
-3. Add toast notification service
-4. Build shared UI components (buttons, inputs, cards)
-5. Test authentication flow end-to-end
+1. Complete remaining shared components (dropdown, tooltip, progress bar)
+2. Build remaining pages (phone verification, receipt sharing, chatbot, 2FA setup, email confirmation)
+3. Implement advanced features (search, bulk operations, dark mode)
+4. E2E testing with Playwright
+
+**Note**: PWA support has been moved to "Future Plans" section and will be considered after all optional features above are completed. See main README for details.

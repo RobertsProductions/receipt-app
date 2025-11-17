@@ -766,8 +766,6 @@ For issues, questions, or contributions, please:
   - Chatbot conversation flows (send message, get history, clear)
   - Receipt sharing workflows (share, revoke, access control)
 - [ ] Generate code coverage report and badge (current estimate: service layer ~100%, overall ~85%)
-- [ ] Add performance benchmarks for critical endpoints (upload, OCR, chatbot)
-- [ ] Implement load testing with k6 or JMeter (target: 100 concurrent users)
 
 **Deployment & Production Readiness**
 - [ ] Configure GitHub secrets for production deployment (Azure credentials, API keys)
@@ -978,7 +976,6 @@ For issues, questions, or contributions, please:
 - [ ] Receipt export - Download CSV of all receipts, generate PDF report with summaries
 - [ ] Dark mode support - Theme toggle with localStorage persistence
 - [ ] Frontend E2E tests with Playwright - Critical user flows (auth, upload, warranty tracking)
-- [ ] PWA support - Service workers for offline mode, installable as native app, push notifications
 - [ ] Receipt categories and tags - User-defined tags, filter by category
 - [ ] Advanced filtering - Date range picker, amount range, warranty status
 - [ ] Receipt analytics charts - Spending over time, category breakdowns with Chart.js
@@ -993,6 +990,27 @@ For issues, questions, or contributions, please:
 - [x] Proxy Configuration Fix ([32-aspire-angular-proxy-fix.md](docs/32-aspire-angular-proxy-fix.md)) - Dynamic port management
 
 **See documentation in [docs/](docs/) folder for comprehensive frontend specifications and progress tracking.**
+
+---
+
+## Future Plans (Post-Optional Features)
+
+These features will be considered after all optional enhancements above are completed:
+
+### Backend Future Plans
+- [ ] Performance benchmarks for critical endpoints (upload, OCR, chatbot) - Baseline metrics and performance tracking
+- [ ] Load testing with k6 or JMeter (target: 100 concurrent users) - Stress testing and capacity planning
+
+### Frontend Future Plans
+- [ ] PWA support - Service workers for offline mode, installable as native app, push notifications
+
+### Shared Future Plans
+- [ ] Mobile app development (iOS/Android with React Native or Flutter)
+- [ ] Advanced analytics and reporting dashboards
+- [ ] Machine learning for receipt categorization and insights
+- [ ] Multi-tenant support for business/enterprise customers
+
+**Note**: These future plans require completion of current optional features and will be prioritized based on user feedback and business needs.
 
 ---
 

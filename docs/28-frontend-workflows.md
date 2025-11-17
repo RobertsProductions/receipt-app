@@ -677,11 +677,11 @@ const routes: Routes = [
 
 #### Utility Components
 - [ ] **Loading Spinner**: Global loading indicator
-- [ ] **Toast Notifications**: Success/error toasts
-- [ ] **Confirmation Dialog**: Generic confirmation modal
+- [x] **Toast Notifications**: Success/error toasts
+- [x] **Confirmation Dialog**: Generic confirmation modal (via Modal component)
 - [ ] **Error Boundary**: Catch and display errors
-- [ ] **Offline Indicator**: Show when offline
-- [ ] **Update Notification**: PWA update available
+- [ ] **Offline Indicator**: Show when offline (Future: PWA support - see README Future Plans)
+- [ ] **Update Notification**: PWA update available (Future: PWA support - see README Future Plans)
 
 #### Form Components
 - [ ] **Text Input**: Reusable text input
@@ -699,13 +699,13 @@ const routes: Routes = [
 - [ ] **Currency Input**: Amount with currency symbol
 
 ### Global Services
-- [ ] **HTTP Interceptor**: Add auth headers, handle errors
-- [ ] **Error Handler**: Global error handling
-- [ ] **Toast Service**: Show notifications
-- [ ] **Storage Service**: LocalStorage wrapper
-- [ ] **Theme Service**: Manage themes (future)
+- [x] **HTTP Interceptor**: Add auth headers, handle errors
+- [x] **Error Handler**: Global error handling (via error interceptor)
+- [x] **Toast Service**: Show notifications
+- [x] **Storage Service**: LocalStorage wrapper (integrated in AuthService)
+- [ ] **Theme Service**: Manage themes (future: dark mode)
 - [ ] **Analytics Service**: Track user events
-- [ ] **PWA Service**: Service worker management
+- [ ] **PWA Service**: Service worker management (Future: PWA support - see README Future Plans)
 
 ### State Management
 - [ ] **Auth State**: User authentication
