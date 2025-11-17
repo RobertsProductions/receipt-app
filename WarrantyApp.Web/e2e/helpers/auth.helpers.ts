@@ -114,7 +114,12 @@ export async function registerAndLogin(page: Page, user: TestUser): Promise<void
  */
 async function verifyLoggedIn(page: Page): Promise<void> {
   // Wait for redirect to complete
-  await page.waitForURL(/\/(receipts|dashboard)/, { timeout: 10000 });
+  try {
+    await page.waitForURL(/\/(receipts|dashboard)/, { timeout: 10000 });
+  } catch (error) {
+    const currentUrl = page.url();
+    throw new Error(`Failed to navigate to protected route. Current URL: ${currentUrl}. Expected /receipts or /dashboard`);
+  }
   
   // Verify token exists
   const hasToken = await page.evaluate(() => {
@@ -122,7 +127,14 @@ async function verifyLoggedIn(page: Page): Promise<void> {
   });
   
   if (!hasToken) {
-    throw new Error('Login completed but access_token not found in localStorage');
+    const currentUrl = page.url();
+    const allStorage = await page.evaluate(() => {
+      return {
+        localStorage: { ...localStorage },
+        sessionStorage: { ...sessionStorage }
+      };
+    });
+    throw new Error(`Login completed but access_token not found in localStorage. URL: ${currentUrl}. Storage: ${JSON.stringify(allStorage)}`);
   }
 }
 
