@@ -67,7 +67,19 @@ export async function registerAndLogin(page: Page, user: TestUser): Promise<void
   // Check if already logged in (auto-login after registration)
   const currentUrl = page.url();
   if (currentUrl.includes('/receipts') || currentUrl.includes('/dashboard')) {
-    // Already logged in, nothing to do
+    // Check if auth token exists (using actual key from auth.service.ts)
+    const hasToken = await page.evaluate(() => {
+      return !!(localStorage.getItem('access_token') || localStorage.getItem('auth_token'));
+    });
+    
+    if (hasToken) {
+      // Wait for user menu to confirm login state
+      await page.waitForTimeout(2000);
+      return;
+    }
+    // No token found, need to login manually
+    await page.goto('/login');
+    await loginUser(page, user.email, user.password);
     return;
   }
   
