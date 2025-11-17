@@ -566,7 +566,7 @@ Common status codes:
 
 ## Deployment
 
-See [../docs/21-automated-deployment.md](../docs/21-automated-deployment.md) for:
+See [../docs/infra-deployment-azure.md](../docs/infra-deployment-azure.md) for:
 - Azure Container Apps deployment
 - Docker containerization
 - CI/CD pipeline setup
@@ -620,14 +620,14 @@ dotnet ef database update
 ## Documentation
 
 ### Core Backend Guides
-- **[Authentication](../docs/04-authentication-authorization.md)** - JWT + 2FA setup
-- **[Receipt Upload & OCR](../docs/09-ocr-openai-integration.md)** - File upload and AI extraction
-- **[Warranty Notifications](../docs/10-warranty-expiration-notifications.md)** - Background monitoring
-- **[Email/SMS Setup](../docs/11-email-sms-notifications.md)** - SMTP and Twilio config
-- **[Testing Strategy](../docs/20-testing-strategy.md)** - 146 tests explained
+- **[Authentication](../docs/backend-authentication.md)** - JWT + 2FA setup
+- **[Receipt Upload & OCR](../docs/backend-ocr-openai.md)** - File upload and AI extraction
+- **[Warranty Notifications](../docs/backend-warranty-notifications.md)** - Background monitoring
+- **[Email/SMS Setup](../docs/backend-notifications-email-sms.md)** - SMTP and Twilio config
+- **[Testing Strategy](../docs/infra-testing-strategy.md)** - 146 tests explained
 
-### All Backend Features (docs/04-26)
-Authentication (04), Database (05-07), Receipts (08-09, 13, 15), Notifications (10-12, 14), Security (16-18), Operations (19-22), Advanced (23-26)
+### All Backend Features
+Authentication (`backend-authentication`, `backend-auth-*`), Database (`setup-database-*`, `infra-troubleshooting-database`), Receipts (`backend-receipts-*`, `backend-ocr-*`), Notifications (`backend-*-notifications`, `backend-phone-verification`), Security & Performance (`backend-auth-*`, `backend-caching-*`), Operations (`infra-*`)
 
 **Browse All**: See [../docs/](../docs/) folder for complete backend documentation.
 

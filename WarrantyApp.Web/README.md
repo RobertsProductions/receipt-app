@@ -372,7 +372,7 @@ Build Time:       ~2 seconds
 
 ## Workflows and Components
 
-See `../docs/28-frontend-workflows.md` for:
+See `../docs/frontend-workflows.md` for:
 - User journey workflows
 - Component breakdown
 - Implementation phases
@@ -382,7 +382,7 @@ See `../docs/28-frontend-workflows.md` for:
 
 The Angular app can be orchestrated with the .NET Aspire AppHost for unified development.
 
-See `../docs/29-angular-aspire-integration.md` for:
+See `../docs/frontend-aspire-integration.md` for:
 - Aspire integration instructions
 - AppHost configuration
 - Service discovery setup
@@ -453,15 +453,15 @@ Run `ng generate component component-name` to generate a new component. You can 
 ## Documentation
 
 ### Core Frontend Guides
-- **[Quick Start Guide](../docs/00-quickstart.md)** - Get up and running fast
-- **[Design Reference](../docs/27-design-reference.md)** - Complete UI/UX design system
-- **[Frontend Workflows](../docs/28-frontend-workflows.md)** - User journeys and flows
-- **[Aspire Integration](../docs/29-angular-aspire-integration.md)** - Angular + .NET Aspire setup
-- **[Implementation Roadmap](../docs/34-frontend-implementation-roadmap.md)** - Detailed specs (1,507 lines)
+- **[Quick Start Guide](../docs/setup-quickstart.md)** - Get up and running fast
+- **[Design Reference](../docs/frontend-design-system.md)** - Complete UI/UX design system
+- **[Frontend Workflows](../docs/frontend-workflows.md)** - User journeys and flows
+- **[Aspire Integration](../docs/frontend-aspire-integration.md)** - Angular + .NET Aspire setup
+- **[Implementation Roadmap](../docs/frontend-roadmap.md)** - Detailed specs (1,507 lines)
 
 ### Additional Resources
-- **[Proxy Configuration](../docs/32-aspire-angular-proxy-fix.md)** - Dynamic API proxy troubleshooting
-- **[Complete Implementation](../docs/39-complete-implementation-summary.md)** - E2E testing guide and next steps
+- **[Proxy Configuration](../docs/frontend-aspire-proxy.md)** - Dynamic API proxy troubleshooting
+- **[Complete Implementation](../docs/guide-complete-implementation.md)** - E2E testing guide and next steps
 
 **Development History**: Session notes and progress reports available in [../docs/archive/](../docs/archive/)
 

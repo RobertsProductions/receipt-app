@@ -6,7 +6,7 @@ A modern warranty management application built with .NET 8 and .NET Aspire for c
 
 ## 🚀 Quick Start
 
-**Want to get started quickly?** See the [Quick Start Guide](docs/00-quickstart.md) for streamlined setup instructions.
+**Want to get started quickly?** See the [Quick Start Guide](docs/setup-quickstart.md) for streamlined setup instructions.
 
 ## Overview
 
@@ -176,7 +176,7 @@ npm start
 
 **Twilio SMS** (optional): Configure via user secrets (AccountSid, AuthToken, PhoneNumber)
 
-See [docs/00-quickstart.md](docs/00-quickstart.md) for detailed setup.
+See [docs/setup-quickstart.md](docs/setup-quickstart.md) for detailed setup.
 
 ## Testing
 
@@ -203,12 +203,12 @@ Access Swagger UI when the API is running:
 ## Documentation
 
 **Quick Links**:
-- [📖 Quick Start Guide](docs/00-quickstart.md) - Get up and running in minutes
-- [🔐 Authentication](docs/04-authentication-authorization.md) - JWT + 2FA implementation
-- [📄 Receipt Upload & OCR](docs/09-ocr-openai-integration.md) - AI-powered extraction
-- [🧪 Testing Strategy](docs/20-testing-strategy.md) - 146 tests explained
-- [🎨 Design System](docs/27-design-reference.md) - Complete UI/UX guide
-- [✅ Complete Implementation](docs/39-complete-implementation-summary.md) - E2E testing guide
+- [📖 Quick Start Guide](docs/setup-quickstart.md) - Get up and running in minutes
+- [🔐 Authentication](docs/backend-authentication.md) - JWT + 2FA implementation
+- [📄 Receipt Upload & OCR](docs/backend-ocr-openai.md) - AI-powered extraction
+- [🧪 Testing Strategy](docs/infra-testing-strategy.md) - 146 tests explained
+- [🎨 Design System](docs/frontend-design-system.md) - Complete UI/UX guide
+- [✅ Complete Implementation](docs/guide-complete-implementation.md) - E2E testing guide
 
 **Browse All**: See [docs/](docs/) folder for 33 comprehensive guides covering setup, features, deployment, and frontend development. Historical session notes available in [docs/archive/](docs/archive/).
 
@@ -216,7 +216,7 @@ Access Swagger UI when the API is running:
 
 GitHub Actions runs on every push/PR: **Build** → **Test** (146 tests) → **Security Scan** → **Code Quality**
 
-See [docs/03-cicd-setup.md](docs/03-cicd-setup.md) for configuration details.
+See [docs/infra-cicd-github-actions.md](docs/infra-cicd-github-actions.md) for configuration details.
 
 ## Optional Enhancements
 
@@ -226,7 +226,7 @@ See [docs/03-cicd-setup.md](docs/03-cicd-setup.md) for configuration details.
 
 **Future**: Mobile app, accounting software integration, ML categorization, multi-tenant support
 
-**See**: [docs/39-complete-implementation-summary.md](docs/39-complete-implementation-summary.md) for detailed roadmap
+**See**: [docs/guide-complete-implementation.md](docs/guide-complete-implementation.md) for detailed roadmap
 
 ## Troubleshooting
 
@@ -236,7 +236,7 @@ See [docs/03-cicd-setup.md](docs/03-cicd-setup.md) for configuration details.
 
 **Port conflicts**: Aspire uses dynamic ports - access via Dashboard links
 
-**Angular proxy issues**: See [docs/32-aspire-angular-proxy-fix.md](docs/32-aspire-angular-proxy-fix.md)
+**Angular proxy issues**: See [docs/frontend-aspire-proxy.md](docs/frontend-aspire-proxy.md)
 
 ## Contributing
 

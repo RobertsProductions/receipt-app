@@ -6,25 +6,25 @@ This folder contains historical development notes, progress reports, and referen
 
 ### `/sessions/` - Development Session Logs
 Session-by-session development notes documenting component and feature implementation:
-- 35-session-9-components-pages.md
-- 36-batch1-remaining-pages.md
-- 36-session-nov17-foundational-components.md
-- 37-batch3-test-attributes-plan.md
-- 37-session-nov17-priority2-components.md
-- 38-login-error-interceptor-fix.md
+- session-09-components-pages.md
+- session-batch1-pages.md
+- session-batch3-testing.md
+- session-bugfix-login-interceptor.md
+- session-nov17-foundational.md
+- session-nov17-priority2.md
 
 ### `/progress/` - Status Reports
 Historical progress snapshots and completion summaries:
-- 30-frontend-setup-complete.md
-- 31-aspire-integration-complete.md
-- 33-frontend-progress.md
-- 38-batch3-progress.md
-- 40-git-commit-summary.md
-- 41-readme-condensation-summary.md
+- progress-aspire-integration-complete.md
+- progress-batch3.md
+- progress-frontend-sessions.md
+- progress-frontend-setup-complete.md
+- progress-git-commits-session9.md
+- progress-readme-condensation.md
 
 ### `/reference/` - Quick Reference Guides
 Condensed reference materials and summaries:
-- 35-frontend-roadmap-summary.md
+- reference-frontend-roadmap-summary.md
 
 ## ℹ️ Why Archive?
 
@@ -36,12 +36,12 @@ These documents were moved to the archive to:
 
 ## 📖 Active Documentation
 
-For current, production-ready documentation, see the main [../docs/](../) folder which contains:
-- Setup & Getting Started (00-02, 05-06)
-- Backend Features (04, 08-18, 23-26)
-- Infrastructure & Operations (03, 07, 19-22)
-- Frontend Documentation (27-29, 32, 34)
-- Complete Implementation Summary (39)
+For current, production-ready documentation, see the main [../](../) folder which contains:
+- Setup & Getting Started (`setup-*`)
+- Backend Features (`backend-*`)
+- Infrastructure & Operations (`infra-*`)
+- Frontend Documentation (`frontend-*`)
+- Complete Implementation Summary (`guide-complete-implementation.md`)
 
 ## 🕒 Last Updated
 
@@ -49,4 +49,4 @@ Archive created: November 17, 2025
 
 ---
 
-**Note**: These documents are read-only historical records. For current implementation status, see [../39-complete-implementation-summary.md](../39-complete-implementation-summary.md).
+**Note**: These documents are read-only historical records. For current implementation status, see [../guide-complete-implementation.md](../guide-complete-implementation.md).
