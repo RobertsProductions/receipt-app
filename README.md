@@ -35,11 +35,13 @@ This application provides a comprehensive warranty tracking system with a REST A
 ```
 MyAspireSolution/
 ├── .github/workflows/          # CI/CD pipeline
-├── docs/                       # Technical documentation (33 guides)
+├── docs/                       # Technical documentation (35 guides)
 │   ├── setup/                  # Getting started (5 docs)
 │   ├── backend/                # Backend features (15 docs)
 │   ├── infra/                  # Infrastructure & ops (7 docs)
 │   ├── frontend/               # Frontend design & implementation (5 docs)
+│   ├── testing/                # Testing documentation & guidelines (1 doc)
+│   ├── workflow/               # Development workflow & best practices (1 doc)
 │   ├── guide/                  # Complete implementation guide (1 doc)
 │   └── archive/                # Historical logs and progress reports
 │       ├── sessions/           # Development session logs (6 docs)
@@ -212,6 +214,13 @@ npm run e2e:debug    # Debug mode
 
 **Note**: E2E tests require the full application stack (frontend + backend + database). The Playwright config automatically starts the Angular dev server, but the backend must be running separately.
 
+📖 **See [docs/testing/README.md](docs/testing/README.md)** for comprehensive testing documentation including:
+- Complete test inventory and status tracking
+- E2E test maintenance guidelines
+- HTML selector best practices for Playwright
+- Debugging procedures and common issues
+- Test execution workflows
+
 ## API Documentation
 
 Access Swagger UI when the API is running:
@@ -222,13 +231,15 @@ Access Swagger UI when the API is running:
 
 **Quick Links**:
 - [📖 Quick Start Guide](docs/setup/setup-quickstart.md) - Get up and running in minutes
+- [🚀 Development Workflow](docs/workflow/README.md) - Session management & best practices
 - [🔐 Authentication](docs/backend/backend-authentication.md) - JWT + 2FA implementation
 - [📄 Receipt Upload & OCR](docs/backend/backend-ocr-openai.md) - AI-powered extraction
-- [🧪 Testing Strategy](docs/infra/infra-testing-strategy.md) - 146 tests explained
+- [🧪 Testing Documentation](docs/testing/README.md) - Complete testing guide with E2E maintenance
+- [🧪 Testing Strategy](docs/infra/infra-testing-strategy.md) - Backend tests explained
 - [🎨 Design System](docs/frontend/frontend-design-system.md) - Complete UI/UX guide
 - [✅ Complete Implementation](docs/guide/guide-complete-implementation.md) - E2E testing guide
 
-**Browse All**: See [docs/](docs/) folder for 33 comprehensive guides covering setup, features, deployment, and frontend development. Historical session notes available in [docs/archive/](docs/archive/).
+**Browse All**: See [docs/](docs/) folder for 35 comprehensive guides covering setup, features, deployment, testing, and development workflows. Historical session notes available in [docs/archive/](docs/archive/).
 
 ## CI/CD Pipeline
 
