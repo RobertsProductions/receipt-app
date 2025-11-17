@@ -34,7 +34,7 @@ test.describe('User Login', () => {
   });
 
   test('should validate required fields', async ({ page }) => {
-    // Check that form inputs have required attribute before submitting
+    // Check that form inputs have required or aria-required attribute
     const emailInput = page.getByLabel(/email/i);
     const passwordInput = page.getByLabel('Password', { exact: true });
     
@@ -42,9 +42,15 @@ test.describe('User Login', () => {
     await expect(emailInput).toBeVisible();
     await expect(passwordInput).toBeVisible();
     
-    // Check required attributes exist
-    await expect(emailInput).toHaveAttribute('required');
-    await expect(passwordInput).toHaveAttribute('required');
+    // Check required attributes exist (either HTML5 required or ARIA)
+    const emailHasRequired = await emailInput.evaluate(el => 
+      el.hasAttribute('required') || el.hasAttribute('aria-required')
+    );
+    const passwordHasRequired = await passwordInput.evaluate(el => 
+      el.hasAttribute('required') || el.hasAttribute('aria-required')
+    );
+    expect(emailHasRequired).toBe(true);
+    expect(passwordHasRequired).toBe(true);
     
     // Submit empty form - should not navigate away
     await page.getByRole('button', { name: /sign in/i }).click();

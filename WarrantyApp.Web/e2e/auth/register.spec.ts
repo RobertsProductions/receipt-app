@@ -33,19 +33,23 @@ test.describe('User Registration', () => {
   });
 
   test('should validate required fields', async ({ page }) => {
-    // Check that form inputs have required attribute before submitting
+    // Check that form inputs have required or aria-required attribute
     const emailInput = page.getByLabel(/email/i);
     
     // Wait for input to be visible
     await expect(emailInput).toBeVisible();
     
-    // Check required attribute exists
-    await expect(emailInput).toHaveAttribute('required');
+    // Check required attribute exists (either HTML5 required or ARIA)
+    // Angular forms use aria-required instead of required attribute
+    const hasRequired = await emailInput.evaluate(el => 
+      el.hasAttribute('required') || el.hasAttribute('aria-required')
+    );
+    expect(hasRequired).toBe(true);
     
     // Submit empty form - should not navigate away
     await page.getByRole('button', { name: /create account/i }).click();
     
-    // Should still be on register page
+    // Should still be on register page (form validation prevents submission)
     await expect(page).toHaveURL(/\/register/);
   });
 
@@ -109,8 +113,11 @@ test.describe('User Registration', () => {
     // Submit form
     await page.getByRole('button', { name: /create account/i }).click();
     
-    // Should redirect to login or dashboard
-    await expect(page).toHaveURL(/\/(login|receipts|dashboard)/i, { timeout: 10000 });
+    // Should redirect to confirm-email page (email confirmation required)
+    await expect(page).toHaveURL(/\/(confirm-email|login|receipts|dashboard)/i, { timeout: 10000 });
+    
+    // Should show success message or confirmation prompt
+    // The app may show a toast or redirect to email confirmation page
   });
 
   test('should register with optional fields', async ({ page }) => {
@@ -140,7 +147,7 @@ test.describe('User Registration', () => {
     await page.getByRole('button', { name: /create account/i }).click();
     
     // Should successfully register
-    await expect(page).toHaveURL(/\/(login|receipts|dashboard)/i, { timeout: 10000 });
+    await expect(page).toHaveURL(/\/(confirm-email|login|receipts|dashboard)/i, { timeout: 10000 });
   });
 
   test('should show error for duplicate email', async ({ page }) => {

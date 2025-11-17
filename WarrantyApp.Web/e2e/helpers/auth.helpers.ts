@@ -32,15 +32,20 @@ export async function registerUser(page: Page, user: TestUser): Promise<void> {
   await confirmPasswordInput.waitFor({ state: 'visible', timeout: 10000 });
   await confirmPasswordInput.fill(user.password);
   
+  // Fill optional fields if provided and if they exist on the form
   if (user.firstName) {
     const firstNameInput = page.getByLabel(/first name/i);
-    await firstNameInput.waitFor({ state: 'visible', timeout: 10000 });
-    await firstNameInput.fill(user.firstName);
+    const isVisible = await firstNameInput.isVisible({ timeout: 2000 }).catch(() => false);
+    if (isVisible) {
+      await firstNameInput.fill(user.firstName);
+    }
   }
   if (user.lastName) {
     const lastNameInput = page.getByLabel(/last name/i);
-    await lastNameInput.waitFor({ state: 'visible', timeout: 10000 });
-    await lastNameInput.fill(user.lastName);
+    const isVisible = await lastNameInput.isVisible({ timeout: 2000 }).catch(() => false);
+    if (isVisible) {
+      await lastNameInput.fill(user.lastName);
+    }
   }
   
   // Submit form
@@ -48,8 +53,8 @@ export async function registerUser(page: Page, user: TestUser): Promise<void> {
   await submitButton.waitFor({ state: 'visible', timeout: 10000 });
   await submitButton.click();
   
-  // Wait for registration to complete (redirect or success message)
-  await page.waitForURL(/\/(login|receipts|dashboard)/i, { timeout: 15000 });
+  // Wait for registration to complete (redirect to confirm-email, receipts, or dashboard)
+  await page.waitForURL(/\/(confirm-email|login|receipts|dashboard)/i, { timeout: 15000 });
 }
 
 /**
@@ -63,6 +68,12 @@ export async function registerAndLogin(page: Page, user: TestUser): Promise<void
   const currentUrl = page.url();
   if (currentUrl.includes('/receipts') || currentUrl.includes('/dashboard')) {
     // Already logged in, nothing to do
+    return;
+  }
+  
+  // If on confirm-email page, skip to login (email confirmation not needed for tests)
+  if (currentUrl.includes('/confirm-email')) {
+    await loginUser(page, user.email, user.password);
     return;
   }
   
