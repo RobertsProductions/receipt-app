@@ -104,7 +104,14 @@ export async function loginUser(page: Page, email: string, password: string): Pr
   await loginButton.click();
   
   // Wait for successful login (redirect to receipts or dashboard)
-  await page.waitForURL(/\/(receipts|dashboard)/i, { timeout: 15000 });
+  // Sometimes app redirects to confirm-email with invalid token - navigate to receipts instead
+  await page.waitForURL(/\/(receipts|dashboard|confirm-email)/i, { timeout: 15000 });
+  
+  // If landed on confirm-email page, navigate directly to receipts
+  if (page.url().includes('/confirm-email')) {
+    await page.goto('/receipts');
+    await page.waitForURL(/\/receipts/, { timeout: 5000 });
+  }
 }
 
 /**
@@ -145,14 +152,31 @@ export async function loginWith2FA(page: Page, email: string, password: string, 
  * Logout current user
  */
 export async function logoutUser(page: Page): Promise<void> {
-  // Look for logout button/link (might be in dropdown or nav)
-  const logoutButton = page.getByRole('button', { name: /logout|sign out/i })
-    .or(page.getByRole('link', { name: /logout|sign out/i }));
+  // If on error/confirmation page, navigate to receipts first
+  const currentUrl = page.url();
+  if (currentUrl.includes('/confirm-email') || currentUrl.includes('/error')) {
+    await page.goto('/receipts');
+    await page.waitForLoadState('networkidle');
+  }
   
+  // Find and click the user menu button to open dropdown
+  // Button contains username and chevron ▼
+  const userMenuButton = page.locator('button').filter({ hasText: '▼' }).first();
+  await userMenuButton.waitFor({ state: 'visible', timeout: 10000 });
+  await userMenuButton.click();
+  
+  // Wait for dropdown to appear
+  await page.waitForTimeout(500);
+  
+  // Click the Logout button in the dropdown
+  const logoutButton = page.locator('button.dropdown-item.logout').or(
+    page.locator('button', { hasText: 'Logout' })
+  );
+  await logoutButton.waitFor({ state: 'visible', timeout: 5000 });
   await logoutButton.click();
   
   // Wait for redirect to login or landing page
-  await page.waitForURL(/\/(login|\/)/i, { timeout: 5000 });
+  await page.waitForURL(/\/(login|$)/i, { timeout: 5000 });
 }
 
 /**

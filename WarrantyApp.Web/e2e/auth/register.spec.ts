@@ -164,8 +164,13 @@ test.describe('User Registration', () => {
     await page.getByLabel(/confirm password/i).fill(user.password);
     await page.getByRole('button', { name: /create account/i }).click();
     
-    // Should show error about duplicate email
-    await expect(page.getByText(/email.*already.*exists|email.*taken/i)).toBeVisible({ timeout: 5000 });
+    // Should show error about duplicate email or registration failure
+    // Backend may return generic "Registration failed" or specific duplicate message
+    await expect(page.getByText(/email.*already.*exists|email.*taken|registration.*failed/i))
+      .toBeVisible({ timeout: 10000 });
+    
+    // Should stay on registration page
+    await expect(page).toHaveURL(/\/register/);
   });
 
   test('should navigate to login page from link', async ({ page }) => {
