@@ -619,27 +619,17 @@ dotnet ef database update
 
 ## Documentation
 
-### API-Specific Docs
-- **[Authentication](../docs/04-authentication-authorization.md)** - JWT setup and configuration
-- **[Receipt Upload](../docs/08-receipt-upload-feature.md)** - File upload implementation
-- **[OCR Integration](../docs/09-ocr-openai-integration.md)** - OpenAI OCR setup
-- **[Warranty Notifications](../docs/10-warranty-expiration-notifications.md)** - Background service
-- **[Email/SMS](../docs/11-email-sms-notifications.md)** - Notification setup
-- **[User Profile](../docs/12-user-profile-management.md)** - Profile API
-- **[Testing Strategy](../docs/20-testing-strategy.md)** - Comprehensive testing approach
+### Core Backend Guides
+- **[Authentication](../docs/04-authentication-authorization.md)** - JWT + 2FA setup
+- **[Receipt Upload & OCR](../docs/09-ocr-openai-integration.md)** - File upload and AI extraction
+- **[Warranty Notifications](../docs/10-warranty-expiration-notifications.md)** - Background monitoring
+- **[Email/SMS Setup](../docs/11-email-sms-notifications.md)** - SMTP and Twilio config
+- **[Testing Strategy](../docs/20-testing-strategy.md)** - 146 tests explained
 
-### Feature Docs
-- **[PDF OCR](../docs/13-pdf-ocr-support.md)** - PDF processing
-- **[Phone Verification](../docs/14-phone-verification.md)** - SMS verification
-- **[Batch OCR](../docs/15-batch-ocr-processing.md)** - Bulk processing
-- **[Refresh Tokens](../docs/16-refresh-token-support.md)** - Token renewal
-- **[2FA](../docs/17-two-factor-authentication.md)** - Two-factor auth
-- **[Email Confirmation](../docs/18-email-confirmation.md)** - Email verification
-- **[Monitoring](../docs/19-monitoring-and-alerting.md)** - Health checks
-- **[Receipt Sharing](../docs/23-receipt-sharing.md)** - Sharing feature
-- **[Chatbot](../docs/24-ai-chatbot-receipt-queries.md)** - AI chatbot
-- **[Performance](../docs/25-performance-optimization.md)** - Optimization
-- **[Caching](../docs/26-user-data-caching.md)** - Caching strategy
+### All Backend Features (docs/04-26)
+Authentication (04), Database (05-07), Receipts (08-09, 13, 15), Notifications (10-12, 14), Security (16-18), Operations (19-22), Advanced (23-26)
+
+**Browse All**: See [../docs/](../docs/) folder for complete backend documentation.
 
 ## License
 

@@ -35,7 +35,12 @@ This application provides a comprehensive warranty tracking system with a REST A
 ```
 MyAspireSolution/
 ├── .github/workflows/          # CI/CD pipeline
-├── docs/                       # Comprehensive documentation (40 docs)
+├── docs/                       # Technical documentation (33 guides)
+│   ├── 00-quickstart.md       # Quick start guide
+│   ├── 01-26                  # Setup, backend features, infrastructure
+│   ├── 27-34                  # Frontend design, workflows, roadmap
+│   ├── 39                     # Complete implementation summary
+│   └── archive/               # Historical logs and progress reports
 ├── MyApi/                      # ASP.NET Core Web API
 │   ├── Controllers/            # 15 API controllers, 70+ endpoints
 │   ├── Services/               # Business logic (OCR, notifications, auth)
@@ -205,7 +210,7 @@ Access Swagger UI when the API is running:
 - [🎨 Design System](docs/27-design-reference.md) - Complete UI/UX guide
 - [✅ Complete Implementation](docs/39-complete-implementation-summary.md) - E2E testing guide
 
-**Browse All**: See [docs/](docs/) folder for 40 comprehensive guides covering setup, features, deployment, and frontend development.
+**Browse All**: See [docs/](docs/) folder for 33 comprehensive guides covering setup, features, deployment, and frontend development. Historical session notes available in [docs/archive/](docs/archive/).
 
 ## CI/CD Pipeline
 

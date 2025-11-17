@@ -452,21 +452,18 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Documentation
 
-### Core Documentation
+### Core Frontend Guides
 - **[Quick Start Guide](../docs/00-quickstart.md)** - Get up and running fast
-- **[Design Reference](../docs/27-design-reference.md)** - Complete design system
+- **[Design Reference](../docs/27-design-reference.md)** - Complete UI/UX design system
 - **[Frontend Workflows](../docs/28-frontend-workflows.md)** - User journeys and flows
-- **[Implementation Roadmap](../docs/34-frontend-implementation-roadmap.md)** - Complete specs (1,507 lines)
-- **[Progress Tracker](../docs/33-frontend-progress.md)** - Detailed progress log
-
-### Integration Guides
 - **[Aspire Integration](../docs/29-angular-aspire-integration.md)** - Angular + .NET Aspire setup
-- **[Proxy Configuration](../docs/32-aspire-angular-proxy-fix.md)** - Dynamic API proxy
+- **[Implementation Roadmap](../docs/34-frontend-implementation-roadmap.md)** - Detailed specs (1,507 lines)
 
-### Implementation Progress
-- **[Session 9 Components & Pages](../docs/35-session-9-components-pages.md)** - Latest components and pages
-- **[Batch 1: Remaining Pages](../docs/36-batch1-remaining-pages.md)** - 2FA setup and sharing modal
-- **[Complete Implementation Guide](../docs/39-complete-implementation-summary.md)** - Full summary with Playwright testing guide
+### Additional Resources
+- **[Proxy Configuration](../docs/32-aspire-angular-proxy-fix.md)** - Dynamic API proxy troubleshooting
+- **[Complete Implementation](../docs/39-complete-implementation-summary.md)** - E2E testing guide and next steps
+
+**Development History**: Session notes and progress reports available in [../docs/archive/](../docs/archive/)
 
 ### API Documentation
 See backend API documentation at `/swagger` when running the API.
