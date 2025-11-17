@@ -176,6 +176,42 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
+    
+    // Add detailed logging for JWT validation
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            logger.LogError("JWT Authentication failed: {Error}", context.Exception.Message);
+            logger.LogError("Exception details: {Exception}", context.Exception);
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            logger.LogInformation("JWT Token validated successfully for user: {User}", 
+                context.Principal?.Identity?.Name ?? "Unknown");
+            return Task.CompletedTask;
+        },
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (token != null)
+            {
+                logger.LogInformation("JWT Token received: {Token}", token.Substring(0, Math.Min(50, token.Length)) + "...");
+            }
+            else
+            {
+                logger.LogWarning("No Authorization header found in request");
+            }
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            logger.LogWarning("JWT Challenge triggered. Error: {Error}, ErrorDescription: {ErrorDescription}", 
+                context.Error, context.ErrorDescription);
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization();
