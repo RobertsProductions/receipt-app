@@ -1,0 +1,92 @@
+<div class="receipt-detail-page">
+  <div class="back-nav">
+    <app-button variant="ghost" size="sm" [routerLink]="['/receipts']">
+      ← Back to Receipts
+    </app-button>
+  </div>
+
+  <app-spinner *ngIf="loading" size="lg" text="Loading receipt..."></app-spinner>
+
+  <div *ngIf="!loading && receipt" class="detail-container">
+    <div class="image-section">
+      <app-card class="image-card" padding="md">
+        <img
+          *ngIf="receipt.filePath"
+          [src]="receipt.filePath"
+          [alt]="'Receipt from ' + (receipt.merchant || 'Unknown')"
+          class="receipt-image" />
+        <div *ngIf="!receipt.filePath" class="no-image">
+          <span class="no-image-icon">📄</span>
+          <p>No image available</p>
+        </div>
+      </app-card>
+    </div>
+
+    <div class="details-section">
+      <app-card class="details-card" padding="lg">
+        <h1 class="merchant-name">{{ receipt.merchant || "Unknown Merchant" }}</h1>
+        <div class="amount">${{ receipt.amount?.toFixed(2) || "0.00" }}</div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Purchase Date</span>
+            <span class="info-value">{{ receipt.purchaseDate | date:"mediumDate" }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Product</span>
+            <span class="info-value">{{ receipt.productName || "N/A" }}</span>
+          </div>
+
+          <div class="info-item" *ngIf="receipt.warrantyMonths">
+            <span class="info-label">Warranty Period</span>
+            <span class="info-value">{{ receipt.warrantyMonths }} months</span>
+          </div>
+
+          <div class="info-item" *ngIf="receipt.warrantyExpirationDate">
+            <span class="info-label">Warranty Expires</span>
+            <span class="info-value">{{ receipt.warrantyExpirationDate | date:"mediumDate" }}</span>
+          </div>
+
+          <div class="info-item" *ngIf="getWarrantyBadge() as badge">
+            <span class="info-label">Status</span>
+            <app-badge [variant]="badge.variant" size="md">{{ badge.text }}</app-badge>
+          </div>
+        </div>
+
+        <div class="notes-section" *ngIf="receipt.notes">
+          <span class="info-label">Notes</span>
+          <p class="notes-text">{{ receipt.notes }}</p>
+        </div>
+
+        <div class="actions">
+          <app-button variant="primary" size="md" (onClick)="openEditModal()">Edit</app-button>
+          <app-button variant="secondary" size="md" (onClick)="downloadReceipt()">Download</app-button>
+          <app-button variant="secondary" size="md" (onClick)="runOCR()">Run OCR</app-button>
+          <app-button variant="danger" size="md" (onClick)="deleteReceipt()">Delete</app-button>
+        </div>
+      </app-card>
+    </div>
+  </div>
+
+  <app-modal [isOpen]="showEditModal" title="Edit Receipt" size="md" (onClose)="closeEditModal()">
+    <div body>
+      <form [formGroup]="editForm" class="edit-form">
+        <app-input type="text" label="Merchant Name" formControlName="merchantName" required></app-input>
+        <app-input type="number" label="Amount" formControlName="totalAmount" required></app-input>
+        <app-input type="date" label="Purchase Date" formControlName="purchaseDate" required></app-input>
+        <app-input type="text" label="Product Name" formControlName="productName"></app-input>
+        <app-input type="number" label="Warranty (months)" formControlName="warrantyMonths"></app-input>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea formControlName="notes" class="form-textarea" rows="3"></textarea>
+        </div>
+      </form>
+    </div>
+    <div footer>
+      <app-button variant="secondary" (onClick)="closeEditModal()">Cancel</app-button>
+      <app-button variant="primary" [loading]="saving" (onClick)="saveReceipt()">Save</app-button>
+    </div>
+  </app-modal>
+</div>
+

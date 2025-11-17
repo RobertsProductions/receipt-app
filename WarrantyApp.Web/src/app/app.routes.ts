@@ -20,6 +20,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/receipts/pages/receipt-list/receipt-list.component').then(m => m.ReceiptListComponent)
   },
   {
+    path: 'receipts/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/receipts/pages/receipt-detail/receipt-detail.component').then(m => m.ReceiptDetailComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
