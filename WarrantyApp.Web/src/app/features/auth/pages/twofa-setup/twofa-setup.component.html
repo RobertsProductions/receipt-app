@@ -1,0 +1,157 @@
+<div class="twofa-setup-page">
+  <div class="twofa-setup-container">
+    <app-card>
+      <div class="twofa-setup-content">
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-state">
+          <div class="spinner"></div>
+          <p class="loading-text">Setting up 2FA...</p>
+        </div>
+
+        <!-- Step 1: QR Code & Verification -->
+        <div *ngIf="!loading && currentStep === 'qrcode'" class="step-content">
+          <div class="step-header">
+            <div class="step-number">Step 1 of 3</div>
+            <h1 class="step-title">Scan QR Code</h1>
+            <p class="step-description">
+              Use an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy to scan this QR code.
+            </p>
+          </div>
+
+          <div class="qr-code-section">
+            <div class="qr-code-container">
+              <img [src]="qrCodeDataUrl" alt="2FA QR Code" class="qr-code-image" data-testid="qr-code">
+            </div>
+
+            <div class="manual-entry">
+              <p class="manual-entry-label">Can't scan? Enter this code manually:</p>
+              <div class="manual-entry-code" data-testid="manual-entry-key">
+                <code>{{ manualEntryKey }}</code>
+                <button class="copy-button" (click)="copyRecoveryCodes()" title="Copy code">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="verification-section">
+            <app-input
+              type="text"
+              label="Verification Code"
+              placeholder="Enter 6-digit code"
+              [(value)]="verificationCode"
+              [maxLength]="6"
+              testId="verification-code-input"
+              hint="Enter the 6-digit code from your authenticator app">
+            </app-input>
+          </div>
+
+          <div class="step-actions">
+            <app-button
+              variant="primary"
+              size="lg"
+              [fullWidth]="true"
+              [disabled]="verificationCode.length !== 6"
+              [loading]="verifyLoading"
+              testId="verify-button"
+              (onClick)="proceedToVerify()">
+              Verify & Continue
+            </app-button>
+
+            <app-button
+              variant="ghost"
+              size="md"
+              [fullWidth]="true"
+              testId="cancel-button"
+              (onClick)="cancel()">
+              Cancel
+            </app-button>
+          </div>
+        </div>
+
+        <!-- Step 2: Recovery Codes -->
+        <div *ngIf="currentStep === 'recoveryCodes'" class="step-content">
+          <div class="step-header">
+            <div class="step-number">Step 2 of 3</div>
+            <h1 class="step-title">Save Recovery Codes</h1>
+            <p class="step-description">
+              Store these recovery codes in a safe place. You can use them to access your account if you lose your device.
+            </p>
+          </div>
+
+          <div class="recovery-codes-section">
+            <div class="warning-banner">
+              <svg class="warning-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <span>These codes will only be shown once. Download or copy them now!</span>
+            </div>
+
+            <div class="recovery-codes-list" data-testid="recovery-codes">
+              <div *ngFor="let code of recoveryCodes; let i = index" class="recovery-code-item">
+                <span class="code-number">{{ i + 1 }}.</span>
+                <code class="code-value">{{ code }}</code>
+              </div>
+            </div>
+
+            <div class="recovery-codes-actions">
+              <app-button
+                variant="primary"
+                size="md"
+                testId="download-codes-button"
+                (onClick)="downloadRecoveryCodes()">
+                <svg class="button-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Download Codes
+              </app-button>
+
+              <app-button
+                variant="secondary"
+                size="md"
+                testId="copy-codes-button"
+                (onClick)="copyRecoveryCodes()">
+                <svg class="button-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                  <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                </svg>
+                Copy to Clipboard
+              </app-button>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <app-button
+              variant="success"
+              size="lg"
+              [fullWidth]="true"
+              [disabled]="!downloaded"
+              testId="complete-button"
+              (onClick)="complete()">
+              Complete Setup
+            </app-button>
+
+            <p class="download-hint" *ngIf="!downloaded">
+              Please download your recovery codes before completing setup
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div *ngIf="currentStep === 'complete'" class="step-content success-state">
+          <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          
+          <h1 class="success-title">2FA Enabled!</h1>
+          <p class="success-message">
+            Your account is now protected with two-factor authentication. You'll need to enter a code from your authenticator app each time you log in.
+          </p>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>
