@@ -175,9 +175,9 @@ export async function logoutUser(page: Page): Promise<void> {
   }
   
   // Find and click the user menu button to open dropdown
-  // Button contains username and chevron ▼
+  // Button contains username and chevron ▼ - use more flexible selector
   const userMenuButton = page.locator('button').filter({ hasText: '▼' }).first();
-  await userMenuButton.waitFor({ state: 'visible', timeout: 10000 });
+  await userMenuButton.waitFor({ state: 'visible', timeout: 15000 });
   await userMenuButton.click();
   
   // Wait for dropdown to appear

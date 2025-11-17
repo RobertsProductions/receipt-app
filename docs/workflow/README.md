@@ -5,6 +5,34 @@
 
 This guide provides best practices for coding sessions, documentation maintenance, context management, and efficient development workflows. Use this to start any coding or debugging session.
 
+## 🚀 Quick Start
+
+**Before doing ANYTHING, start Aspire:**
+
+```bash
+cd AppHost
+dotnet run
+```
+
+**On first run, Aspire will prompt you for the OpenAI API key.**  
+This key is stored securely in user secrets and reused for all future sessions.
+
+This single command:
+- ✅ Prompts for OpenAI API key (first run only)
+- ✅ Starts backend API with OpenAI key configured
+- ✅ Starts frontend dev server
+- ✅ Starts PostgreSQL database
+- ✅ Configures all service dependencies
+- ✅ Opens monitoring dashboard at http://localhost:15299
+
+**Why Aspire is mandatory:**
+1. **OpenAI Integration**: Manages API key via user secrets (prompts on first run)
+2. **Zero Configuration**: No manual setup of connection strings or ports
+3. **Service Orchestration**: Ensures proper startup order and dependencies
+4. **Monitoring**: Real-time logs and health checks in dashboard
+
+**⚠️ DO NOT run services standalone** unless you have a specific reason and know what you're doing.
+
 ## 📋 Table of Contents
 
 1. [Starting a Development Session](#starting-a-development-session)
@@ -77,24 +105,42 @@ git log --graph --oneline -20
 git status
 ```
 
-#### 3. **Verify Environment**
+#### 3. **Start Services & Verify Environment**
+
+**IMPORTANT**: Always use Aspire to run services. It automatically handles:
+- OpenAI API key management (prompts on first run, stores in user secrets)
+- Database orchestration
+- Service dependencies
+- Configuration management
 
 ```bash
-# Backend
+# 1. Start All Services (via Aspire - RECOMMENDED)
+cd AppHost
+dotnet run
+# First run: Will prompt for OpenAI API key
+# Subsequent runs: Uses stored key from user secrets
+# Opens Aspire Dashboard at http://localhost:15299 (or similar)
+# ✅ Verify all services show "Running" status
+# ✅ Check API is accessible: http://localhost:5134
+# ✅ Check frontend is accessible: http://localhost:4200
+
+# 2. Verify Backend (if running standalone - NOT recommended)
 cd MyApi
 dotnet build
 dotnet test
 
-# Frontend
+# 3. Verify Frontend
 cd WarrantyApp.Web
 npm install
 npm run lint
-
-# Database (via Aspire)
-cd AppHost
-dotnet run
-# Check Aspire Dashboard - all services should be "Running"
 ```
+
+**⚠️ Why Aspire is Default:**
+- Manages OpenAI API key via user secrets (prompts once, stores securely)
+- Handles database connection strings
+- Orchestrates all services with proper dependencies
+- Provides real-time monitoring dashboard
+- Eliminates manual configuration for local development
 
 #### 4. **Define Session Goal**
 
@@ -736,24 +782,42 @@ git diff main -- MyApi/
 
 **Frontend:**
 ```bash
-# Run E2E test
+# IMPORTANT: Ensure Aspire services are running first!
+cd AppHost
+dotnet run
+# Wait for all services to show "Running" in dashboard
+
+# Then run E2E tests
+cd WarrantyApp.Web
 npm run e2e:ui  # Interactive debugging
+npm run e2e     # Headless mode
 
 # Check specific component
-ng serve
-# Navigate to component in browser
+# Frontend is auto-started by Aspire
+# Navigate to http://localhost:4200
 ```
+
+**⚠️ E2E Test Prerequisites:**
+- ✅ Aspire services must be running (`cd AppHost && dotnet run`)
+- ✅ Backend API must be accessible (http://localhost:5134)
+- ✅ Database must be ready
+- ❌ Do NOT run frontend standalone for E2E tests
 
 #### 4. Fix and Verify
 
 ```bash
 # 1. Make fix
-# 2. Run tests
-dotnet test        # Backend
-npm run e2e        # Frontend
 
-# 3. Manual verification
-# Run app and test the scenario
+# 2. Run tests (with Aspire running for E2E tests)
+dotnet test        # Backend (from MyApi.Tests)
+npm run e2e        # Frontend E2E (requires Aspire)
+
+# 3. Manual verification via Aspire Dashboard
+cd AppHost
+dotnet run
+# Check dashboard: http://localhost:15299
+# Access app: http://localhost:4200
+# Test the scenario manually
 
 # 4. Check for regressions
 # Run full test suite
@@ -865,18 +929,30 @@ git diff origin/main
 cd MyApi                  # Backend API
 cd MyApi.Tests            # Backend tests
 cd WarrantyApp.Web        # Frontend
-cd AppHost                # Aspire orchestrator
+cd AppHost                # Aspire orchestrator (START HERE)
 cd docs                   # Documentation
 
-# === Building & Running ===
-dotnet build              # Build backend
-dotnet run                # Run (from AppHost or MyApi)
-npm start                 # Run frontend dev server
+# === Building & Running (via Aspire - RECOMMENDED) ===
+cd AppHost
+dotnet run                # Starts ALL services with proper config
+# First run: Prompts for OpenAI API key
+# Subsequent runs: Uses stored key from user secrets
+# Dashboard: http://localhost:15299
+# API: http://localhost:5134
+# Frontend: http://localhost:4200
+
+# === Building & Running (Standalone - NOT recommended) ===
+cd MyApi
+dotnet build              # Build backend only
+dotnet run                # Run backend only (requires manual OpenAI key setup)
+
+cd WarrantyApp.Web
+npm start                 # Run frontend dev server only
 npm run build:prod        # Production build
 
 # === Testing ===
-dotnet test               # All backend tests
-npm run e2e               # All E2E tests
+dotnet test               # All backend tests (from MyApi.Tests)
+npm run e2e               # All E2E tests (requires Aspire running)
 npm run e2e:ui            # E2E interactive mode
 npm run lint              # Frontend linting
 
@@ -926,10 +1002,11 @@ ls -R docs/               # Directory structure
 - [ ] [Doc 2]
 
 ## Environment Check
-- [ ] Backend builds: `dotnet build`
-- [ ] Backend tests pass: `dotnet test`
-- [ ] Frontend builds: `npm start`
-- [ ] Frontend lints: `npm run lint`
+- [ ] Aspire services running: `cd AppHost && dotnet run`
+- [ ] Aspire Dashboard accessible: http://localhost:15299
+- [ ] All services show "Running" in dashboard
+- [ ] Backend tests pass: `dotnet test` (from MyApi.Tests)
+- [ ] Frontend lints: `cd WarrantyApp.Web && npm run lint`
 
 ## Tasks
 - [ ] [Task 1]
@@ -957,24 +1034,27 @@ ls -R docs/               # Directory structure
 ### ✅ DO
 
 1. **Read docs FIRST** before coding
-2. **Keep sessions focused** on one goal
-3. **Batch similar tasks** together
-4. **Update documentation** with code changes
-5. **Test before committing**
-6. **Write descriptive commit messages**
-7. **Use component READMEs** for context
-8. **Take breaks** every 60-90 minutes
+2. **Use Aspire** for running services (manages OpenAI key via user secrets)
+3. **Keep sessions focused** on one goal
+4. **Batch similar tasks** together
+5. **Update documentation** with code changes
+6. **Test before committing** (with Aspire running for E2E)
+7. **Write descriptive commit messages**
+8. **Use component READMEs** for context
+9. **Take breaks** every 60-90 minutes
 
 ### ❌ DON'T
 
 1. **Don't skip documentation review**
-2. **Don't multi-task** across unrelated features
-3. **Don't commit broken code**
-4. **Don't forget to update docs**
-5. **Don't create scope creep**
-6. **Don't work without clear goal**
-7. **Don't ignore failing tests**
-8. **Don't create docs in repo for personal notes**
+2. **Don't run services standalone** (use Aspire for proper config)
+3. **Don't run E2E tests** without Aspire services running
+4. **Don't multi-task** across unrelated features
+5. **Don't commit broken code**
+6. **Don't forget to update docs**
+7. **Don't create scope creep**
+8. **Don't work without clear goal**
+9. **Don't ignore failing tests**
+10. **Don't create docs in repo for personal notes**
 
 ---
 

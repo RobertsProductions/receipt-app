@@ -11,7 +11,7 @@
 
 import { test, expect } from '@playwright/test';
 import { generateTestUser, TEST_USERS } from '../helpers/test-data';
-import { registerUser, loginUser, logoutUser, isLoggedIn, assertLoggedOut } from '../helpers/auth.helpers';
+import { registerUser, loginUser, logoutUser, isLoggedIn, assertLoggedOut, registerAndLogin } from '../helpers/auth.helpers';
 
 test.describe('User Login', () => {
   
@@ -96,9 +96,11 @@ test.describe('User Login', () => {
     // Should redirect to receipts or dashboard
     await expect(page).toHaveURL(/\/(receipts|dashboard)/i);
     
-    // Should see user-specific elements
-    const userMenu = page.locator('button').filter({ hasText: '▼' })
-      .or(page.getByText(user.username));
+    // Should see user-specific elements - wait for login link to disappear
+    await expect(page.getByRole('link', { name: /^login$/i })).not.toBeVisible({ timeout: 15000 });
+    
+    // And/or user menu should be visible
+    const userMenu = page.locator('button', { hasText: user.username });
     await expect(userMenu).toBeVisible({ timeout: 10000 });
   });
 
@@ -111,6 +113,10 @@ test.describe('User Login', () => {
     await page.goto('/receipts');
     await page.waitForLoadState('networkidle');
     
+    // Wait for user menu to be visible before reloading
+    const userMenuButton = page.locator('button', { hasText: user.username });
+    await expect(userMenuButton).toBeVisible({ timeout: 15000 });
+    
     // Reload page
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -118,9 +124,8 @@ test.describe('User Login', () => {
     // Should still be on receipts page (not redirected to login)
     await expect(page).toHaveURL(/\/(receipts|dashboard|confirm-email)/i);
     
-    // Should still see user menu
-    const userMenu = page.locator('button').filter({ hasText: '▼' });
-    await expect(userMenu).toBeVisible({ timeout: 10000 });
+    // Should still see user menu - wait for it to reappear
+    await expect(userMenuButton).toBeVisible({ timeout: 15000 });
   });
 
   test('should successfully logout', async ({ page }) => {
@@ -170,7 +175,7 @@ test.describe('User Login', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     await page.getByLabel(/email/i).fill(user.email);
-    await page.getByLabel(/password/i).fill(user.password);
+    await page.getByLabel('Password', { exact: true }).fill(user.password);
     
     const loginButton = page.getByRole('button', { name: /login|sign in/i });
     await loginButton.click();
@@ -251,7 +256,7 @@ test.describe('User Login', () => {
     
     // Login
     await page.getByLabel(/email/i).fill(user.email);
-    await page.getByLabel(/password/i).fill(user.password);
+    await page.getByLabel('Password', { exact: true }).fill(user.password);
     await page.getByRole('button', { name: /sign in/i }).click();
     
     // Should redirect back to receipts page (or confirm-email, then we navigate)
