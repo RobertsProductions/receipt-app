@@ -13,6 +13,7 @@ export class CardComponent implements AfterContentInit {
   @Input() hoverable: boolean = false;
   @Input() padding: 'sm' | 'md' | 'lg' = 'md';
   @Input() clickable: boolean = false;
+  @Input() testId?: string;
   @Output() onClick = new EventEmitter<void>();
 
   @ContentChild('[header]') headerContent?: ElementRef;

@@ -15,9 +15,36 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/pages/register/register.component').then(m => m.RegisterComponent)
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/auth/pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./features/auth/pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+  },
+  {
+    path: 'confirm-email',
+    loadComponent: () => import('./features/auth/pages/confirm-email/confirm-email.component').then(m => m.ConfirmEmailComponent)
+  },
+  {
+    path: 'verify-phone',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/auth/pages/verify-phone/verify-phone.component').then(m => m.VerifyPhoneComponent)
+  },
+  {
+    path: '2fa/setup',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/auth/pages/twofa-setup/twofa-setup.component').then(m => m.TwofaSetupComponent)
+  },
+  {
     path: 'receipts',
     canActivate: [authGuard],
     loadComponent: () => import('./features/receipts/pages/receipt-list/receipt-list.component').then(m => m.ReceiptListComponent)
+  },
+  {
+    path: 'receipts/shared',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/sharing/pages/shared-receipts/shared-receipts.component').then(m => m.SharedReceiptsComponent)
   },
   {
     path: 'receipts/:id',

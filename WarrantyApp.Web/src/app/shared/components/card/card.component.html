@@ -6,6 +6,7 @@
   [class.card-padding-sm]="padding === 'sm'"
   [class.card-padding-md]="padding === 'md'"
   [class.card-padding-lg]="padding === 'lg'"
+  [attr.data-testid]="testId"
   (click)="handleClick()">
   
   <div class="card-header" *ngIf="hasHeader">

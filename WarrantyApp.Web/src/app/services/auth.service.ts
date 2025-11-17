@@ -76,6 +76,26 @@ export class AuthService {
     return this.http.post<void>(`${this.apiUrl}/resend-confirmation-email`, {});
   }
 
+  resendEmailConfirmation(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/resend-email-confirmation`, { email });
+  }
+
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/reset-password`, { token, newPassword });
+  }
+
+  verifyPhone(code: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/verify-phone`, { code });
+  }
+
+  resendPhoneVerification(phoneNumber: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/resend-phone-verification`, { phoneNumber });
+  }
+
   enable2FA(): Observable<TwoFactorSetupResponse> {
     return this.http.post<TwoFactorSetupResponse>(`${this.apiUrl}/2fa/enable`, {});
   }

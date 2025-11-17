@@ -79,4 +79,20 @@ export class ReceiptService {
   batchOcr(request: BatchOcrRequest): Observable<BatchOcrResult> {
     return this.http.post<BatchOcrResult>(`${this.apiUrl}/batch-ocr`, request);
   }
+
+  getSharedWithMe(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/shared-with-me`);
+  }
+
+  getReceiptShares(receiptId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${receiptId}/shares`);
+  }
+
+  shareReceipt(receiptId: number, email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${receiptId}/share`, { email });
+  }
+
+  revokeShare(receiptId: number, email: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${receiptId}/share/${encodeURIComponent(email)}`);
+  }
 }
