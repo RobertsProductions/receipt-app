@@ -1,0 +1,15 @@
+<label class="checkbox-container" [class]="'checkbox-' + size" [class.disabled]="disabled">
+  <input
+    type="checkbox"
+    class="checkbox-input"
+    [checked]="value"
+    [disabled]="disabled"
+    (change)="toggle()"
+    (blur)="onTouched()" />
+  <span class="checkbox-box">
+    <svg *ngIf="value" class="checkbox-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+  </span>
+  <span *ngIf="label" class="checkbox-label">{{ label }}</span>
+</label>

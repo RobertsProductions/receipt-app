@@ -1,0 +1,23 @@
+<div class="slider-container">
+  <div class="slider-header" *ngIf="label || showValue">
+    <label *ngIf="label" class="slider-label">{{ label }}</label>
+    <span *ngIf="showValue" class="slider-value">{{ value }}{{ unit }}</span>
+  </div>
+  <div class="slider-track">
+    <div class="slider-fill" [style.width.%]="percentage"></div>
+    <input
+      type="range"
+      class="slider-input"
+      [min]="min"
+      [max]="max"
+      [step]="step"
+      [value]="value"
+      [disabled]="disabled"
+      (input)="onSliderChange($event)"
+      (blur)="onTouched()" />
+  </div>
+  <div class="slider-labels">
+    <span class="slider-min">{{ min }}{{ unit }}</span>
+    <span class="slider-max">{{ max }}{{ unit }}</span>
+  </div>
+</div>
