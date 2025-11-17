@@ -256,6 +256,8 @@ See [docs/infra/infra-cicd-github-actions.md](docs/infra/infra-cicd-github-actio
 
 **Angular proxy issues**: See [docs/frontend/frontend-aspire-proxy.md](docs/frontend/frontend-aspire-proxy.md)
 
+**Authentication 401 errors**: See [docs/infra/infra-auth-troubleshooting.md](docs/infra/infra-auth-troubleshooting.md) for detailed HTTP/HTTPS proxy and token issues
+
 ## Contributing
 
 1. Fork the repository
