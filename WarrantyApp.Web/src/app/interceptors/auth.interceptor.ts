@@ -19,6 +19,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       },
     });
     console.log('✅ Added Authorization header');
+    console.log('Verify header in cloned request:', clonedReq.headers.get('Authorization'));
     return next(clonedReq);
   }
 
