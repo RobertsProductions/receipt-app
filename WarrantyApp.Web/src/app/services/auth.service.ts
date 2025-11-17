@@ -23,8 +23,6 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    console.log('🌍 AuthService initialized with apiUrl:', environment.apiUrl);
-    console.log('Full auth endpoint:', this.apiUrl);
     this.loadStoredAuth();
   }
 
@@ -141,17 +139,9 @@ export class AuthService {
   }
 
   private storeAuth(response: LoginResponse): void {
-    console.log('🔐 Storing auth tokens...');
-    console.log('Access token:', response.token ? `${response.token.substring(0, 20)}...` : 'MISSING');
-    console.log('Refresh token:', response.refreshToken ? `${response.refreshToken.substring(0, 20)}...` : 'MISSING');
-    
     localStorage.setItem(this.accessTokenKey, response.token);
     localStorage.setItem(this.refreshTokenKey, response.refreshToken);
     this.currentUserSubject.next(response);
-    
-    console.log('✅ Tokens stored. Verify in localStorage:');
-    console.log('- access_token:', localStorage.getItem(this.accessTokenKey) ? 'EXISTS' : 'MISSING');
-    console.log('- refresh_token:', localStorage.getItem(this.refreshTokenKey) ? 'EXISTS' : 'MISSING');
   }
 
   private clearAuth(): void {
