@@ -115,7 +115,7 @@ export async function loginUser(page: Page, email: string, password: string): Pr
   
   // Wait for navbar to update with user info (this ensures Angular state has loaded)
   // Look for either "Login" button to disappear OR user menu to appear
-  await page.waitForTimeout(1000); // Give Angular time to process auth state
+  await page.waitForTimeout(2000); // Give Angular time to process auth state and persist to storage
   
   // Verify we're actually logged in by checking navbar state change
   try {
@@ -127,6 +127,9 @@ export async function loginUser(page: Page, email: string, password: string): Pr
   } catch {
     // If timeout, continue anyway - the page might have loaded
   }
+  
+  // Extra wait to ensure token is fully persisted to localStorage/sessionStorage
+  await page.waitForTimeout(500);
 }
 
 /**

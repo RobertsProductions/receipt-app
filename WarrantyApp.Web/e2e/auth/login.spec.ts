@@ -117,15 +117,41 @@ test.describe('User Login', () => {
     const userMenuButton = page.locator('button', { hasText: user.username });
     await expect(userMenuButton).toBeVisible({ timeout: 15000 });
     
+    // Verify auth token is stored in localStorage before reload
+    const tokenBeforeReload = await page.evaluate(() => {
+      return localStorage.getItem('auth_token') || localStorage.getItem('token') || 
+             sessionStorage.getItem('auth_token') || sessionStorage.getItem('token');
+    });
+    
+    if (!tokenBeforeReload) {
+      throw new Error('Auth token not found in storage before reload');
+    }
+    
+    // Give extra time for auth state to fully persist
+    await page.waitForTimeout(1000);
+    
     // Reload page
     await page.reload();
     await page.waitForLoadState('networkidle');
     
+    // Give Angular time to restore auth state from storage
+    await page.waitForTimeout(3000);
+    
+    // Verify token still exists after reload
+    const tokenAfterReload = await page.evaluate(() => {
+      return localStorage.getItem('auth_token') || localStorage.getItem('token') || 
+             sessionStorage.getItem('auth_token') || sessionStorage.getItem('token');
+    });
+    
+    if (!tokenAfterReload) {
+      throw new Error('Auth token not found in storage after reload');
+    }
+    
     // Should still be on receipts page (not redirected to login)
-    await expect(page).toHaveURL(/\/(receipts|dashboard|confirm-email)/i);
+    await expect(page).toHaveURL(/\/(receipts|dashboard)/i, { timeout: 10000 });
     
     // Should still see user menu - wait for it to reappear
-    await expect(userMenuButton).toBeVisible({ timeout: 15000 });
+    await expect(userMenuButton).toBeVisible({ timeout: 20000 });
   });
 
   test('should successfully logout', async ({ page }) => {
@@ -136,6 +162,10 @@ test.describe('User Login', () => {
     // Navigate to receipts to ensure we're on a stable page
     await page.goto('/receipts');
     await page.waitForLoadState('networkidle');
+    
+    // Wait for user menu to be visible (ensure auth state is fully loaded)
+    const userMenuButton = page.locator('button').filter({ hasText: '▼' }).first();
+    await expect(userMenuButton).toBeVisible({ timeout: 15000 });
     
     // Logout
     await logoutUser(page);
