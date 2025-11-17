@@ -626,7 +626,11 @@ For issues, questions, or contributions, please:
   - OpenAiOcrService (16 tests)
   - WarrantyExpirationService (17 tests)
   - ChatbotService (17 tests)
-- [ ] Phase 3: E2E tests with Playwright (after frontend implementation)
+- [x] Phase 3: Controller integration tests - **Deferred** (skipped in favor of E2E tests)
+  - Decision: API controller tests not implemented due to high maintenance burden
+  - Rationale: E2E tests with Playwright provide superior validation of endpoints
+  - See [Testing Strategy](docs/20-testing-strategy.md) for full rationale
+- [ ] Phase 4: E2E tests with Playwright (after frontend implementation)
   - Authentication flows (login, register, 2FA, email confirmation)
   - Receipt workflows (upload, OCR, batch processing, download, delete)
   - User profile management (update profile, phone verification, preferences)

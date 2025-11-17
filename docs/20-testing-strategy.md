@@ -123,16 +123,17 @@ This document outlines the comprehensive testing strategy for the Warranty Manag
 
 ### ⏸️ Deferred: Controller Integration Tests
 
-**Decision**: Controller integration tests are NOT being implemented.
+**Decision**: API controller integration tests are NOT being implemented.
 
 **Rationale**:
 1. **Complexity**: Require full application bootstrap with all services
 2. **Brittleness**: Break frequently with implementation changes
 3. **Maintenance Burden**: High overhead for mocking all dependencies
-4. **Redundant Coverage**: E2E tests provide better validation of endpoints
-5. **Service Coverage**: 117 service tests already validate business logic
+4. **Redundant Coverage**: E2E tests provide superior validation of endpoints
+5. **Service Coverage**: 117 service tests already validate all business logic
+6. **Poor ROI**: Time investment better spent on E2E tests that validate full user workflows
 
-**Alternative**: Playwright E2E tests after frontend development.
+**Alternative**: Playwright E2E tests after frontend development will provide comprehensive validation of API endpoints in realistic usage scenarios, including authentication, authorization, and full request/response cycles.
 
 ### 🔮 Future: E2E Tests with Playwright
 
