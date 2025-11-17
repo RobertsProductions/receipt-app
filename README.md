@@ -192,7 +192,16 @@ dotnet test
 ```
 
 ### Run Frontend E2E Tests
+
+⚠️ **Prerequisites**: Backend API must be running first
+
 ```bash
+# Terminal 1: Start backend API
+cd AppHost
+dotnet run
+# Wait for Aspire Dashboard to show services ready
+
+# Terminal 2: Run E2E tests
 cd WarrantyApp.Web
 npm run e2e          # Run all 125 tests
 npm run e2e:ui       # Open Playwright UI
@@ -200,6 +209,8 @@ npm run e2e:debug    # Debug mode
 ```
 
 **Test Coverage**: 125 E2E tests covering authentication, receipts, OCR, sharing, warranties, and settings.
+
+**Note**: E2E tests require the full application stack (frontend + backend + database). The Playwright config automatically starts the Angular dev server, but the backend must be running separately.
 
 ## API Documentation
 

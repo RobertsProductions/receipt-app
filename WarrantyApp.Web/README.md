@@ -105,9 +105,19 @@ The build artifacts will be stored in the `dist/` directory.
 
 ### Running E2E Tests (NEW!)
 
+⚠️ **Prerequisites**: Requires backend API running
+
 Playwright E2E tests for comprehensive testing:
 
 ```bash
+# Step 1: Start backend API (required!)
+cd AppHost
+dotnet run
+# Wait for Aspire Dashboard to show all services ready
+
+# Step 2: Run E2E tests (in new terminal)
+cd WarrantyApp.Web
+
 # Run all E2E tests
 npm run e2e
 
@@ -134,7 +144,7 @@ npm run e2e:report
 
 **Total: 125 comprehensive E2E tests**
 
-See [Testing Guide](../../docs/39-complete-implementation-summary.md) for comprehensive test documentation.
+**Note**: E2E tests are integration tests that require the full application stack (frontend + backend + database). If tests fail immediately, verify the backend API is running via Aspire.
 
 ### Running Unit Tests
 
