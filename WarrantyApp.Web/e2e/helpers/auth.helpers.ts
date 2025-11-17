@@ -62,12 +62,12 @@ export async function loginUser(page: Page, email: string, password: string): Pr
   await emailInput.waitFor({ state: 'visible', timeout: 10000 });
   await emailInput.fill(email);
   
-  const passwordInput = page.getByLabel(/password/i);
+  const passwordInput = page.getByLabel('Password', { exact: true });
   await passwordInput.waitFor({ state: 'visible', timeout: 10000 });
   await passwordInput.fill(password);
   
   // Submit form
-  const loginButton = page.getByRole('button', { name: /login|sign in/i });
+  const loginButton = page.getByRole('button', { name: /sign in/i });
   await loginButton.waitFor({ state: 'visible', timeout: 10000 });
   await loginButton.click();
   
@@ -86,11 +86,11 @@ export async function loginWith2FA(page: Page, email: string, password: string, 
   await emailInput.waitFor({ state: 'visible', timeout: 10000 });
   await emailInput.fill(email);
   
-  const passwordInput = page.getByLabel(/password/i);
+  const passwordInput = page.getByLabel('Password', { exact: true });
   await passwordInput.waitFor({ state: 'visible', timeout: 10000 });
   await passwordInput.fill(password);
   
-  const loginButton = page.getByRole('button', { name: /login|sign in/i });
+  const loginButton = page.getByRole('button', { name: /sign in/i });
   await loginButton.waitFor({ state: 'visible', timeout: 10000 });
   await loginButton.click();
   

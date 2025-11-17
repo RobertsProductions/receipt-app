@@ -20,37 +20,36 @@ test.describe('User Login', () => {
   });
 
   test('should display login form correctly', async ({ page }) => {
-    // Check page title
-    await expect(page).toHaveTitle(/login|sign in/i);
+    // Check page heading (not title, since SPA title is static)
+    await expect(page.getByRole('heading', { name: /welcome back/i })).toBeVisible();
     
     // Check form elements
-    await expect(page.getByRole('heading', { name: /login|sign in/i })).toBeVisible();
     await expect(page.getByLabel(/email/i)).toBeVisible();
-    await expect(page.getByLabel(/password/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /login|sign in/i })).toBeVisible();
+    await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
     
     // Check links
-    await expect(page.getByRole('link', { name: /register|create account/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /sign up/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /forgot password/i })).toBeVisible();
   });
 
   test('should validate required fields', async ({ page }) => {
     // Submit empty form
-    await page.getByRole('button', { name: /login|sign in/i }).click();
+    await page.getByRole('button', { name: /sign in/i }).click();
     
-    // Check for validation errors
+    // Check for validation errors - inputs should have required attribute
     const emailInput = page.getByLabel(/email/i);
-    await expect(emailInput).toHaveAttribute('required', '');
+    await expect(emailInput).toHaveAttribute('required');
     
-    const passwordInput = page.getByLabel(/password/i);
-    await expect(passwordInput).toHaveAttribute('required', '');
+    const passwordInput = page.getByLabel('Password', { exact: true });
+    await expect(passwordInput).toHaveAttribute('required');
   });
 
   test('should show error for invalid credentials', async ({ page }) => {
     // Try to login with invalid credentials
     await page.getByLabel(/email/i).fill(TEST_USERS.invalid.email);
-    await page.getByLabel(/password/i).fill(TEST_USERS.invalid.password);
-    await page.getByRole('button', { name: /login|sign in/i }).click();
+    await page.getByLabel('Password', { exact: true }).fill(TEST_USERS.invalid.password);
+    await page.getByRole('button', { name: /sign in/i }).click();
     
     // Should show error message
     await expect(page.getByText(/invalid.*credentials|incorrect.*password|login.*failed/i))
@@ -116,12 +115,12 @@ test.describe('User Login', () => {
   });
 
   test('should navigate to register page from link', async ({ page }) => {
-    // Click register link
-    await page.getByRole('link', { name: /register|create account|sign up/i }).click();
+    // Click register link (use first() to avoid strict mode if there are multiple)
+    await page.getByRole('link', { name: /sign up/i }).first().click();
     
     // Should navigate to register page
     await expect(page).toHaveURL(/\/register/);
-    await expect(page.getByRole('heading', { name: /create account|register/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /create account/i })).toBeVisible();
   });
 
   test('should navigate to forgot password page', async ({ page }) => {
@@ -171,14 +170,13 @@ test.describe('User Login', () => {
   });
 
   test('should show password visibility toggle if present', async ({ page }) => {
-    const passwordInput = page.getByLabel(/password/i);
+    const passwordInput = page.getByLabel('Password', { exact: true });
     await passwordInput.fill('TestPassword123!');
     
     // Look for visibility toggle button
-    const toggleButton = page.getByRole('button', { name: /show|hide|toggle.*password/i })
-      .or(page.locator('button[type="button"]').filter({ has: page.locator('svg') }));
+    const toggleButton = page.getByRole('button', { name: /show|hide.*password/i }).first();
     
-    const hasToggle = await toggleButton.first().isVisible().catch(() => false);
+    const hasToggle = await toggleButton.isVisible().catch(() => false);
     
     if (hasToggle) {
       // Check initial type
@@ -186,7 +184,7 @@ test.describe('User Login', () => {
       expect(initialType).toBe('password');
       
       // Click toggle
-      await toggleButton.first().click();
+      await toggleButton.click();
       
       // Type should change to text
       const newType = await passwordInput.getAttribute('type');

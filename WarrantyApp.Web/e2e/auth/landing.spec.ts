@@ -7,12 +7,12 @@ test.describe('Landing Page', () => {
     // Check page title
     await expect(page).toHaveTitle(/Warranty/i);
     
-    // Check hero section
-    await expect(page.getByRole('heading', { name: /manage your receipts/i })).toBeVisible();
+    // Check hero section heading
+    await expect(page.getByRole('heading', { name: /warranty management made simple/i })).toBeVisible();
     
-    // Check navigation links
-    await expect(page.getByRole('link', { name: /login/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /register/i })).toBeVisible();
+    // Check navigation links (use first() to handle multiple instances)
+    await expect(page.getByRole('link', { name: /login/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /sign up/i }).first()).toBeVisible();
   });
 
   test('should navigate to login page', async ({ page }) => {
@@ -21,13 +21,14 @@ test.describe('Landing Page', () => {
     await page.getByRole('link', { name: /login/i }).first().click();
     
     await expect(page).toHaveURL('/login');
-    await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /welcome back/i })).toBeVisible();
   });
 
   test('should navigate to register page', async ({ page }) => {
     await page.goto('/');
     
-    await page.getByRole('link', { name: /get started/i }).first().click();
+    // Click the "Get Started Free" button
+    await page.getByRole('button', { name: /get started/i }).first().click();
     
     await expect(page).toHaveURL('/register');
     await expect(page.getByRole('heading', { name: /create account/i })).toBeVisible();

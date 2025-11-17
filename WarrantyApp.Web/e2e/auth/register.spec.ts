@@ -18,28 +18,27 @@ test.describe('User Registration', () => {
   });
 
   test('should display registration form correctly', async ({ page }) => {
-    // Check page title
-    await expect(page).toHaveTitle(/register|create account/i);
+    // Check page heading
+    await expect(page.getByRole('heading', { name: /create account/i })).toBeVisible();
     
     // Check form elements
-    await expect(page.getByRole('heading', { name: /create account|register/i })).toBeVisible();
     await expect(page.getByLabel(/email/i)).toBeVisible();
     await expect(page.getByLabel(/username/i)).toBeVisible();
     await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
     await expect(page.getByLabel(/confirm password/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /create account|register/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /create account/i })).toBeVisible();
     
     // Check link to login page
-    await expect(page.getByRole('link', { name: /login|sign in/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /sign in/i })).toBeVisible();
   });
 
   test('should validate required fields', async ({ page }) => {
     // Submit empty form
-    await page.getByRole('button', { name: /create account|register/i }).click();
+    await page.getByRole('button', { name: /create account/i }).click();
     
     // Check for validation errors (form should not submit)
     const emailInput = page.getByLabel(/email/i);
-    await expect(emailInput).toHaveAttribute('required', '');
+    await expect(emailInput).toHaveAttribute('required');
   });
 
   test('should validate email format', async ({ page }) => {
@@ -50,7 +49,7 @@ test.describe('User Registration', () => {
     await page.getByLabel(/confirm password/i).fill('Test123!');
     
     // Submit form
-    await page.getByRole('button', { name: /create account|register/i }).click();
+    await page.getByRole('button', { name: /create account/i }).click();
     
     // Should show email validation error or not submit
     const currentUrl = page.url();
@@ -67,7 +66,7 @@ test.describe('User Registration', () => {
     await page.getByLabel(/confirm password/i).fill('DifferentPassword123!');
     
     // Submit form
-    await page.getByRole('button', { name: /create account|register/i }).click();
+    await page.getByRole('button', { name: /create account/i }).click();
     
     // Should show password mismatch error
     await expect(page.getByText(/password.*match/i)).toBeVisible();
@@ -83,7 +82,7 @@ test.describe('User Registration', () => {
     await page.getByLabel(/confirm password/i).fill(user.password);
     
     // Submit form
-    await page.getByRole('button', { name: /create account|register/i }).click();
+    await page.getByRole('button', { name: /create account/i }).click();
     
     // Should show password strength error or stay on registration page
     const currentUrl = page.url();
