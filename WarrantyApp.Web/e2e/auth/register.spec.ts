@@ -99,7 +99,7 @@ test.describe('User Registration', () => {
     await page.getByLabel(/confirm password/i).fill(user.password);
     
     // Submit form
-    await page.getByRole('button', { name: /create account|register/i }).click();
+    await page.getByRole('button', { name: /create account/i }).click();
     
     // Should redirect to login or dashboard
     await expect(page).toHaveURL(/\/(login|receipts|dashboard)/i, { timeout: 10000 });
@@ -129,7 +129,7 @@ test.describe('User Registration', () => {
     }
     
     // Submit form
-    await page.getByRole('button', { name: /create account|register/i }).click();
+    await page.getByRole('button', { name: /create account/i }).click();
     
     // Should successfully register
     await expect(page).toHaveURL(/\/(login|receipts|dashboard)/i, { timeout: 10000 });
@@ -147,15 +147,15 @@ test.describe('User Registration', () => {
     await page.getByLabel(/username/i).fill(generateTestUser().username);
     await page.getByLabel('Password', { exact: true }).fill(user.password);
     await page.getByLabel(/confirm password/i).fill(user.password);
-    await page.getByRole('button', { name: /create account|register/i }).click();
+    await page.getByRole('button', { name: /create account/i }).click();
     
     // Should show error about duplicate email
     await expect(page.getByText(/email.*already.*exists|email.*taken/i)).toBeVisible({ timeout: 5000 });
   });
 
   test('should navigate to login page from link', async ({ page }) => {
-    // Click login link
-    await page.getByRole('link', { name: /login|sign in|already have.*account/i }).click();
+    // Click login link (use first() to avoid strict mode)
+    await page.getByRole('link', { name: /sign in/i }).first().click();
     
     // Should navigate to login page
     await assertOnLoginPage(page);
@@ -171,7 +171,7 @@ test.describe('User Registration', () => {
     await page.getByLabel(/confirm password/i).fill(user.password);
     
     // Submit form
-    const submitButton = page.getByRole('button', { name: /create account|register/i });
+    const submitButton = page.getByRole('button', { name: /create account/i });
     await submitButton.click();
     
     // Button should be disabled during submission

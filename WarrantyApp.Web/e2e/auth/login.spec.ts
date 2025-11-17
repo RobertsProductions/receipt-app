@@ -28,8 +28,8 @@ test.describe('User Login', () => {
     await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
     
-    // Check links
-    await expect(page.getByRole('link', { name: /sign up/i })).toBeVisible();
+    // Check links (use first() since they appear in navbar and footer)
+    await expect(page.getByRole('link', { name: /sign up/i }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /forgot password/i })).toBeVisible();
   });
 
