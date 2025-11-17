@@ -1,0 +1,23 @@
+<div class="progress-container" [attr.data-testid]="testId">
+  <div class="progress-bar" 
+       [class]="'progress-bar-' + size"
+       role="progressbar"
+       [attr.aria-valuenow]="value"
+       [attr.aria-valuemin]="0"
+       [attr.aria-valuemax]="max"
+       [attr.aria-label]="label || 'Progress'">
+    
+    <div class="progress-track">
+      <div class="progress-fill"
+           [class]="'progress-fill-' + variant"
+           [class.progress-fill-striped]="striped"
+           [class.progress-fill-animated]="animated"
+           [style.width.%]="percentage">
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showLabel" class="progress-label">
+    {{ displayLabel }}
+  </div>
+</div>

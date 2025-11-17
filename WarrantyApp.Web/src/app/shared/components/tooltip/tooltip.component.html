@@ -1,0 +1,10 @@
+<div class="tooltip-wrapper">
+  <ng-content></ng-content>
+  
+  <div *ngIf="isVisible && text" 
+       class="tooltip"
+       [class]="'tooltip-' + position"
+       role="tooltip">
+    {{ text }}
+  </div>
+</div>
