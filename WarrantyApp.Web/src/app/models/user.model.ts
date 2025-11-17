@@ -8,6 +8,7 @@ export interface User {
   emailConfirmed: boolean;
   phoneNumberConfirmed: boolean;
   twoFactorEnabled: boolean;
+  createdAt?: string;
 }
 
 export interface UserProfile {
@@ -21,4 +22,5 @@ export interface UserProfile {
   emailConfirmed: boolean;
   phoneNumberConfirmed: boolean;
   twoFactorEnabled: boolean;
+  createdAt?: string;
 }

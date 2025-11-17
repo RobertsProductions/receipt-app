@@ -1,0 +1,222 @@
+<div class="profile-page">
+  <div class="page-header">
+    <h1 class="page-title">Profile</h1>
+    <app-button variant="secondary" size="md" [routerLink]="['/receipts']">
+      Back to Receipts
+    </app-button>
+  </div>
+
+  <app-spinner *ngIf="loading" size="lg" text="Loading profile..."></app-spinner>
+
+  <div *ngIf="!loading && profile" class="profile-content">
+    <!-- Profile Header Card -->
+    <app-card class="profile-header-card" padding="lg">
+      <div class="profile-header">
+        <app-avatar [name]="profile.firstName + ' ' + profile.lastName" size="xl"></app-avatar>
+        <div class="profile-header-info">
+          <h2 class="profile-name">{{ profile.firstName }} {{ profile.lastName }}</h2>
+          <p class="profile-email">
+            {{ profile.email }}
+            <app-badge *ngIf="profile.emailConfirmed" variant="success" size="sm">Verified</app-badge>
+          </p>
+          <p class="profile-member-since">Member since {{ getMemberSince() }}</p>
+        </div>
+      </div>
+    </app-card>
+
+    <!-- Personal Information Card -->
+    <app-card padding="lg">
+      <div header class="card-header-section">
+        <h3 class="card-title">Personal Information</h3>
+        <app-button
+          *ngIf="!editMode"
+          variant="secondary"
+          size="sm"
+          (onClick)="toggleEditMode()">
+          Edit
+        </app-button>
+      </div>
+
+      <form [formGroup]="profileForm" class="profile-form">
+        <div class="form-row">
+          <app-input
+            label="First Name"
+            type="text"
+            formControlName="firstName"
+            [disabled]="!editMode"
+            [required]="true">
+          </app-input>
+
+          <app-input
+            label="Last Name"
+            type="text"
+            formControlName="lastName"
+            [disabled]="!editMode"
+            [required]="true">
+          </app-input>
+        </div>
+
+        <app-input
+          label="Email"
+          type="email"
+          [value]="profile.email"
+          [disabled]="true">
+          <span class="input-help">Email cannot be changed. Contact support if needed.</span>
+        </app-input>
+
+        <app-input
+          label="Phone Number"
+          type="tel"
+          formControlName="phoneNumber"
+          [disabled]="!editMode"
+          placeholder="+1234567890">
+          <span class="input-help" *ngIf="profile.phoneNumberConfirmed">
+            <app-badge variant="success" size="sm">Verified</app-badge>
+          </span>
+        </app-input>
+
+        <div *ngIf="editMode" class="form-actions">
+          <app-button
+            variant="secondary"
+            size="md"
+            (onClick)="toggleEditMode()">
+            Cancel
+          </app-button>
+          <app-button
+            variant="primary"
+            size="md"
+            [loading]="savingProfile"
+            (onClick)="saveProfile()">
+            Save Changes
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+
+    <!-- Security Card -->
+    <app-card padding="lg">
+      <div header>
+        <h3 class="card-title">Security</h3>
+      </div>
+
+      <div class="security-items">
+        <div class="security-item">
+          <div class="security-item-info">
+            <span class="security-item-label">Password</span>
+            <span class="security-item-value">••••••••</span>
+          </div>
+          <app-button variant="secondary" size="sm" (onClick)="openPasswordModal()">
+            Change
+          </app-button>
+        </div>
+
+        <div class="security-item">
+          <div class="security-item-info">
+            <span class="security-item-label">Two-Factor Authentication</span>
+            <span class="security-item-value">
+              <app-badge [variant]="profile.twoFactorEnabled ? 'success' : 'neutral'">
+                {{ profile.twoFactorEnabled ? 'Enabled' : 'Disabled' }}
+              </app-badge>
+            </span>
+          </div>
+          <app-button
+            variant="secondary"
+            size="sm"
+            [routerLink]="['/settings/2fa']"
+            [disabled]="true">
+            Manage
+          </app-button>
+        </div>
+      </div>
+    </app-card>
+
+    <!-- Statistics Card -->
+    <app-card padding="lg">
+      <div header>
+        <h3 class="card-title">Statistics</h3>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-label">Total Receipts</span>
+          <span class="stat-value">{{ stats.totalReceipts }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Warranties Tracked</span>
+          <span class="stat-value">{{ stats.warrantiesTracked }}</span>
+        </div>
+      </div>
+    </app-card>
+
+    <!-- Actions Card -->
+    <app-card padding="lg">
+      <div class="actions-grid">
+        <app-button
+          variant="secondary"
+          size="md"
+          [routerLink]="['/settings/notifications']"
+          [disabled]="true">
+          Notification Settings
+        </app-button>
+        <app-button
+          variant="secondary"
+          size="md"
+          [routerLink]="['/warranties']">
+          View Warranties
+        </app-button>
+        <app-button
+          variant="danger"
+          size="md"
+          (onClick)="logout()">
+          Logout
+        </app-button>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Change Password Modal -->
+  <app-modal
+    [isOpen]="showPasswordModal"
+    title="Change Password"
+    size="md"
+    (onClose)="closePasswordModal()">
+    <form [formGroup]="passwordForm" body>
+      <app-input
+        label="Current Password"
+        type="password"
+        formControlName="currentPassword"
+        [required]="true">
+      </app-input>
+
+      <app-input
+        label="New Password"
+        type="password"
+        formControlName="newPassword"
+        [required]="true">
+        <span class="input-help">Minimum 6 characters</span>
+      </app-input>
+
+      <app-input
+        label="Confirm New Password"
+        type="password"
+        formControlName="confirmPassword"
+        [required]="true"
+        [error]="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched ? 'Passwords do not match' : undefined">
+      </app-input>
+    </form>
+
+    <div footer class="modal-actions">
+      <app-button variant="secondary" size="md" (onClick)="closePasswordModal()">
+        Cancel
+      </app-button>
+      <app-button
+        variant="primary"
+        size="md"
+        [loading]="changingPassword"
+        [disabled]="passwordForm.invalid"
+        (onClick)="changePassword()">
+        Change Password
+      </app-button>
+    </div>
+  </app-modal>
+</div>

@@ -30,6 +30,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/warranties/pages/warranty-dashboard/warranty-dashboard.component').then(m => m.WarrantyDashboardComponent)
   },
   {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/profile/pages/profile/profile.component').then(m => m.ProfileComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
