@@ -64,34 +64,65 @@ export async function registerUser(page: Page, user: TestUser): Promise<void> {
 export async function registerAndLogin(page: Page, user: TestUser): Promise<void> {
   await registerUser(page, user);
   
+  // Wait a bit for redirect to complete
+  await page.waitForTimeout(1000);
+  
   // Check if already logged in (auto-login after registration)
   const currentUrl = page.url();
-  if (currentUrl.includes('/receipts') || currentUrl.includes('/dashboard')) {
-    // Check if auth token exists (using actual key from auth.service.ts)
-    const hasToken = await page.evaluate(() => {
-      return !!(localStorage.getItem('access_token') || localStorage.getItem('auth_token'));
-    });
-    
-    if (hasToken) {
-      // Wait for user menu to confirm login state
-      await page.waitForTimeout(2000);
-      return;
-    }
-    // No token found, need to login manually
-    await page.goto('/login');
-    await loginUser(page, user.email, user.password);
-    return;
-  }
   
   // If on confirm-email page, skip to login (email confirmation not needed for tests)
   if (currentUrl.includes('/confirm-email')) {
     await loginUser(page, user.email, user.password);
+    // After loginUser, verify we're actually logged in
+    await verifyLoggedIn(page);
     return;
   }
   
   // If on login page, proceed with login
   if (currentUrl.includes('/login')) {
     await loginUser(page, user.email, user.password);
+    await verifyLoggedIn(page);
+    return;
+  }
+  
+  // If on protected page (receipts/dashboard), verify token exists
+  if (currentUrl.includes('/receipts') || currentUrl.includes('/dashboard')) {
+    // Check if auth token exists (using actual key from auth.service.ts)
+    const hasToken = await page.evaluate(() => {
+      return !!localStorage.getItem('access_token');
+    });
+    
+    if (hasToken) {
+      // Wait for auth state to stabilize
+      await page.waitForTimeout(2000);
+      return;
+    }
+    
+    // No token found, need to login manually
+    await loginUser(page, user.email, user.password);
+    await verifyLoggedIn(page);
+    return;
+  }
+  
+  // Unknown state - force login
+  await loginUser(page, user.email, user.password);
+  await verifyLoggedIn(page);
+}
+
+/**
+ * Verify user is logged in by checking token and URL
+ */
+async function verifyLoggedIn(page: Page): Promise<void> {
+  // Wait for redirect to complete
+  await page.waitForURL(/\/(receipts|dashboard)/, { timeout: 10000 });
+  
+  // Verify token exists
+  const hasToken = await page.evaluate(() => {
+    return !!localStorage.getItem('access_token');
+  });
+  
+  if (!hasToken) {
+    throw new Error('Login completed but access_token not found in localStorage');
   }
 }
 

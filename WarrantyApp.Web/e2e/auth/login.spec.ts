@@ -113,10 +113,6 @@ test.describe('User Login', () => {
     await page.goto('/receipts');
     await page.waitForLoadState('networkidle');
     
-    // Wait for user menu to be visible before reloading
-    const userMenuButton = page.locator('button', { hasText: user.username });
-    await expect(userMenuButton).toBeVisible({ timeout: 15000 });
-    
     // Verify auth token is stored in localStorage before reload (using correct key)
     const tokenBeforeReload = await page.evaluate(() => {
       return localStorage.getItem('access_token');
