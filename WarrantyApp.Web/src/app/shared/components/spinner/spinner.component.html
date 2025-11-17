@@ -1,0 +1,14 @@
+<div class='spinner-container'>
+  <svg
+    [class]='"spinner spinner-" + size + " spinner-" + color'
+    viewBox='0 0 50 50'>
+    <circle
+      class='spinner-circle'
+      cx='25'
+      cy='25'
+      r='20'
+      fill='none'
+      stroke-width='4'></circle>
+  </svg>
+  <p *ngIf='text' class='spinner-text'>{{ text }}</p>
+</div>

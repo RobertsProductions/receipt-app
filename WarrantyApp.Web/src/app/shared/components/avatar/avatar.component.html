@@ -1,0 +1,14 @@
+<div [class]='"avatar avatar-" + size' [attr.data-status]='status'>
+  <img
+    *ngIf='src && !imageError'
+    [src]='src'
+    [alt]='alt || "Avatar"'
+    class='avatar-image'
+    (error)='onImageError()' />
+  
+  <div *ngIf='!src || imageError' class='avatar-placeholder'>
+    <span>{{ displayInitials }}</span>
+  </div>
+
+  <span *ngIf='status' [class]='"avatar-status avatar-status-" + status'></span>
+</div>

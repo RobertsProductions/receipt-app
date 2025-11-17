@@ -1,0 +1,16 @@
+<div class='empty-state'>
+  <div class='empty-state-icon' *ngIf='icon'>
+    <span>{{ icon }}</span>
+  </div>
+  <h3 class='empty-state-title'>{{ title }}</h3>
+  <p class='empty-state-description' *ngIf='description'>
+    {{ description }}
+  </p>
+  <app-button
+    *ngIf='actionText'
+    variant='primary'
+    size='md'
+    (onClick)='handleAction()'>
+    {{ actionText }}
+  </app-button>
+</div>
