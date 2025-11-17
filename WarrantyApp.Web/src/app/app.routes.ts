@@ -40,6 +40,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/settings/pages/notification-settings/notification-settings.component').then(m => m.NotificationSettingsComponent)
   },
   {
+    path: 'chatbot',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/chatbot/pages/chatbot/chatbot.component').then(m => m.ChatbotComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
