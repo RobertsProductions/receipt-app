@@ -25,6 +25,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/receipts/pages/receipt-detail/receipt-detail.component').then(m => m.ReceiptDetailComponent)
   },
   {
+    path: 'warranties',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/warranties/pages/warranty-dashboard/warranty-dashboard.component').then(m => m.WarrantyDashboardComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

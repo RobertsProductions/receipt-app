@@ -1,0 +1,122 @@
+<div class="warranty-dashboard">
+  <div class="page-header">
+    <h1 class="page-title">Warranty Dashboard</h1>
+    <app-button variant="secondary" size="md" [routerLink]="['/receipts']">
+      View All Receipts
+    </app-button>
+  </div>
+
+  <app-spinner *ngIf="loading" size="lg" text="Loading warranties..."></app-spinner>
+
+  <div *ngIf="!loading && warranties.length === 0">
+    <app-empty-state
+      icon="📋"
+      title="No warranties tracked"
+      description="Upload receipts with warranty information to track expiration dates"
+      actionText="Upload Receipt"
+      [routerLink]="['/receipts']">
+    </app-empty-state>
+  </div>
+
+  <div *ngIf="!loading && warranties.length > 0" class="dashboard-content">
+    <div class="summary-cards">
+      <app-card class="summary-card" padding="lg">
+        <div class="summary-icon total">📦</div>
+        <div class="summary-value">{{ summary.total }}</div>
+        <div class="summary-label">Total Warranties</div>
+      </app-card>
+
+      <app-card class="summary-card" padding="lg">
+        <div class="summary-icon expiring">⚠️</div>
+        <div class="summary-value">{{ summary.expiringSoon }}</div>
+        <div class="summary-label">Expiring Soon</div>
+      </app-card>
+
+      <app-card class="summary-card" padding="lg">
+        <div class="summary-icon valid">✅</div>
+        <div class="summary-value">{{ summary.valid }}</div>
+        <div class="summary-label">Valid</div>
+      </app-card>
+
+      <app-card class="summary-card" padding="lg">
+        <div class="summary-icon expired">❌</div>
+        <div class="summary-value">{{ summary.expired }}</div>
+        <div class="summary-label">Expired</div>
+      </app-card>
+    </div>
+
+    <div class="filter-section">
+      <h2 class="filter-title">Filter by expiration:</h2>
+      <div class="filter-buttons">
+        <app-button
+          [variant]="selectedFilter === 7 ? 'primary' : 'secondary'"
+          size="sm"
+          (onClick)="applyFilter(7)">
+          7 days
+        </app-button>
+        <app-button
+          [variant]="selectedFilter === 30 ? 'primary' : 'secondary'"
+          size="sm"
+          (onClick)="applyFilter(30)">
+          30 days
+        </app-button>
+        <app-button
+          [variant]="selectedFilter === 60 ? 'primary' : 'secondary'"
+          size="sm"
+          (onClick)="applyFilter(60)">
+          60 days
+        </app-button>
+        <app-button
+          [variant]="selectedFilter === -1 ? 'primary' : 'secondary'"
+          size="sm"
+          (onClick)="applyFilter(-1)">
+          All
+        </app-button>
+      </div>
+    </div>
+
+    <div class="warranties-list">
+      <h2 class="warranties-title">
+        {{ selectedFilter === -1 ? 'All Warranties' : 'Warranties Expiring Soon' }}
+        <span class="count">({{ filteredWarranties.length }})</span>
+      </h2>
+
+      <div *ngIf="filteredWarranties.length === 0" class="no-results">
+        <p>No warranties found for this filter</p>
+      </div>
+
+      <app-card
+        *ngFor="let warranty of filteredWarranties"
+        class="warranty-card"
+        [hoverable]="true"
+        padding="lg"
+        [routerLink]="['/receipts', warranty.id]">
+        <div class="warranty-header">
+          <span class="urgency-icon">{{ getUrgencyIcon(warranty) }}</span>
+          <div class="warranty-info">
+            <h3 class="warranty-product">{{ warranty.productName || 'Unknown Product' }}</h3>
+            <p class="warranty-merchant">{{ warranty.merchant || 'Unknown Merchant' }}</p>
+          </div>
+          <app-badge [variant]="getUrgencyBadge(warranty).variant" size="md">
+            {{ getUrgencyBadge(warranty).text }}
+          </app-badge>
+        </div>
+
+        <div class="warranty-details">
+          <span class="detail-item">
+            <span class="detail-label">Amount:</span>
+            <span class="detail-value">${{ warranty.amount?.toFixed(2) || '0.00' }}</span>
+          </span>
+          <span class="detail-item">
+            <span class="detail-label">Purchased:</span>
+            <span class="detail-value">{{ warranty.purchaseDate | date:'mediumDate' }}</span>
+          </span>
+          <span class="detail-item">
+            <span class="detail-label">Expires:</span>
+            <span class="detail-value">{{ warranty.warrantyExpirationDate | date:'mediumDate' }}</span>
+          </span>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>
