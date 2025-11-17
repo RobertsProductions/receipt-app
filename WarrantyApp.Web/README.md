@@ -443,8 +443,9 @@ Run `ng generate component component-name` to generate a new component. You can 
 - [ ] Write comprehensive E2E tests (9-15 hours estimated)
 - [ ] Search functionality across receipts
 - [ ] Bulk operations (select multiple, batch delete)
+- [ ] Export features (CSV/PDF for receipts and warranties)
 - [ ] Dark mode support
-- [ ] PWA support (offline mode)
+- [ ] Advanced filtering (by merchant, date range, amount)
 
 **Total Remaining**: ~5-7 hours for 100% feature completion + testing
 

@@ -226,7 +226,7 @@ See [docs/infra/infra-cicd-github-actions.md](docs/infra/infra-cicd-github-actio
 
 **Backend**: Performance benchmarks, load testing (100+ concurrent users)
 
-**Frontend**: Chatbot enhancements, receipt search, bulk operations, export (CSV/PDF), dark mode, categories/tags, advanced filtering, analytics charts, PWA support
+**Frontend**: Chatbot enhancements, receipt search, bulk operations, export (CSV/PDF), dark mode, categories/tags, advanced filtering, analytics charts
 
 **Future**: Mobile app, accounting software integration, ML categorization, multi-tenant support
 
