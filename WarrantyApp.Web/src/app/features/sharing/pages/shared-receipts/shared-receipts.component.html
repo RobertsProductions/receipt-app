@@ -1,0 +1,76 @@
+<div class="shared-receipts-page">
+  <div class="page-header">
+    <h1 class="page-title">Shared with Me</h1>
+    <p class="page-subtitle">Receipts that other users have shared with you</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <app-spinner size="lg"></app-spinner>
+  </div>
+
+  <!-- Empty State -->
+  <app-empty-state
+    *ngIf="!loading && receipts.length === 0"
+    icon="share"
+    title="No Shared Receipts"
+    message="When someone shares a receipt with you, it will appear here.">
+  </app-empty-state>
+
+  <!-- Receipts Grid -->
+  <div *ngIf="!loading && receipts.length > 0" class="receipts-grid">
+    <app-card
+      *ngFor="let receipt of receipts"
+      class="receipt-card"
+      [hoverable]="true"
+      (click)="viewReceipt(receipt.id)"
+      [attr.data-testid]="'shared-receipt-' + receipt.id">
+      
+      <div class="receipt-header">
+        <div class="receipt-info">
+          <h3 class="receipt-merchant">{{ receipt.merchantName }}</h3>
+          <p class="receipt-product" *ngIf="receipt.productName">{{ receipt.productName }}</p>
+        </div>
+        
+        <div class="receipt-amount">{{ formatCurrency(receipt.totalAmount) }}</div>
+      </div>
+
+      <div class="receipt-details">
+        <div class="detail-row">
+          <svg class="detail-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+          </svg>
+          <span class="detail-text">{{ formatDate(receipt.purchaseDate) }}</span>
+        </div>
+
+        <div class="detail-row" *ngIf="receipt.warrantyEndDate">
+          <svg class="detail-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          <span class="detail-text">Warranty: {{ formatDate(receipt.warrantyEndDate) }}</span>
+          <app-badge
+            *ngIf="getWarrantyStatus(receipt.warrantyEndDate)"
+            [variant]="getWarrantyBadgeVariant(getWarrantyStatus(receipt.warrantyEndDate))"
+            [text]="getWarrantyStatus(receipt.warrantyEndDate)!"
+            size="sm">
+          </app-badge>
+        </div>
+      </div>
+
+      <div class="receipt-footer">
+        <div class="shared-info">
+          <svg class="share-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+          </svg>
+          <span class="shared-text">Shared by <strong>{{ receipt.sharedBy }}</strong></span>
+        </div>
+        
+        <span class="shared-date">{{ formatDate(receipt.sharedAt) }}</span>
+      </div>
+
+      <div class="read-only-badge">
+        <app-badge variant="default" text="Read Only" size="sm"></app-badge>
+      </div>
+    </app-card>
+  </div>
+</div>
