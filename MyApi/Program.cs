@@ -208,17 +208,6 @@ builder.Services.AddHostedService<WarrantyExpirationService>();
 // Add memory cache for warranty notifications
 builder.Services.AddMemoryCache();
 
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
 // Add HttpClient for health checks
 builder.Services.AddHttpClient();
 
