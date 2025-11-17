@@ -682,7 +682,7 @@ For issues, questions, or contributions, please:
 
 ### Frontend/UI Tasks 🎨
 
-**Foundation Complete (Phase 1: 40%)**
+**Foundation Complete (Phase 1: 60%)**
 - [x] Choose frontend framework (Angular selected)
 - [x] Create design reference document ([27-design-reference.md](docs/27-design-reference.md))
 - [x] Define frontend workflows and component structure ([28-frontend-workflows.md](docs/28-frontend-workflows.md))
@@ -691,13 +691,14 @@ For issues, questions, or contributions, please:
 - [x] Integrate Angular app with .NET Aspire AppHost for orchestration
 - [x] Implement complete CSS design system (colors, typography, spacing, shadows)
 - [x] Create all TypeScript models for API entities (User, Auth, Receipt, Warranty, Chatbot, Sharing)
-- [x] Implement 6 core services with full API integration:
+- [x] Implement 7 core services with full API integration:
   - AuthService (login, register, 2FA, token management)
   - ReceiptService (CRUD, upload, OCR, batch processing)
   - WarrantyService (warranty tracking)
   - UserProfileService (profile management)
   - ChatbotService (AI chat integration)
   - SharingService (receipt sharing)
+  - ToastService (notifications)
 - [x] Add HTTP interceptors (auth token injection, error handling)
 - [x] Implement auth guard for route protection
 - [x] Create responsive Navbar component
@@ -706,11 +707,16 @@ For issues, questions, or contributions, please:
   - Props, events, and usage examples for every component
   - Service integration code examples
   - Full routing configuration
+- [x] **Build 5 foundational shared UI components** ✅ (**Priority 1 COMPLETE**)
+  - ButtonComponent (5 variants, 3 sizes, loading/disabled states, animations)
+  - InputComponent (7 types, password toggle, validation, ControlValueAccessor)
+  - CardComponent (header/body/footer slots, hoverable, clickable)
+  - ModalComponent (5 sizes, backdrop, ESC close, animations, scroll lock)
+  - ToastComponent (4 types, auto-dismiss, stacking, slide animations)
 
-**In Progress / Next Steps**
-- [ ] Build 5 foundational shared UI components (button, input, card, modal, toast) - **Priority 1**
-- [ ] Build 15 remaining shared components (badge, spinner, pagination, etc.)
-- [ ] Implement authentication pages (landing, login, register, email confirmation, 2FA)
+**Next Priority (Phase 2: Pages & Features)**
+- [ ] Build 15 remaining shared components (badge, spinner, pagination, etc.) - **Priority 2**
+- [ ] Implement authentication pages (landing, login, register, email confirmation, 2FA) - **Priority 3**
 - [ ] Implement receipt management UI (list, detail, upload, edit, share)
 - [ ] Implement warranty dashboard with expiring warranty cards
 - [ ] Implement user profile and settings pages

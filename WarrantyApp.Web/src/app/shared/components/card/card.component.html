@@ -1,0 +1,22 @@
+<div
+  class="card"
+  [class.card-elevated]="elevated"
+  [class.card-hoverable]="hoverable"
+  [class.card-clickable]="clickable"
+  [class.card-padding-sm]="padding === 'sm'"
+  [class.card-padding-md]="padding === 'md'"
+  [class.card-padding-lg]="padding === 'lg'"
+  (click)="handleClick()">
+  
+  <div class="card-header" *ngIf="hasHeader">
+    <ng-content select="[header]"></ng-content>
+  </div>
+  
+  <div class="card-body">
+    <ng-content></ng-content>
+  </div>
+  
+  <div class="card-footer" *ngIf="hasFooter">
+    <ng-content select="[footer]"></ng-content>
+  </div>
+</div>
