@@ -64,8 +64,12 @@ export class ReceiptListComponent implements OnInit {
         this.totalCount = response.totalCount;
         this.loading = false;
       },
-      error: () => {
-        this.toast.error('Failed to load receipts');
+      error: (err) => {
+        console.error('❌ Failed to load receipts:', err);
+        console.error('Status:', err.status);
+        console.error('Message:', err.message);
+        console.error('Full error:', err);
+        this.toast.error(`Failed to load receipts: ${err.status} ${err.statusText || err.message}`);
         this.loading = false;
       }
     });
