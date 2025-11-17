@@ -1,0 +1,152 @@
+.settings-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-8);
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.card-header {
+  margin-bottom: var(--space-4);
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.setting-info {
+  flex: 1;
+}
+
+.setting-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.setting-description {
+  display: block;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.channels-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.channel-item {
+  padding: var(--space-4);
+  background-color: var(--neutral-50);
+  border-radius: var(--radius-md);
+}
+
+.channel-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: var(--space-2) 0 0 var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.channel-description.warning {
+  color: var(--warning-600);
+  font-weight: 500;
+}
+
+.threshold-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.threshold-description {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.threshold-help {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  padding: var(--space-3);
+  background-color: var(--neutral-50);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary-500);
+}
+
+.phone-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.input-help {
+  display: block;
+  margin-top: var(--space-1);
+}
+
+.test-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.test-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.actions-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-6) 0;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,157 @@
+<div class="settings-page">
+  <div class="page-header">
+    <h1 class="page-title">Notification Settings</h1>
+    <app-button variant="secondary" size="md" [routerLink]="['/profile']">
+      Back to Profile
+    </app-button>
+  </div>
+
+  <app-spinner *ngIf="loading" size="lg" text="Loading settings..."></app-spinner>
+
+  <div *ngIf="!loading && profile" class="settings-content">
+    <form [formGroup]="settingsForm">
+      <!-- Enable Notifications Card -->
+      <app-card padding="lg">
+        <div header class="card-header">
+          <h3 class="card-title">Notification Status</h3>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-label">Enable Notifications</span>
+            <span class="setting-description">
+              Receive warranty expiration alerts via email or SMS
+            </span>
+          </div>
+          <app-toggle
+            formControlName="enableNotifications"
+            size="lg"
+            (valueChange)="onEnableNotificationsChange($event)">
+          </app-toggle>
+        </div>
+      </app-card>
+
+      <!-- Notification Channels Card -->
+      <app-card padding="lg" *ngIf="settingsForm.value.enableNotifications">
+        <div header>
+          <h3 class="card-title">Notification Channels</h3>
+        </div>
+
+        <div class="channels-section">
+          <div class="channel-item">
+            <app-checkbox
+              label="Email Notifications"
+              formControlName="emailNotifications"
+              size="md">
+            </app-checkbox>
+            <p class="channel-description">
+              Send notifications to <strong>{{ profile.email }}</strong>
+              <app-badge *ngIf="profile.emailConfirmed" variant="success" size="sm">Verified</app-badge>
+            </p>
+          </div>
+
+          <div class="channel-item">
+            <app-checkbox
+              label="SMS Notifications"
+              formControlName="smsNotifications"
+              size="md">
+            </app-checkbox>
+            <p class="channel-description" *ngIf="profile.phoneNumber">
+              Send notifications to <strong>{{ profile.phoneNumber }}</strong>
+              <app-badge *ngIf="profile.phoneNumberConfirmed" variant="success" size="sm">Verified</app-badge>
+              <app-badge *ngIf="!profile.phoneNumberConfirmed" variant="warning" size="sm">Not Verified</app-badge>
+            </p>
+            <p class="channel-description warning" *ngIf="!profile.phoneNumber">
+              ⚠️ Please add a phone number in your profile to enable SMS notifications
+            </p>
+          </div>
+        </div>
+      </app-card>
+
+      <!-- Expiration Threshold Card -->
+      <app-card padding="lg" *ngIf="settingsForm.value.enableNotifications">
+        <div header>
+          <h3 class="card-title">Alert Timing</h3>
+        </div>
+
+        <div class="threshold-section">
+          <p class="threshold-description">
+            Notify me when a warranty expires in:
+          </p>
+          <app-slider
+            formControlName="thresholdDays"
+            [min]="7"
+            [max]="90"
+            [step]="1"
+            [showValue]="true"
+            unit=" days">
+          </app-slider>
+          <p class="threshold-help">
+            You'll receive an alert <strong>{{ settingsForm.value.thresholdDays }} days</strong> before warranties expire
+          </p>
+        </div>
+      </app-card>
+
+      <!-- Phone Number Card -->
+      <app-card padding="lg" *ngIf="settingsForm.value.smsNotifications">
+        <div header>
+          <h3 class="card-title">Phone Number</h3>
+        </div>
+
+        <div class="phone-section">
+          <app-input
+            label="Phone Number"
+            type="tel"
+            formControlName="phoneNumber"
+            placeholder="+1234567890">
+            <span class="input-help" *ngIf="profile.phoneNumberConfirmed">
+              <app-badge variant="success" size="sm">Verified</app-badge>
+            </span>
+            <span class="input-help" *ngIf="!profile.phoneNumberConfirmed">
+              <app-badge variant="warning" size="sm">Not Verified</app-badge>
+            </span>
+          </app-input>
+
+          <app-button
+            *ngIf="!profile.phoneNumberConfirmed && settingsForm.value.phoneNumber"
+            variant="secondary"
+            size="md"
+            (onClick)="verifyPhone()">
+            Verify Phone Number
+          </app-button>
+        </div>
+      </app-card>
+
+      <!-- Test Notification Card -->
+      <app-card padding="lg" *ngIf="settingsForm.value.enableNotifications">
+        <div header>
+          <h3 class="card-title">Test Notification</h3>
+        </div>
+
+        <div class="test-section">
+          <p class="test-description">
+            Send a test notification to verify your settings are working correctly.
+          </p>
+          <app-button
+            variant="secondary"
+            size="md"
+            [loading]="testing"
+            (onClick)="sendTestNotification()">
+            Send Test Notification
+          </app-button>
+        </div>
+      </app-card>
+
+      <!-- Save Actions -->
+      <div class="actions-section">
+        <app-button
+          variant="primary"
+          size="lg"
+          [loading]="saving"
+          (onClick)="saveSettings()">
+          Save Settings
+        </app-button>
+      </div>
+    </form>
+  </div>
+</div>
