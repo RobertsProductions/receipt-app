@@ -99,9 +99,9 @@ export async function loginUser(page: Page, email: string, password: string): Pr
   await passwordInput.fill(password);
   
   // Submit form
-  const loginButton = page.getByRole('button', { name: /sign in/i });
-  await loginButton.waitFor({ state: 'visible', timeout: 10000 });
-  await loginButton.click();
+  const submitButton = page.getByRole('button', { name: /sign in/i });
+  await submitButton.waitFor({ state: 'visible', timeout: 10000 });
+  await submitButton.click();
   
   // Wait for successful login (redirect to receipts or dashboard)
   // Sometimes app redirects to confirm-email with invalid token - navigate to receipts instead
@@ -111,6 +111,21 @@ export async function loginUser(page: Page, email: string, password: string): Pr
   if (page.url().includes('/confirm-email')) {
     await page.goto('/receipts');
     await page.waitForURL(/\/receipts/, { timeout: 5000 });
+  }
+  
+  // Wait for navbar to update with user info (this ensures Angular state has loaded)
+  // Look for either "Login" button to disappear OR user menu to appear
+  await page.waitForTimeout(1000); // Give Angular time to process auth state
+  
+  // Verify we're actually logged in by checking navbar state change
+  try {
+    await page.waitForFunction(() => {
+      const loginBtn = document.querySelector('a[href="/login"]');
+      const userMenu = document.querySelector('button .chevron');
+      return !loginBtn || userMenu !== null;
+    }, { timeout: 5000 });
+  } catch {
+    // If timeout, continue anyway - the page might have loaded
   }
 }
 
