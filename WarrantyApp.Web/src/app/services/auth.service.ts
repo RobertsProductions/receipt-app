@@ -139,9 +139,17 @@ export class AuthService {
   }
 
   private storeAuth(response: LoginResponse): void {
+    console.log('🔐 Storing auth tokens...');
+    console.log('Access token:', response.accessToken ? `${response.accessToken.substring(0, 20)}...` : 'MISSING');
+    console.log('Refresh token:', response.refreshToken ? `${response.refreshToken.substring(0, 20)}...` : 'MISSING');
+    
     localStorage.setItem(this.accessTokenKey, response.accessToken);
     localStorage.setItem(this.refreshTokenKey, response.refreshToken);
     this.currentUserSubject.next(response);
+    
+    console.log('✅ Tokens stored. Verify in localStorage:');
+    console.log('- access_token:', localStorage.getItem(this.accessTokenKey) ? 'EXISTS' : 'MISSING');
+    console.log('- refresh_token:', localStorage.getItem(this.refreshTokenKey) ? 'EXISTS' : 'MISSING');
   }
 
   private clearAuth(): void {
