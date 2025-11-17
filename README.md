@@ -786,9 +786,6 @@ For issues, questions, or contributions, please:
 - [ ] Multi-language support for OCR (detect language, localized parsing)
 - [ ] Receipt analytics dashboard (spending trends, category breakdowns, charts)
 - [ ] Scheduled report emails (weekly/monthly spending summaries)
-- [ ] Integration with accounting software (QuickBooks, Xero)
-- [ ] Mobile app support (iOS/Android with push notifications)
-- [ ] Offline mode with sync (PWA with service workers)
 
 ### ✅ Frontend Features Complete (53% - Core Production Ready!)
 
@@ -1006,6 +1003,7 @@ These features will be considered after all optional enhancements above are comp
 
 ### Shared Future Plans
 - [ ] Mobile app development (iOS/Android with React Native or Flutter)
+- [ ] Integration with accounting software (QuickBooks, Xero)
 - [ ] Advanced analytics and reporting dashboards
 - [ ] Machine learning for receipt categorization and insights
 - [ ] Multi-tenant support for business/enterprise customers
