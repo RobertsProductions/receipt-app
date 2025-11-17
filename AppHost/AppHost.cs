@@ -29,12 +29,12 @@ var myApi = builder.AddProject<Projects.MyApi>("myapi")
 // Add Angular frontend as NPM app
 // Runs 'npm start' in the WarrantyApp.Web directory
 // Aspire will allocate a port and pass it via PORT environment variable
-// Angular will use that port (no --port 0, just let Aspire control it)
+// The myApi reference automatically injects the API URL via service discovery
+// Angular proxy uses: services__myapi__http__0 environment variable
 var frontend = builder.AddNpmApp("frontend", "../WarrantyApp.Web", "start")
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
     .WithReference(myApi)
-    .WithEnvironment("API_URL", myApi.GetEndpoint("http"))
     .WaitFor(myApi);
 
 builder.Build().Run();
