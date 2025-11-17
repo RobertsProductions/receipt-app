@@ -23,6 +23,8 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
+    console.log('🌍 AuthService initialized with apiUrl:', environment.apiUrl);
+    console.log('Full auth endpoint:', this.apiUrl);
     this.loadStoredAuth();
   }
 
