@@ -19,7 +19,10 @@ export class ButtonComponent {
 
   handleClick(event: MouseEvent) {
     if (!this.disabled && !this.loading) {
-      this.onClick.emit(event);
+      // Only emit click for non-submit buttons to prevent double form submission
+      if (this.type !== 'submit') {
+        this.onClick.emit(event);
+      }
     }
   }
 }
