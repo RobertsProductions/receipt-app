@@ -6,16 +6,17 @@
 
 This is the frontend application for the Warranty Management System, built with Angular 18 and TypeScript. The application provides a modern, responsive interface for receipt and warranty management with AI-powered OCR processing.
 
-## 🎉 Current Status (6 Sessions Complete)
+## 🎉 Current Status (8 Sessions Complete)
 
 **What's Built:**
-- ✅ 14 of 20 shared components (70%)
-- ✅ 6 of 15 pages (40%)
+- ✅ 17 of 20 shared components (85%)
+- ✅ 8 of 15 pages (53%)
 - ✅ Full authentication flow
 - ✅ Receipt management (upload, view, edit, delete)
 - ✅ Warranty dashboard with expiration tracking
-- ✅ ~4,612 lines of production-ready code
-- ✅ Bundle size: 90.17 kB gzipped (excellent performance!)
+- ✅ User profile and notification settings
+- ✅ ~6,800 lines of production-ready code
+- ✅ Bundle size: 91.68 kB gzipped (excellent performance!)
 
 **What Users Can Do:**
 1. Register and login with JWT authentication
@@ -27,6 +28,9 @@ This is the frontend application for the Warranty Management System, built with 
 7. Track warranty expiration dates
 8. Get alerts for expiring warranties
 9. Filter warranties by urgency
+10. View and edit user profile
+11. Configure notification preferences (email/SMS)
+12. Set warranty expiration threshold (1-90 days)
 
 See [Quick Demo](#quick-demo) below for screenshots and usage.
 
@@ -174,7 +178,7 @@ src/
 └── styles.scss                  # Global styles + design system
 ```
 
-## Component Library (14 of 20 Complete)
+## Component Library (17 of 20 Complete)
 
 ### ✅ Built Components
 
@@ -194,12 +198,12 @@ src/
 | **Checkbox** | 3 sizes | Custom styled with checkmark | ✅ |
 | **Slider** | - | Range input with value display | ✅ |
 | **File Upload** | - | Drag-and-drop, preview, progress | ✅ |
+| **Radio** | 3 sizes | Radio button groups | ✅ |
+| **Tabs** | - | Tabbed navigation with active state | ✅ |
+| **Accordion** | - | Collapsible sections with animation | ✅ |
 
 ### 🔜 Remaining Components (Optional)
 - Dropdown (searchable select)
-- Radio (radio button groups)
-- Tabs (tabbed navigation)
-- Accordion (collapsible sections)
 - Tooltip (hover tooltips)
 - Progress Bar (linear progress)
 
@@ -285,8 +289,8 @@ See `../docs/27-design-reference.md` for complete specifications.
 **Production Build** (as of November 17, 2025):
 
 ```
-Initial Bundle:   323.18 kB → 90.17 kB gzipped
-Total Lazy Chunks: 117 kB → 31 kB gzipped (avg 2-5 kB per page)
+Initial Bundle:   331.45 kB → 91.68 kB gzipped
+Total Lazy Chunks: 141 kB → 38 kB gzipped (avg 2-5 kB per page)
 Build Time:       ~2 seconds
 ```
 
@@ -297,6 +301,8 @@ Build Time:       ~2 seconds
 - Receipt List: 5.11 kB gzipped
 - Receipt Detail: 3.20 kB gzipped
 - Warranty Dashboard: 2.74 kB gzipped
+- User Profile: 2.52 kB gzipped
+- Notification Settings: 3.18 kB gzipped
 
 **Performance Score: A+ 🎯**
 - Optimal bundle splitting
@@ -375,9 +381,9 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ### 🔜 Optional Enhancements (Remaining Work)
 
-**User Profile & Settings** (~2-3 hours)
-- [ ] User Profile Page - View/edit profile, statistics
-- [ ] Notification Settings - Email/SMS preferences with slider
+**User Profile & Settings** ✅ COMPLETE
+- [x] User Profile Page - View/edit profile, account info
+- [x] Notification Settings - Email/SMS preferences with slider
 - [ ] Phone Verification - 6-digit code input
 
 **Advanced Features** (~3-4 hours)
@@ -394,9 +400,9 @@ Run `ng generate component component-name` to generate a new component. You can 
 - [ ] Frontend E2E tests (Playwright)
 - [ ] PWA support (offline mode)
 
-**Total Remaining**: ~7-10 hours for 100% completion
+**Total Remaining**: ~5-7 hours for 100% completion
 
-**Current Status**: Core features are production-ready! The remaining work is optional enhancements.
+**Current Status**: Core features + user settings are production-ready! The remaining work is optional enhancements.
 
 ## Documentation
 
