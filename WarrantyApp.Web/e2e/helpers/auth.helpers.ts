@@ -180,7 +180,7 @@ export async function waitForAuthComplete(page: Page, timeout = 10000): Promise<
  */
 export async function assertOnLoginPage(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/login/);
-  await expect(page.getByRole('heading', { name: /login|sign in/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /welcome back/i })).toBeVisible();
 }
 
 /**

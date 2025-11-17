@@ -34,15 +34,23 @@ test.describe('User Login', () => {
   });
 
   test('should validate required fields', async ({ page }) => {
-    // Submit empty form
+    // Check that form inputs have required attribute before submitting
+    const emailInput = page.getByLabel(/email/i);
+    const passwordInput = page.getByLabel('Password', { exact: true });
+    
+    // Wait for inputs to be visible
+    await expect(emailInput).toBeVisible();
+    await expect(passwordInput).toBeVisible();
+    
+    // Check required attributes exist
+    await expect(emailInput).toHaveAttribute('required');
+    await expect(passwordInput).toHaveAttribute('required');
+    
+    // Submit empty form - should not navigate away
     await page.getByRole('button', { name: /sign in/i }).click();
     
-    // Check for validation errors - inputs should have required attribute
-    const emailInput = page.getByLabel(/email/i);
-    await expect(emailInput).toHaveAttribute('required');
-    
-    const passwordInput = page.getByLabel('Password', { exact: true });
-    await expect(passwordInput).toHaveAttribute('required');
+    // Should still be on login page
+    await expect(page).toHaveURL(/\/login/);
   });
 
   test('should show error for invalid credentials', async ({ page }) => {

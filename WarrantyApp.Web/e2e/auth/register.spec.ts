@@ -33,12 +33,20 @@ test.describe('User Registration', () => {
   });
 
   test('should validate required fields', async ({ page }) => {
-    // Submit empty form
+    // Check that form inputs have required attribute before submitting
+    const emailInput = page.getByLabel(/email/i);
+    
+    // Wait for input to be visible
+    await expect(emailInput).toBeVisible();
+    
+    // Check required attribute exists
+    await expect(emailInput).toHaveAttribute('required');
+    
+    // Submit empty form - should not navigate away
     await page.getByRole('button', { name: /create account/i }).click();
     
-    // Check for validation errors (form should not submit)
-    const emailInput = page.getByLabel(/email/i);
-    await expect(emailInput).toHaveAttribute('required');
+    // Should still be on register page
+    await expect(page).toHaveURL(/\/register/);
   });
 
   test('should validate email format', async ({ page }) => {
