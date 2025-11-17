@@ -11,10 +11,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        // Unauthorized - token expired or invalid
-        authService.logout().subscribe(() => {
+        // Only trigger logout and redirect if this is not a login/auth endpoint
+        // to avoid cascading logout calls on failed login attempts
+        const isAuthEndpoint = req.url.includes('/Auth/login') || 
+                               req.url.includes('/Auth/register') ||
+                               req.url.includes('/Auth/refresh');
+        
+        if (!isAuthEndpoint && authService.isAuthenticated()) {
+          // Clear local auth state without making API call to avoid loops
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
           router.navigate(['/login']);
-        });
+        }
       }
 
       // Log error to console in development

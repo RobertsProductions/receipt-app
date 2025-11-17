@@ -71,7 +71,10 @@ MyAspireSolution/
 │   ├── 32-aspire-angular-proxy-fix.md              # Angular proxy and port management fix
 │   ├── 33-frontend-progress.md                     # Frontend implementation progress tracker
 │   ├── 34-frontend-implementation-roadmap.md       # Detailed UI component and page specifications (1,507 lines)
-│   └── 35-frontend-roadmap-summary.md              # Quick reference guide for frontend implementation
+│   ├── 35-frontend-roadmap-summary.md              # Quick reference guide for frontend implementation
+│   ├── 36-session-nov17-foundational-components.md # Session 1: Foundational components implementation
+│   ├── 37-session-nov17-priority2-components.md    # Session 2-8: Priority components and pages
+│   └── 38-login-error-interceptor-fix.md           # Bug fix: Prevented auth controller spam on login failure
 ├── MyApi/                                          # ASP.NET Core Web API
 │   ├── Controllers/                                # API endpoints
 │   │   ├── AuthController.cs                       # Authentication (register, login)
