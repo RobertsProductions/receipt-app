@@ -37,11 +37,11 @@ These documents were moved to the archive to:
 ## 📖 Active Documentation
 
 For current, production-ready documentation, see the main [../](../) folder which contains:
-- Setup & Getting Started (`setup-*`)
-- Backend Features (`backend-*`)
-- Infrastructure & Operations (`infra-*`)
-- Frontend Documentation (`frontend-*`)
-- Complete Implementation Summary (`guide-complete-implementation.md`)
+- Setup & Getting Started ([../setup/](../setup/))
+- Backend Features ([../backend/](../backend/))
+- Infrastructure & Operations ([../infra/](../infra/))
+- Frontend Documentation ([../frontend/](../frontend/))
+- Complete Implementation Summary ([../guide/guide-complete-implementation.md](../guide/guide-complete-implementation.md))
 
 ## 🕒 Last Updated
 
@@ -49,4 +49,4 @@ Archive created: November 17, 2025
 
 ---
 
-**Note**: These documents are read-only historical records. For current implementation status, see [../guide-complete-implementation.md](../guide-complete-implementation.md).
+**Note**: These documents are read-only historical records. For current implementation status, see [../guide/guide-complete-implementation.md](../guide/guide-complete-implementation.md).

@@ -6,7 +6,7 @@ A modern warranty management application built with .NET 8 and .NET Aspire for c
 
 ## 🚀 Quick Start
 
-**Want to get started quickly?** See the [Quick Start Guide](docs/setup-quickstart.md) for streamlined setup instructions.
+**Want to get started quickly?** See the [Quick Start Guide](docs/setup/setup-quickstart.md) for streamlined setup instructions.
 
 ## Overview
 
@@ -36,11 +36,15 @@ This application provides a comprehensive warranty tracking system with a REST A
 MyAspireSolution/
 ├── .github/workflows/          # CI/CD pipeline
 ├── docs/                       # Technical documentation (33 guides)
-│   ├── 00-quickstart.md       # Quick start guide
-│   ├── 01-26                  # Setup, backend features, infrastructure
-│   ├── 27-34                  # Frontend design, workflows, roadmap
-│   ├── 39                     # Complete implementation summary
-│   └── archive/               # Historical logs and progress reports
+│   ├── setup/                  # Getting started (5 docs)
+│   ├── backend/                # Backend features (15 docs)
+│   ├── infra/                  # Infrastructure & ops (7 docs)
+│   ├── frontend/               # Frontend design & implementation (5 docs)
+│   ├── guide/                  # Complete implementation guide (1 doc)
+│   └── archive/                # Historical logs and progress reports
+│       ├── sessions/           # Development session logs (6 docs)
+│       ├── progress/           # Progress reports (6 docs)
+│       └── reference/          # Quick reference (1 doc)
 ├── MyApi/                      # ASP.NET Core Web API
 │   ├── Controllers/            # 15 API controllers, 70+ endpoints
 │   ├── Services/               # Business logic (OCR, notifications, auth)
@@ -176,7 +180,7 @@ npm start
 
 **Twilio SMS** (optional): Configure via user secrets (AccountSid, AuthToken, PhoneNumber)
 
-See [docs/setup-quickstart.md](docs/setup-quickstart.md) for detailed setup.
+See [docs/setup/setup-quickstart.md](docs/setup/setup-quickstart.md) for detailed setup.
 
 ## Testing
 
@@ -203,12 +207,12 @@ Access Swagger UI when the API is running:
 ## Documentation
 
 **Quick Links**:
-- [📖 Quick Start Guide](docs/setup-quickstart.md) - Get up and running in minutes
-- [🔐 Authentication](docs/backend-authentication.md) - JWT + 2FA implementation
-- [📄 Receipt Upload & OCR](docs/backend-ocr-openai.md) - AI-powered extraction
-- [🧪 Testing Strategy](docs/infra-testing-strategy.md) - 146 tests explained
-- [🎨 Design System](docs/frontend-design-system.md) - Complete UI/UX guide
-- [✅ Complete Implementation](docs/guide-complete-implementation.md) - E2E testing guide
+- [📖 Quick Start Guide](docs/setup/setup-quickstart.md) - Get up and running in minutes
+- [🔐 Authentication](docs/backend/backend-authentication.md) - JWT + 2FA implementation
+- [📄 Receipt Upload & OCR](docs/backend/backend-ocr-openai.md) - AI-powered extraction
+- [🧪 Testing Strategy](docs/infra/infra-testing-strategy.md) - 146 tests explained
+- [🎨 Design System](docs/frontend/frontend-design-system.md) - Complete UI/UX guide
+- [✅ Complete Implementation](docs/guide/guide-complete-implementation.md) - E2E testing guide
 
 **Browse All**: See [docs/](docs/) folder for 33 comprehensive guides covering setup, features, deployment, and frontend development. Historical session notes available in [docs/archive/](docs/archive/).
 
@@ -216,7 +220,7 @@ Access Swagger UI when the API is running:
 
 GitHub Actions runs on every push/PR: **Build** → **Test** (146 tests) → **Security Scan** → **Code Quality**
 
-See [docs/infra-cicd-github-actions.md](docs/infra-cicd-github-actions.md) for configuration details.
+See [docs/infra/infra-cicd-github-actions.md](docs/infra/infra-cicd-github-actions.md) for configuration details.
 
 ## Optional Enhancements
 
@@ -226,7 +230,7 @@ See [docs/infra-cicd-github-actions.md](docs/infra-cicd-github-actions.md) for c
 
 **Future**: Mobile app, accounting software integration, ML categorization, multi-tenant support
 
-**See**: [docs/guide-complete-implementation.md](docs/guide-complete-implementation.md) for detailed roadmap
+**See**: [docs/guide/guide-complete-implementation.md](docs/guide/guide-complete-implementation.md) for detailed roadmap
 
 ## Troubleshooting
 
@@ -236,7 +240,7 @@ See [docs/infra-cicd-github-actions.md](docs/infra-cicd-github-actions.md) for c
 
 **Port conflicts**: Aspire uses dynamic ports - access via Dashboard links
 
-**Angular proxy issues**: See [docs/frontend-aspire-proxy.md](docs/frontend-aspire-proxy.md)
+**Angular proxy issues**: See [docs/frontend/frontend-aspire-proxy.md](docs/frontend/frontend-aspire-proxy.md)
 
 ## Contributing
 

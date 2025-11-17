@@ -566,7 +566,7 @@ Common status codes:
 
 ## Deployment
 
-See [../docs/infra-deployment-azure.md](../docs/infra-deployment-azure.md) for:
+See [../docs/infra/infra-deployment-azure.md](../docs/infra/infra-deployment-azure.md) for:
 - Azure Container Apps deployment
 - Docker containerization
 - CI/CD pipeline setup
@@ -620,16 +620,16 @@ dotnet ef database update
 ## Documentation
 
 ### Core Backend Guides
-- **[Authentication](../docs/backend-authentication.md)** - JWT + 2FA setup
-- **[Receipt Upload & OCR](../docs/backend-ocr-openai.md)** - File upload and AI extraction
-- **[Warranty Notifications](../docs/backend-warranty-notifications.md)** - Background monitoring
-- **[Email/SMS Setup](../docs/backend-notifications-email-sms.md)** - SMTP and Twilio config
-- **[Testing Strategy](../docs/infra-testing-strategy.md)** - 146 tests explained
+- **[Authentication](../docs/backend/backend-authentication.md)** - JWT + 2FA setup
+- **[Receipt Upload & OCR](../docs/backend/backend-ocr-openai.md)** - File upload and AI extraction
+- **[Warranty Notifications](../docs/backend/backend-warranty-notifications.md)** - Background monitoring
+- **[Email/SMS Setup](../docs/backend/backend-notifications-email-sms.md)** - SMTP and Twilio config
+- **[Testing Strategy](../docs/infra/infra-testing-strategy.md)** - 146 tests explained
 
 ### All Backend Features
 Authentication (`backend-authentication`, `backend-auth-*`), Database (`setup-database-*`, `infra-troubleshooting-database`), Receipts (`backend-receipts-*`, `backend-ocr-*`), Notifications (`backend-*-notifications`, `backend-phone-verification`), Security & Performance (`backend-auth-*`, `backend-caching-*`), Operations (`infra-*`)
 
-**Browse All**: See [../docs/](../docs/) folder for complete backend documentation.
+**Browse All**: See [../docs/backend/](../docs/backend/) and [../docs/infra/](../docs/infra/) folders for complete backend documentation.
 
 ## License
 
