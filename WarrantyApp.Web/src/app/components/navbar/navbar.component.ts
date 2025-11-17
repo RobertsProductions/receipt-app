@@ -38,8 +38,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   getUserInitials(): string {
-    if (!this.currentUser?.userName) return 'U';
-    return this.currentUser.userName
+    if (!this.currentUser?.username) return 'U';
+    return this.currentUser.username
       .split(' ')
       .map((n) => n[0])
       .join('')

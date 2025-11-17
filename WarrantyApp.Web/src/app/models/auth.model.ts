@@ -13,11 +13,11 @@ export interface RegisterRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
+  token: string;           // Backend returns 'Token' (lowercase in JSON)
   refreshToken: string;
-  expiresIn: number;
-  userName: string;
+  expiresAt: string;       // Backend returns 'ExpiresAt' 
   email: string;
+  username: string;        // Backend returns 'Username'
   requiresTwoFactor?: boolean;
 }
 
