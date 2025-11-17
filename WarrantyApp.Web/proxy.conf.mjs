@@ -1,7 +1,7 @@
 // Aspire injects service URLs in the format: services__<servicename>__http__0
 const apiUrl = process.env.services__myapi__http__0 || 
                process.env.API_URL || 
-               'http://localhost:7156';
+               'https://localhost:7156';  // Backend uses HTTPS
 
 console.log('\n========================================');
 console.log('🔧 PROXY CONFIGURATION LOADED');
