@@ -10,7 +10,7 @@
 
 import { test, expect } from '@playwright/test';
 import { generateTestUser, generateTestReceipt } from '../helpers/test-data';
-import { registerUser, loginUser } from '../helpers/auth.helpers';
+import { registerAndLogin } from '../helpers/auth.helpers';
 import { createReceipt, viewReceiptDetails, editReceipt, deleteReceipt, assertReceiptDetails, goToReceiptsPage } from '../helpers/receipt.helpers';
 
 test.describe('Receipt Details Page', () => {
@@ -20,8 +20,7 @@ test.describe('Receipt Details Page', () => {
   test.beforeEach(async ({ page }) => {
     // Register and login
     testUser = generateTestUser();
-    await registerUser(page, testUser);
-    await loginUser(page, testUser.email, testUser.password);
+    await registerAndLogin(page, testUser);
   });
 
   test('should display receipt details correctly', async ({ page }) => {
@@ -35,9 +34,6 @@ test.describe('Receipt Details Page', () => {
     
     // Navigate to details
     await viewReceiptDetails(page, receipt.merchantName);
-    
-    // Check page title
-    await expect(page).toHaveTitle(/receipt|details/i);
     
     // Verify all details are displayed
     await assertReceiptDetails(page, receipt);

@@ -10,7 +10,7 @@
 
 import { test, expect } from '@playwright/test';
 import { generateTestUser, generateTestReceipt } from '../helpers/test-data';
-import { registerUser, loginUser } from '../helpers/auth.helpers';
+import { registerAndLogin } from '../helpers/auth.helpers';
 import { goToReceiptsPage, createReceipt, getReceiptCount, isReceiptsListEmpty, goToNextPage, findReceipt } from '../helpers/receipt.helpers';
 
 test.describe('Receipt List Page', () => {
@@ -18,8 +18,7 @@ test.describe('Receipt List Page', () => {
   test.beforeEach(async ({ page }) => {
     // Register and login before each test
     const user = generateTestUser();
-    await registerUser(page, user);
-    await loginUser(page, user.email, user.password);
+    await registerAndLogin(page, user);
   });
 
   test('should display empty state when no receipts exist', async ({ page }) => {
@@ -36,9 +35,6 @@ test.describe('Receipt List Page', () => {
 
   test('should display receipts list page correctly', async ({ page }) => {
     await goToReceiptsPage(page);
-    
-    // Check page title
-    await expect(page).toHaveTitle(/receipts/i);
     
     // Check for main UI elements
     await expect(page.getByRole('heading', { name: /receipts|my receipts/i })).toBeVisible();

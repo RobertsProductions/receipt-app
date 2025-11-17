@@ -11,15 +11,14 @@
 
 import { test, expect } from '@playwright/test';
 import { generateTestUser } from '../helpers/test-data';
-import { registerUser, loginUser } from '../helpers/auth.helpers';
+import { registerAndLogin } from '../helpers/auth.helpers';
 import { goToReceiptsPage, processReceiptWithOCR, uploadReceipt } from '../helpers/receipt.helpers';
 
 test.describe('Receipt Upload and OCR', () => {
   
   test.beforeEach(async ({ page }) => {
     const user = generateTestUser();
-    await registerUser(page, user);
-    await loginUser(page, user.email, user.password);
+    await registerAndLogin(page, user);
   });
 
   test('should display upload interface', async ({ page }) => {

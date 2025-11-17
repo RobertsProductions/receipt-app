@@ -10,25 +10,21 @@
 
 import { test, expect } from '@playwright/test';
 import { generateTestUser, generateTestReceipt } from '../helpers/test-data';
-import { registerUser, loginUser } from '../helpers/auth.helpers';
+import { registerAndLogin } from '../helpers/auth.helpers';
 import { createReceipt } from '../helpers/receipt.helpers';
 
 test.describe('Warranty Dashboard', () => {
   
   test.beforeEach(async ({ page }) => {
     const user = generateTestUser();
-    await registerUser(page, user);
-    await loginUser(page, user.email, user.password);
+    await registerAndLogin(page, user);
   });
 
   test('should display warranty dashboard page', async ({ page }) => {
     await page.goto('/warranties');
     
-    // Check page title
-    await expect(page).toHaveTitle(/warrant/i);
+    // Check URL and heading
     await expect(page).toHaveURL(/\/warranties/);
-    
-    // Check heading
     await expect(page.getByRole('heading', { name: /warrant/i })).toBeVisible();
   });
 

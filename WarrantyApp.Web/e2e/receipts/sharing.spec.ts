@@ -10,7 +10,7 @@
 
 import { test, expect } from '@playwright/test';
 import { generateTestUser, generateTestReceipt } from '../helpers/test-data';
-import { registerUser, loginUser, logoutUser } from '../helpers/auth.helpers';
+import { registerAndLogin, logoutUser } from '../helpers/auth.helpers';
 import { createReceipt, viewReceiptDetails, goToReceiptsPage } from '../helpers/receipt.helpers';
 
 test.describe('Receipt Sharing', () => {
@@ -23,9 +23,8 @@ test.describe('Receipt Sharing', () => {
     owner = generateTestUser();
     sharedUser = generateTestUser();
     
-    // Register owner
-    await registerUser(page, owner);
-    await loginUser(page, owner.email, owner.password);
+    // Register and login owner
+    await registerAndLogin(page, owner);
   });
 
   test('should display share button on receipt details', async ({ page }) => {

@@ -10,6 +10,7 @@ import { TestUser } from './test-data';
 
 /**
  * Register a new user account
+ * Note: Registration may auto-login the user
  */
 export async function registerUser(page: Page, user: TestUser): Promise<void> {
   await page.goto('/register');
@@ -43,12 +44,32 @@ export async function registerUser(page: Page, user: TestUser): Promise<void> {
   }
   
   // Submit form
-  const submitButton = page.getByRole('button', { name: /create account|register/i });
+  const submitButton = page.getByRole('button', { name: /create account/i });
   await submitButton.waitFor({ state: 'visible', timeout: 10000 });
   await submitButton.click();
   
   // Wait for registration to complete (redirect or success message)
   await page.waitForURL(/\/(login|receipts|dashboard)/i, { timeout: 15000 });
+}
+
+/**
+ * Register and ensure user is logged in
+ * Use this in test.beforeEach for authenticated tests
+ */
+export async function registerAndLogin(page: Page, user: TestUser): Promise<void> {
+  await registerUser(page, user);
+  
+  // Check if already logged in (auto-login after registration)
+  const currentUrl = page.url();
+  if (currentUrl.includes('/receipts') || currentUrl.includes('/dashboard')) {
+    // Already logged in, nothing to do
+    return;
+  }
+  
+  // If on login page, proceed with login
+  if (currentUrl.includes('/login')) {
+    await loginUser(page, user.email, user.password);
+  }
 }
 
 /**

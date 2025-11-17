@@ -10,7 +10,7 @@
 
 import { test, expect } from '@playwright/test';
 import { generateTestUser } from '../helpers/test-data';
-import { registerUser, loginUser } from '../helpers/auth.helpers';
+import { registerAndLogin } from '../helpers/auth.helpers';
 
 test.describe('User Profile and Settings', () => {
   
@@ -18,8 +18,7 @@ test.describe('User Profile and Settings', () => {
   
   test.beforeEach(async ({ page }) => {
     testUser = generateTestUser();
-    await registerUser(page, testUser);
-    await loginUser(page, testUser.email, testUser.password);
+    await registerAndLogin(page, testUser);
   });
 
   test('should navigate to profile page', async ({ page }) => {
