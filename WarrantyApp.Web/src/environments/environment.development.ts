@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:53525/api'
+  apiUrl: '/api'  // Use proxy in development - start-server.js forwards to backend
 };
