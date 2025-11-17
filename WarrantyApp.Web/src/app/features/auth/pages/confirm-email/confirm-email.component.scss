@@ -1,0 +1,126 @@
+.confirm-email-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--neutral-100) 100%);
+}
+
+.confirm-email-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.confirm-email-content {
+  padding: var(--space-6);
+}
+
+.confirm-email-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.state-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: var(--space-2);
+}
+
+.loading-icon {
+  color: var(--primary-500);
+  animation: spin 1s linear infinite;
+
+  circle {
+    stroke-dasharray: 50;
+    stroke-dashoffset: 25;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 50;
+  }
+  50% {
+    stroke-dashoffset: 12.5;
+  }
+  100% {
+    stroke-dashoffset: 50;
+  }
+}
+
+.success-icon {
+  color: var(--success);
+  animation: scale-in 0.4s ease-out;
+}
+
+.error-icon {
+  color: var(--error);
+  animation: scale-in 0.4s ease-out;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.state-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.state-message {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.error-message {
+  color: var(--error);
+}
+
+.action-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  .confirm-email-content {
+    padding: var(--space-4);
+  }
+
+  .state-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .state-title {
+    font-size: 24px;
+  }
+
+  .state-message {
+    font-size: 14px;
+  }
+}

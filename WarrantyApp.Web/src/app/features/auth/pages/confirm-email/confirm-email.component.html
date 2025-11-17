@@ -1,0 +1,71 @@
+<div class="confirm-email-page">
+  <div class="confirm-email-container">
+    <app-card>
+      <div class="confirm-email-content">
+        <!-- Loading State -->
+        <div *ngIf="state === 'loading'" class="confirm-email-state">
+          <svg class="state-icon loading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+          </svg>
+          <h1 class="state-title">Confirming Email...</h1>
+          <p class="state-message">Please wait while we verify your email address.</p>
+        </div>
+
+        <!-- Success State -->
+        <div *ngIf="state === 'success'" class="confirm-email-state">
+          <svg class="state-icon success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h1 class="state-title">Email Confirmed!</h1>
+          <p class="state-message">
+            Your email address has been successfully verified. You can now log in and start using your account.
+          </p>
+          
+          <div class="action-buttons">
+            <app-button
+              variant="primary"
+              size="lg"
+              [fullWidth]="true"
+              testId="go-to-login-button"
+              (onClick)="goToLogin()">
+              Go to Login
+            </app-button>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="state === 'error'" class="confirm-email-state">
+          <svg class="state-icon error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h1 class="state-title">Confirmation Failed</h1>
+          <p class="state-message error-message">
+            {{ errorMessage }}
+          </p>
+          
+          <div class="action-buttons">
+            <app-button
+              *ngIf="email"
+              variant="primary"
+              size="lg"
+              [fullWidth]="true"
+              [loading]="resendLoading"
+              testId="resend-button"
+              (onClick)="resendConfirmation()">
+              Resend Confirmation Email
+            </app-button>
+            
+            <app-button
+              variant="ghost"
+              size="md"
+              [fullWidth]="true"
+              testId="go-home-button"
+              (onClick)="goToHome()">
+              Back to Home
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>
