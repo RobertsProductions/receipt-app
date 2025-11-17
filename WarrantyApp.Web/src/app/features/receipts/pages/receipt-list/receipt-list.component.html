@@ -1,0 +1,75 @@
+<div class='receipt-list-page'>
+  <div class='page-header'>
+    <h1 class='page-title'>My Receipts</h1>
+    <app-button variant='primary' size='md' (onClick)='openUploadModal()'>
+      + Upload Receipt
+    </app-button>
+  </div>
+
+  <app-spinner *ngIf='loading' size='lg' text='Loading receipts...'></app-spinner>
+
+  <app-empty-state
+    *ngIf='!loading && receipts.length === 0'
+    icon='📋'
+    title='No receipts yet'
+    description='Upload your first receipt to get started tracking warranties'
+    actionText='Upload Receipt'
+    (onAction)='openUploadModal()'>
+  </app-empty-state>
+
+  <div *ngIf='!loading && receipts.length > 0' class='receipts-grid'>
+    <app-card *ngFor='let receipt of receipts' class='receipt-card' [hoverable]='true' padding='md'>
+      <div class='receipt-content' [routerLink]='["/receipts", receipt.id]'>
+        <div class='receipt-header'>
+          <h3 class='merchant-name'>{{ receipt.merchantName || "Unknown Merchant" }}</h3>
+          <span class='amount'>${{ receipt.totalAmount?.toFixed(2) || "0.00" }}</span>
+        </div>
+        <p class='product-name'>{{ receipt.productName || "No product name" }}</p>
+        <p class='purchase-date'>{{ receipt.purchaseDate | date:"mediumDate" }}</p>
+        <app-badge
+          *ngIf='getWarrantyBadge(receipt) as badge'
+          [variant]='badge.variant'
+          size='sm'>
+          {{ badge.text }}
+        </app-badge>
+      </div>
+      <button class='delete-btn' (click)='deleteReceipt(receipt.id); $event.stopPropagation()' title='Delete'>
+        🗑️
+      </button>
+    </app-card>
+  </div>
+
+  <app-pagination
+    *ngIf='!loading && receipts.length > 0'
+    [currentPage]='currentPage'
+    [totalPages]='totalPages'
+    [totalItems]='totalCount'
+    [pageSize]='pageSize'
+    (pageChange)='onPageChange($event)'>
+  </app-pagination>
+
+  <app-modal
+    [isOpen]='showUploadModal'
+    title='Upload Receipt'
+    size='md'
+    (onClose)='closeUploadModal()'>
+    <div body>
+      <app-file-upload
+        accept='image/*,application/pdf'
+        [multiple]='false'
+        (filesSelected)='onFilesSelected($event)'>
+      </app-file-upload>
+      
+      <div class='ocr-option'>
+        <label>
+          <input type='checkbox' [(ngModel)]='uploadingOCR' />
+          Process with OCR (extract data automatically)
+        </label>
+      </div>
+    </div>
+    <div footer>
+      <app-button variant='secondary' (onClick)='closeUploadModal()'>Cancel</app-button>
+      <app-button variant='primary' [loading]='uploading' (onClick)='uploadReceipt()'>Upload</app-button>
+    </div>
+  </app-modal>
+</div>

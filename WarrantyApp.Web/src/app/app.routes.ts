@@ -17,7 +17,7 @@ export const routes: Routes = [
   {
     path: 'receipts',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/auth/pages/landing/landing.component').then(m => m.LandingComponent) // Placeholder
+    loadComponent: () => import('./features/receipts/pages/receipt-list/receipt-list.component').then(m => m.ReceiptListComponent)
   },
   {
     path: '**',
