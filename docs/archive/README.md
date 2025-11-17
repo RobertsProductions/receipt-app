@@ -24,7 +24,9 @@ Historical progress snapshots and completion summaries:
 
 ### `/reference/` - Quick Reference Guides
 Condensed reference materials and summaries:
-- reference-frontend-roadmap-summary.md
+- reference-docs-analysis.md - Documentation structure analysis
+- reference-docs-renaming-plan.md - Historical docs reorganization plan
+- reference-frontend-roadmap-summary.md - Frontend implementation summary
 
 ## ℹ️ Why Archive?
 
