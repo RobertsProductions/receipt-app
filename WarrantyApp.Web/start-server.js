@@ -8,6 +8,11 @@ const { spawn } = require('child_process');
 const port = process.env.PORT || '4200';
 
 console.log(`Starting Angular dev server on port ${port}`);
+console.log('Environment variables:');
+console.log('  PORT:', process.env.PORT);
+console.log('  API_URL:', process.env.API_URL);
+console.log('  services__myapi__http__0:', process.env.services__myapi__http__0);
+console.log('  All services env vars:', Object.keys(process.env).filter(k => k.startsWith('services__')));
 
 const ngServe = spawn('ng', ['serve', '--proxy-config', 'proxy.conf.mjs', '--port', port], {
   stdio: 'inherit',
