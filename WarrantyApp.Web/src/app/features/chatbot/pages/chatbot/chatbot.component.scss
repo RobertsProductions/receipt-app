@@ -20,10 +20,11 @@
 }
 
 .chatbot-header {
-  background: linear-gradient(135deg, var(--color-primary-600), var(--color-accent-600));
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   padding: var(--space-4);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   .header-content {
     display: flex;
@@ -38,12 +39,15 @@
 
     .icon {
       color: white;
+      width: 24px;
+      height: 24px;
     }
 
     h1 {
-      font-size: var(--font-size-xl);
-      font-weight: var(--font-weight-bold);
+      font-size: 1.5rem;
+      font-weight: 700;
       margin: 0;
+      color: white;
     }
   }
 
@@ -51,21 +55,29 @@
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
     
     &:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.2);
       border-color: rgba(255, 255, 255, 0.3);
     }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     svg {
       width: 16px;
       height: 16px;
+      flex-shrink: 0;
     }
   }
 }
@@ -262,44 +274,58 @@
 }
 
 .input-area {
-  padding: var(--space-4);
+  padding: 1rem;
   background: white;
-  border-top: 1px solid var(--color-neutral-200);
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
 
   .input-wrapper {
     display: flex;
-    gap: var(--space-2);
+    gap: 0.5rem;
     align-items: flex-end;
   }
 
   .message-input {
     flex: 1;
-    padding: var(--space-3);
-    border: 1px solid var(--color-neutral-300);
-    border-radius: var(--radius-md);
-    font-size: var(--font-size-base);
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
     font-family: inherit;
     resize: none;
     max-height: 120px;
-    transition: border-color var(--transition-normal);
+    transition: border-color 0.2s ease;
 
     &:focus {
       outline: none;
-      border-color: var(--color-primary-500);
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
     &:disabled {
-      background: var(--color-neutral-100);
+      background: #f3f4f6;
       cursor: not-allowed;
     }
 
     &::placeholder {
-      color: var(--color-neutral-400);
+      color: #9ca3af;
     }
   }
 
   app-button {
     flex-shrink: 0;
+    
+    ::ng-deep button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      svg {
+        width: 18px !important;
+        height: 18px !important;
+        flex-shrink: 0;
+      }
+    }
   }
 }
 
