@@ -1,7 +1,7 @@
 # Testing Documentation
 
-**Last Updated**: November 17, 2025  
-**Status**: 🎯 **Backend Tests: 146/146 Passing | E2E Tests: In Progress**
+**Last Updated**: November 18, 2025  
+**Status**: 🎯 **Backend Tests: 146/146 Passing | E2E Tests: Auth Suite Passing, Others In Progress**
 
 This directory contains comprehensive testing documentation for the Warranty Management System, including test status, guidelines, troubleshooting, and maintenance procedures for all testing initiatives.
 
@@ -27,8 +27,8 @@ This directory contains comprehensive testing documentation for the Warranty Man
 | Test Category | Tests | Passing | Status | Coverage |
 |--------------|-------|---------|--------|----------|
 | **Backend Unit Tests** | 146 | 146 | ✅ 100% | ~85% |
-| **Frontend E2E Tests** | 125 | TBD | ⚠️ In Progress | Critical Paths |
-| **Total** | **271** | **146+** | 🎯 **Backend Complete** | **Good** |
+| **Frontend E2E Tests** | 125 | ~30 (Auth) | ⚠️ Auth Complete, Others In Progress | Critical Paths |
+| **Total** | **271** | **176+** | 🎯 **Backend Complete** | **Good** |
 
 ### Test Execution Time
 
@@ -123,7 +123,7 @@ dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
 ### Overview
 
-The frontend has **125 E2E tests** implemented using Playwright, covering critical user workflows across authentication, receipts, warranties, and settings. Tests are organized by feature area.
+The frontend has **125 E2E tests** written using Playwright, covering critical user workflows across authentication, receipts, warranties, and settings. Tests are organized by feature area. **Currently, only the Authentication suite is fully passing. Other test suites are in progress.**
 
 ### Test Structure
 
@@ -152,15 +152,15 @@ WarrantyApp.Web/e2e/
 
 | Feature | Tests | File | Priority | Status |
 |---------|-------|------|----------|--------|
-| **Landing Page** | 7 | landing.spec.ts | Medium | ⚠️ To Test |
-| **User Registration** | 20 | register.spec.ts | High | ⚠️ To Test |
-| **User Login** | 18 | login.spec.ts | High | ⚠️ To Test |
-| **Receipt List** | 14 | list.spec.ts | High | ⚠️ To Test |
-| **Receipt Details** | 18 | details.spec.ts | High | ⚠️ To Test |
-| **Receipt Upload/OCR** | 15 | upload.spec.ts | High | ⚠️ To Test |
-| **Receipt Sharing** | 12 | sharing.spec.ts | Medium | ⚠️ To Test |
-| **Warranty Dashboard** | 10 | dashboard.spec.ts | High | ⚠️ To Test |
-| **User Settings** | 11 | settings.spec.ts | Medium | ⚠️ To Test |
+| **Landing Page** | 7 | landing.spec.ts | Medium | ✅ Passing |
+| **User Registration** | 20 | register.spec.ts | High | ✅ Passing |
+| **User Login** | 18 | login.spec.ts | High | ✅ Passing |
+| **Receipt List** | 14 | list.spec.ts | High | ⚠️ In Progress |
+| **Receipt Details** | 18 | details.spec.ts | High | ⚠️ In Progress |
+| **Receipt Upload/OCR** | 15 | upload.spec.ts | High | ⚠️ In Progress |
+| **Receipt Sharing** | 12 | sharing.spec.ts | Medium | ⚠️ In Progress |
+| **Warranty Dashboard** | 10 | dashboard.spec.ts | High | ⚠️ In Progress |
+| **User Settings** | 11 | settings.spec.ts | Medium | ⚠️ In Progress |
 
 ### Running E2E Tests
 
@@ -250,7 +250,7 @@ dotnet run
 # Terminal 2: Run Playwright tests
 cd WarrantyApp.Web
 npm run e2e
-# Expected: 125 tests, ~5-10 minutes
+# Expected: Auth tests passing (~45 tests), others may need fixes
 ```
 
 ### Quick Smoke Test
