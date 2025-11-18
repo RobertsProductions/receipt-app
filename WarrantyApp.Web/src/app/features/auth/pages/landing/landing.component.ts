@@ -16,7 +16,7 @@ export class LandingComponent {
     {
       icon: '📷',
       title: 'AI-Powered OCR',
-      description: 'Upload receipts and let AI automatically extract merchant, amount, date, and product information.'
+      description: 'Upload receipts and AI extracts merchant, amount, date, and products.'
     },
     {
       icon: '⏰',

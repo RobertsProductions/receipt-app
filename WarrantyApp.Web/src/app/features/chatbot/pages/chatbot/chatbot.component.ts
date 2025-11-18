@@ -94,6 +94,9 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
     this.messages.push(userMsg);
     this.shouldScroll = true;
 
+    console.log('User message added:', userMsg);
+    console.log('Total messages:', this.messages.length);
+
     // Clear input
     this.userMessage = '';
     this.isSending = true;
@@ -111,6 +114,9 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
         this.messages.push(aiMsg);
         this.shouldScroll = true;
         this.isSending = false;
+        
+        console.log('AI response added:', aiMsg);
+        console.log('Total messages:', this.messages.length);
       },
       error: (error) => {
         console.error('Failed to send message:', error);
