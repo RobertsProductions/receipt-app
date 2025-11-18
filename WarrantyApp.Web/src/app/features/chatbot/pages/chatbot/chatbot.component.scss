@@ -166,11 +166,23 @@
 
   &.user-message {
     flex-direction: row-reverse;
+    justify-content: flex-start;
 
     .message-bubble {
       background: var(--color-primary-600);
       color: white;
-      margin-left: auto;
+      
+      p {
+        color: white;
+      }
+    }
+    
+    .message-avatar {
+      background: var(--color-primary-100);
+      
+      svg {
+        color: var(--color-primary-600);
+      }
     }
   }
 
