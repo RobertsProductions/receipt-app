@@ -158,6 +158,7 @@ export class AuthService {
         const storedUser: LoginResponse = {
           token: token,
           refreshToken: refreshToken,
+          expiresAt: '',
           username: '',
           email: '',
           requiresTwoFactor: false
