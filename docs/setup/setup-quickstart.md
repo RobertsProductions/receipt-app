@@ -5,7 +5,7 @@
 ### Prerequisites Check
 ```bash
 # Verify Node.js and npm
-node --version  # Should be 18+
+node --version  # Should be 18+ (22 LTS recommended)
 npm --version   # Should be 10+
 
 # Verify .NET SDK

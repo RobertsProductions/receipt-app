@@ -15,7 +15,7 @@ This application provides a comprehensive warranty tracking system with a REST A
 ## Technology Stack
 
 ### Backend
-- **.NET 8.0** - Latest LTS version with C# 12
+- **.NET 8.0** - Current LTS version (supported until Nov 2026) with C# 12
 - **.NET Aspire 13.0** - Cloud-native orchestration and observability
 - **ASP.NET Core Web API** - RESTful API with Swagger/OpenAPI
 - **Entity Framework Core** - ORM with SQL Server/SQLite support
@@ -126,7 +126,7 @@ MyAspireSolution/
 
 ### Prerequisites
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (8.0.302+)
-- [Node.js 18+](https://nodejs.org/) and npm 10+
+- [Node.js 18+](https://nodejs.org/) and npm 10+ (Node.js 22 LTS recommended)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [OpenAI API Key](https://platform.openai.com/api-keys) (optional, for OCR)
 
