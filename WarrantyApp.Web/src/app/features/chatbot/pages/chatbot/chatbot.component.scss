@@ -52,25 +52,27 @@
   }
 
   .clear-button {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.25);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.875rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     
     &:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.7);
+      transform: translateY(-1px);
     }
     
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
@@ -282,7 +284,7 @@
   .input-wrapper {
     display: flex;
     gap: 0.5rem;
-    align-items: flex-end;
+    align-items: stretch;
   }
 
   .message-input {
@@ -293,6 +295,7 @@
     font-size: 1rem;
     font-family: inherit;
     resize: none;
+    min-height: 44px;
     max-height: 120px;
     transition: border-color 0.2s ease;
 
@@ -314,11 +317,15 @@
 
   app-button {
     flex-shrink: 0;
+    align-self: stretch;
     
     ::ng-deep button {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
+      height: 100%;
+      min-height: 44px;
       
       svg {
         width: 18px !important;
