@@ -105,14 +105,16 @@ export class ReceiptListComponent implements OnInit {
         this.closeUploadModal();
         this.uploading = false;
         
+        // Add receipt to the list immediately (optimistic update)
+        this.receipts.unshift(receipt);
+        this.totalCount++;
+        
         if (this.uploadingOCR) {
           this.processingReceiptIds.add(receipt.id);
           this.toast.info('Receipt uploaded. Processing OCR...');
-          this.loadReceipts();
           this.processOCR(receipt.id);
         } else {
           this.toast.success('Receipt uploaded successfully!');
-          this.loadReceipts();
         }
       },
       error: () => {
@@ -127,12 +129,24 @@ export class ReceiptListComponent implements OnInit {
       next: () => {
         this.processingReceiptIds.delete(receiptId);
         this.toast.success('Receipt processed with OCR!');
-        this.loadReceipts();
+        // Update the specific receipt with OCR data
+        const index = this.receipts.findIndex(r => r.id === receiptId);
+        if (index !== -1) {
+          // Reload just this receipt to get updated OCR data
+          this.receiptService.getReceipt(receiptId).subscribe({
+            next: (updatedReceipt) => {
+              this.receipts[index] = updatedReceipt;
+            },
+            error: () => {
+              // If reload fails, just remove processing indicator
+              console.warn('Failed to reload receipt after OCR');
+            }
+          });
+        }
       },
       error: () => {
         this.processingReceiptIds.delete(receiptId);
         this.toast.warning('Receipt uploaded, but OCR processing failed');
-        this.loadReceipts();
       }
     });
   }
