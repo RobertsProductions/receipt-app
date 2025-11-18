@@ -52,8 +52,9 @@ MyAspireSolution/
   - `AppHost\MyAspireApp.Host.csproj`
 
 ### 6. Pinned SDK Version
-- Created `global.json` with SDK version 8.0.302
+- Created `global.json` with SDK version 8.0.302 and `rollForward: "latestPatch"`
 - Command: `dotnet new globaljson --sdk-version 8.0.302 --force`
+- This allows any 8.0.3xx patch version (e.g., 8.0.416) to work without warnings
 
 ### 7. Added Project Reference
 - Command: `dotnet add AppHost/MyAspireApp.Host.csproj reference MyApi/MyApi.csproj`

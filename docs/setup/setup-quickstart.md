@@ -9,7 +9,7 @@ node --version  # Should be 18+ (22 LTS recommended)
 npm --version   # Should be 10+
 
 # Verify .NET SDK
-dotnet --version  # Should be 8.0.302+
+dotnet --version  # Should be 8.0.302 or newer
 
 # Verify Docker is running
 docker --version

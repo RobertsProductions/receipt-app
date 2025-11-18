@@ -63,7 +63,7 @@ MyAspireSolution/
 │   │   └── guards/             # Route guards
 │   ├── e2e/                    # Playwright E2E tests
 │   └── playwright.config.ts
-└── global.json                 # .NET SDK version (8.0.302)
+└── global.json                 # .NET SDK version (8.0.302+, rollForward: latestPatch)
 ```
 
 ## Current Status
@@ -125,7 +125,7 @@ MyAspireSolution/
 ## Getting Started
 
 ### Prerequisites
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (8.0.302+)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (8.0.302 or newer)
 - [Node.js 18+](https://nodejs.org/) and npm 10+ (Node.js 22 LTS recommended)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [OpenAI API Key](https://platform.openai.com/api-keys) (optional, for OCR)
