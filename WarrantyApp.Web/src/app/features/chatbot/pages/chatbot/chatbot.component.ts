@@ -105,7 +105,7 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
         const aiMsg: ChatMessage = {
           id: response.messageId || `ai-${Date.now()}`,
           role: 'assistant',
-          content: response.content || response.message || '',
+          content: response.content || '',
           timestamp: response.createdAt || new Date().toISOString()
         };
         this.messages.push(aiMsg);
