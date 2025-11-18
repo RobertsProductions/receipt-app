@@ -177,7 +177,8 @@ npm start
 **OpenAI API Key** (for OCR):
 ```powershell
 .\SetOpenAiKey.ps1
-# Or: cd MyApi && dotnet user-secrets set "OpenAI:ApiKey" "your-key"
+# This sets the key in AppHost user secrets for Aspire
+# Or manually: cd AppHost && dotnet user-secrets set "Parameters:openai-apikey" "your-key"
 ```
 
 **Email** (optional): `cd MyApi && .\ConfigureEmail.ps1`

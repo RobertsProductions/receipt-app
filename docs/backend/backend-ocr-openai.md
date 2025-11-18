@@ -16,30 +16,45 @@ The receipt upload feature now includes OpenAI-powered OCR (Optical Character Re
 
 ### 1. Configure OpenAI API Key
 
-The OCR service requires an OpenAI API key. There are three ways to configure it:
+The OCR service requires an OpenAI API key. **When using Aspire (recommended)**, use Option A or C. Option B is only for running the API standalone without Aspire.
 
-#### Option A: Via Aspire Dashboard (Recommended for Testing)
+#### Option A: Via PowerShell Script (Recommended - Uses Aspire AppHost)
 
-1. Start your Aspire application
-2. Open the Aspire Dashboard (usually at https://localhost:17191)
-3. Navigate to the Parameters section
-4. Find `openai-apikey` parameter
-5. Enter your OpenAI API key (starts with `sk-`)
-6. Save and restart the API service
+```powershell
+# From solution root
+.\SetOpenAiKey.ps1
+```
 
-#### Option B: Via User Secrets (Recommended for Development)
+This automatically:
+- Initializes AppHost user secrets if needed
+- Sets the `Parameters:openai-apikey` parameter
+- Configures it for Aspire to pass to the API
+
+#### Option B: Via AppHost User Secrets (Manual - For Aspire)
+
+```bash
+cd MyAspireSolution/AppHost
+dotnet user-secrets init  # First time only
+dotnet user-secrets set "Parameters:openai-apikey" "your-openai-api-key-here"
+```
+
+#### Option C: Via MyApi User Secrets (Only for Standalone API)
+
+**⚠️ Only use this if running MyApi standalone without Aspire:**
 
 ```bash
 cd MyAspireSolution/MyApi
 dotnet user-secrets set "OpenAI:ApiKey" "your-openai-api-key-here"
 ```
 
-#### Option C: Via AppHost User Secrets (For Aspire-managed Configuration)
+#### Option D: Via Aspire Dashboard (Interactive)
 
-```bash
-cd MyAspireSolution/AppHost
-dotnet user-secrets set "Parameters:openai-apikey" "your-openai-api-key-here"
-```
+1. Start Aspire: `cd AppHost && dotnet run`
+2. Open the Aspire Dashboard (https://localhost:17263)
+3. Navigate to the Parameters section
+4. Find `openai-apikey` parameter
+5. Enter your OpenAI API key (starts with `sk-`)
+6. The API will automatically receive the key
 
 **Important:** Never commit API keys to source control. User secrets and Aspire parameters are stored locally and not included in the repository.
 

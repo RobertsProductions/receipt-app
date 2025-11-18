@@ -1,11 +1,12 @@
 # Set OpenAI API Key for OCR Feature
-# This script helps you securely configure the OpenAI API key using .NET user secrets
+# This script helps you securely configure the OpenAI API key for Aspire AppHost
+# The key will be stored in AppHost user secrets and passed to the API at runtime
 
-Write-Host "OpenAI API Key Configuration" -ForegroundColor Cyan
-Write-Host "=============================" -ForegroundColor Cyan
+Write-Host "OpenAI API Key Configuration (Aspire)" -ForegroundColor Cyan
+Write-Host "======================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "This will configure your OpenAI API key for the OCR feature." -ForegroundColor Yellow
-Write-Host "The key will be stored securely in .NET user secrets (not in source control)." -ForegroundColor Yellow
+Write-Host "The key will be stored securely in Aspire AppHost user secrets." -ForegroundColor Yellow
 Write-Host ""
 
 # Prompt for API key
@@ -25,24 +26,34 @@ if (-not $apiKey.StartsWith("sk-")) {
     }
 }
 
-# Set the user secret
+# Set the user secret in AppHost project
 try {
-    Push-Location "$PSScriptRoot\MyApi"
+    Push-Location "$PSScriptRoot\AppHost"
     
     Write-Host ""
-    Write-Host "Setting user secret..." -ForegroundColor Cyan
+    Write-Host "Initializing user secrets for AppHost (if needed)..." -ForegroundColor Cyan
     
-    dotnet user-secrets set "OpenAI:ApiKey" $apiKey
+    # Initialize user secrets if not already done
+    $null = dotnet user-secrets init 2>&1
+    
+    Write-Host "Setting OpenAI API key parameter..." -ForegroundColor Cyan
+    
+    # Set the parameter in AppHost user secrets
+    dotnet user-secrets set "Parameters:openai-apikey" $apiKey
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host ""
-        Write-Host "✓ OpenAI API key configured successfully!" -ForegroundColor Green
+        Write-Host "✓ OpenAI API key configured successfully for Aspire!" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "Next steps:" -ForegroundColor Cyan
+        Write-Host "  1. Start Aspire: cd AppHost && dotnet run" -ForegroundColor Gray
+        Write-Host "  2. The API will automatically receive the OpenAI key" -ForegroundColor Gray
         Write-Host ""
         Write-Host "You can verify the configuration with:" -ForegroundColor Gray
-        Write-Host "  cd MyApi" -ForegroundColor Gray
+        Write-Host "  cd AppHost" -ForegroundColor Gray
         Write-Host "  dotnet user-secrets list" -ForegroundColor Gray
         Write-Host ""
-        Write-Host "The OCR feature is now ready to use." -ForegroundColor Green
+        Write-Host "The OCR feature is now ready to use!" -ForegroundColor Green
     } else {
         Write-Host ""
         Write-Host "Error: Failed to set user secret" -ForegroundColor Red

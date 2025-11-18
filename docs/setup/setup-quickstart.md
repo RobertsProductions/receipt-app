@@ -122,16 +122,21 @@ npm start
 
 ### Add OpenAI API Key (for OCR)
 ```powershell
-# Option 1: PowerShell script
+# Option 1: PowerShell script (Recommended for Aspire)
 .\SetOpenAiKey.ps1
+# This sets: cd AppHost && dotnet user-secrets set "Parameters:openai-apikey" "your-key"
 
-# Option 2: User secrets
-cd MyApi
-dotnet user-secrets set "OpenAI:ApiKey" "your-key-here"
+# Option 2: Manual Aspire AppHost user secrets
+cd AppHost
+dotnet user-secrets init  # First time only
+dotnet user-secrets set "Parameters:openai-apikey" "your-key-here"
 
-# Option 3: Aspire Dashboard
-# Start app, go to dashboard, set openai-apikey parameter
+# Option 3: Aspire Dashboard (Interactive)
+# Start Aspire, open dashboard at https://localhost:17263
+# Navigate to Parameters section, set 'openai-apikey' parameter
 ```
+
+**Note**: When using Aspire (recommended), the OpenAI key must be set in the **AppHost** project user secrets, not the MyApi project. Aspire passes parameters to the API at runtime.
 
 ### Reset Database
 ```bash
