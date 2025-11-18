@@ -169,21 +169,21 @@
     justify-content: flex-start;
 
     .message-bubble {
-      background: var(--color-primary-600);
-      color: white;
-      border: 1px solid var(--color-primary-700);
+      background: #667eea !important;
+      color: white !important;
+      border: 1px solid #5568d3;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
       
       p {
-        color: white;
+        color: white !important;
       }
     }
     
     .message-avatar {
-      background: var(--color-primary-100);
+      background: #e0e7ff;
       
       svg {
-        color: var(--color-primary-600);
+        color: #667eea;
       }
     }
   }
