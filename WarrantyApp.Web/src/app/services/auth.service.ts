@@ -153,8 +153,17 @@ export class AuthService {
   private loadStoredAuth(): void {
     const token = this.getAccessToken();
     if (token) {
-      // Could decode JWT here to get user info if needed
-      // For now, just mark as authenticated
+      const refreshToken = this.getRefreshToken();
+      if (refreshToken) {
+        const storedUser: LoginResponse = {
+          token: token,
+          refreshToken: refreshToken,
+          username: '',
+          email: '',
+          requiresTwoFactor: false
+        };
+        this.currentUserSubject.next(storedUser);
+      }
     }
   }
 }

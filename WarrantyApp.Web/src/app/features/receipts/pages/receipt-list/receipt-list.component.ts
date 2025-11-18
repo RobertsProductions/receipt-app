@@ -101,13 +101,14 @@ export class ReceiptListComponent implements OnInit {
 
     this.receiptService.uploadReceipt(file).subscribe({
       next: (receipt) => {
+        this.loadReceipts();
         if (this.uploadingOCR) {
           this.toast.info('Receipt uploaded. Processing OCR...');
           this.processOCR(receipt.id);
         } else {
           this.toast.success('Receipt uploaded successfully!');
           this.closeUploadModal();
-          this.loadReceipts();
+          this.uploading = false;
         }
       },
       error: () => {
