@@ -25,8 +25,8 @@
     <app-card *ngFor='let receipt of receipts' class='receipt-card' [hoverable]='true' padding='md'>
       <div class='receipt-content' [routerLink]='["/receipts", receipt.id]'>
         <div class='receipt-header'>
-          <h3 class='merchant-name'>{{ receipt.merchantName || "Unknown Merchant" }}</h3>
-          <span class='amount'>${{ receipt.totalAmount?.toFixed(2) || "0.00" }}</span>
+          <h3 class='merchant-name'>{{ receipt.merchant || "Unknown Merchant" }}</h3>
+          <span class='amount'>${{ receipt.amount?.toFixed(2) || "0.00" }}</span>
         </div>
         <p class='product-name'>{{ receipt.productName || "No product name" }}</p>
         <p class='purchase-date'>{{ receipt.purchaseDate | date:"mediumDate" }}</p>
