@@ -117,8 +117,8 @@ export class RegisterComponent {
 
     this.authService.register({ userName: username, email, password }).subscribe({
       next: () => {
-        this.toast.success('Account created! Please check your email to confirm.');
-        this.router.navigate(['/confirm-email'], { queryParams: { email } });
+        this.toast.success('Account created successfully! You can verify your email later from your profile.');
+        this.router.navigate(['/receipts']);
       },
       error: (err) => {
         this.loading = false;
