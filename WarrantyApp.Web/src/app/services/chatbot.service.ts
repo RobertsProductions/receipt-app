@@ -23,14 +23,12 @@ export class ChatbotService {
   }
 
   getHistory(
-    pageNumber: number = 1,
-    pageSize: number = 50
-  ): Observable<{ messages: ChatMessage[]; totalCount: number }> {
+    limit: number = 50
+  ): Observable<{ messages: ChatMessage[]; totalMessages: number }> {
     const params = new HttpParams()
-      .set('pageNumber', pageNumber.toString())
-      .set('pageSize', pageSize.toString());
+      .set('limit', limit.toString());
 
-    return this.http.get<{ messages: ChatMessage[]; totalCount: number }>(
+    return this.http.get<{ messages: ChatMessage[]; totalMessages: number }>(
       `${this.apiUrl}/history`,
       { params }
     );

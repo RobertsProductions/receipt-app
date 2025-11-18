@@ -23,7 +23,7 @@ export class ReceiptService {
     pageSize: number = 20
   ): Observable<{ receipts: Receipt[]; totalCount: number }> {
     const params = new HttpParams()
-      .set('pageNumber', pageNumber.toString())
+      .set('page', pageNumber.toString())
       .set('pageSize', pageSize.toString());
 
     return this.http.get<{ receipts: Receipt[]; totalCount: number }>(this.apiUrl, {
