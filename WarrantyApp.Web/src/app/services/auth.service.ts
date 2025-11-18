@@ -18,6 +18,8 @@ export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/Auth`;
   private readonly accessTokenKey = 'access_token';
   private readonly refreshTokenKey = 'refresh_token';
+  private readonly usernameKey = 'username';
+  private readonly emailKey = 'email';
 
   private currentUserSubject = new BehaviorSubject<LoginResponse | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -141,12 +143,16 @@ export class AuthService {
   private storeAuth(response: LoginResponse): void {
     localStorage.setItem(this.accessTokenKey, response.token);
     localStorage.setItem(this.refreshTokenKey, response.refreshToken);
+    localStorage.setItem(this.usernameKey, response.username);
+    localStorage.setItem(this.emailKey, response.email);
     this.currentUserSubject.next(response);
   }
 
   private clearAuth(): void {
     localStorage.removeItem(this.accessTokenKey);
     localStorage.removeItem(this.refreshTokenKey);
+    localStorage.removeItem(this.usernameKey);
+    localStorage.removeItem(this.emailKey);
     this.currentUserSubject.next(null);
   }
 
@@ -159,8 +165,8 @@ export class AuthService {
           token: token,
           refreshToken: refreshToken,
           expiresAt: '',
-          username: '',
-          email: '',
+          username: localStorage.getItem(this.usernameKey) || '',
+          email: localStorage.getItem(this.emailKey) || '',
           requiresTwoFactor: false
         };
         this.currentUserSubject.next(storedUser);

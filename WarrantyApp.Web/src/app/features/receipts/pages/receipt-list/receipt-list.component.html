@@ -31,7 +31,13 @@
         <p class='product-name'>{{ receipt.productName || "No product name" }}</p>
         <p class='purchase-date'>{{ receipt.purchaseDate | date:"mediumDate" }}</p>
         <app-badge
-          *ngIf='getWarrantyBadge(receipt) as badge'
+          *ngIf='isProcessing(receipt.id)'
+          variant='neutral'
+          size='sm'>
+          🔄 Processing OCR...
+        </app-badge>
+        <app-badge
+          *ngIf='!isProcessing(receipt.id) && getWarrantyBadge(receipt) as badge'
           [variant]='badge.variant'
           size='sm'>
           {{ badge.text }}

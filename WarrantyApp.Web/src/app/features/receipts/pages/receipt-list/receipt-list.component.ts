@@ -46,6 +46,7 @@ export class ReceiptListComponent implements OnInit {
   selectedFiles: File[] = [];
   uploadingOCR: boolean = false;
   uploading: boolean = false;
+  processingReceiptIds: Set<string> = new Set();
 
   constructor(
     private receiptService: ReceiptService,
@@ -101,14 +102,17 @@ export class ReceiptListComponent implements OnInit {
 
     this.receiptService.uploadReceipt(file).subscribe({
       next: (receipt) => {
-        this.loadReceipts();
+        this.closeUploadModal();
+        this.uploading = false;
+        
         if (this.uploadingOCR) {
+          this.processingReceiptIds.add(receipt.id);
           this.toast.info('Receipt uploaded. Processing OCR...');
+          this.loadReceipts();
           this.processOCR(receipt.id);
         } else {
           this.toast.success('Receipt uploaded successfully!');
-          this.closeUploadModal();
-          this.uploading = false;
+          this.loadReceipts();
         }
       },
       error: () => {
@@ -121,18 +125,20 @@ export class ReceiptListComponent implements OnInit {
   processOCR(receiptId: string): void {
     this.receiptService.processOcr(receiptId).subscribe({
       next: () => {
-        this.toast.success('Receipt uploaded and processed!');
-        this.uploading = false;
-        this.closeUploadModal();
+        this.processingReceiptIds.delete(receiptId);
+        this.toast.success('Receipt processed with OCR!');
         this.loadReceipts();
       },
       error: () => {
+        this.processingReceiptIds.delete(receiptId);
         this.toast.warning('Receipt uploaded, but OCR processing failed');
-        this.uploading = false;
-        this.closeUploadModal();
         this.loadReceipts();
       }
     });
+  }
+  
+  isProcessing(receiptId: string): boolean {
+    return this.processingReceiptIds.has(receiptId);
   }
 
   getWarrantyBadge(receipt: Receipt): { variant: 'success' | 'warning' | 'error' | 'neutral', text: string } | null {
