@@ -60,15 +60,27 @@ export class FileUploadComponent {
       // Check file type
       const acceptedTypes = this.accept.split(',').map(t => t.trim());
       const fileType = file.type;
+      const fileName = file.name.toLowerCase();
+      const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+      
       const isAccepted = acceptedTypes.some(type => {
         if (type.endsWith('/*')) {
+          // Handle wildcard types like "image/*"
           return fileType.startsWith(type.replace('/*', ''));
         }
         return fileType === type;
       });
 
-      if (!isAccepted) {
-        this.errors.push(`${file.name} is not an accepted file type`);
+      // Fallback: check by file extension if MIME type check fails
+      // This handles cases where browser doesn't set proper MIME type
+      const extensionAccepted = !fileType && acceptedTypes.some(type => {
+        if (type === 'application/pdf' && fileExtension === '.pdf') return true;
+        if (type === 'image/*' && ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(fileExtension)) return true;
+        return false;
+      });
+
+      if (!isAccepted && !extensionAccepted) {
+        this.errors.push(`${file.name} is not an accepted file type. Accepted: JPEG, PNG, PDF`);
         continue;
       }
 
