@@ -72,7 +72,7 @@
 
 .suggested-section {
   padding: var(--space-4);
-  background: var(--color-neutral-50);
+  background: var(--color-neutral-100);
   border-bottom: 1px solid var(--color-neutral-200);
 
   .suggested-title {
@@ -119,7 +119,7 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--space-4);
-  background: var(--color-neutral-50);
+  background: var(--color-neutral-100);
   min-height: 300px;
   display: flex;
   flex-direction: column;
