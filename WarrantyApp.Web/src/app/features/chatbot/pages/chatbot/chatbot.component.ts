@@ -101,13 +101,12 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
     // Send to API
     this.chatbotService.sendMessage(messageToSend).subscribe({
       next: (response) => {
-        // Add AI response as a new message
+        // Backend returns ChatMessageResponseDto with Content field
         const aiMsg: ChatMessage = {
-          id: `ai-${Date.now()}`,
+          id: response.messageId || `ai-${Date.now()}`,
           role: 'assistant',
-          content: response.message,
-          timestamp: new Date().toISOString(),
-          receipts: response.receipts?.map(r => r.id)
+          content: response.content || response.message || '',
+          timestamp: response.createdAt || new Date().toISOString()
         };
         this.messages.push(aiMsg);
         this.shouldScroll = true;

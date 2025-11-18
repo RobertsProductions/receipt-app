@@ -6,6 +6,13 @@ export interface ChatMessage {
   receipts?: string[];
 }
 
+export interface ChatMessageResponseDto {
+  messageId: string;
+  role: string;
+  content: string;
+  createdAt: string;
+}
+
 export interface ChatbotResponse {
   message: string;
   receipts?: Array<{
