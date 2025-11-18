@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
@@ -35,9 +35,32 @@ export class LoginComponent {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, this.passwordValidator.bind(this)]],
       twoFactorCode: ['']
     });
+  }
+
+  // Custom validator to match backend password requirements
+  private passwordValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.value;
+    if (!password) return null; // Let required validator handle empty
+
+    const errors: ValidationErrors = {};
+    
+    if (password.length < 6) {
+      errors['minlength'] = { requiredLength: 6, actualLength: password.length };
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors['requiresUppercase'] = true;
+    }
+    if (!/[a-z]/.test(password)) {
+      errors['requiresLowercase'] = true;
+    }
+    if (!/[0-9]/.test(password)) {
+      errors['requiresDigit'] = true;
+    }
+
+    return Object.keys(errors).length > 0 ? errors : null;
   }
 
   get emailError(): string | undefined {
@@ -54,6 +77,9 @@ export class LoginComponent {
     if (control?.touched && control?.invalid) {
       if (control.errors?.['required']) return 'Password is required';
       if (control.errors?.['minlength']) return 'Password must be at least 6 characters';
+      if (control.errors?.['requiresUppercase']) return 'Password must contain at least one uppercase letter';
+      if (control.errors?.['requiresLowercase']) return 'Password must contain at least one lowercase letter';
+      if (control.errors?.['requiresDigit']) return 'Password must contain at least one digit';
     }
     return undefined;
   }
@@ -80,8 +106,23 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        const errorMessage = err.error?.message || 'Login failed. Please try again.';
-        this.toast.error(errorMessage);
+        
+        // Handle validation errors (400 Bad Request with ModelState)
+        if (err.status === 400 && err.error?.errors) {
+          // Extract validation errors from ModelState
+          const validationErrors = Object.values(err.error.errors).flat();
+          const errorMessage = validationErrors.join('. ');
+          this.toast.error(errorMessage);
+        } else if (err.error?.message) {
+          // Handle structured error messages
+          this.toast.error(err.error.message);
+        } else if (typeof err.error === 'string') {
+          // Handle plain string errors
+          this.toast.error(err.error);
+        } else {
+          // Fallback message
+          this.toast.error('Login failed. Please try again.');
+        }
       }
     });
   }
