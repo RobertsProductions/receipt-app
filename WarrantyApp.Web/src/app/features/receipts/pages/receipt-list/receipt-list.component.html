@@ -1,7 +1,11 @@
 <div class='receipt-list-page'>
   <div class='page-header'>
     <h1 class='page-title'>My Receipts</h1>
-    <app-button variant='primary' size='md' (onClick)='openUploadModal()'>
+    <app-button 
+      *ngIf='!loading && receipts.length > 0'
+      variant='primary' 
+      size='md' 
+      (onClick)='openUploadModal()'>
       + Upload Receipt
     </app-button>
   </div>
@@ -69,7 +73,13 @@
     </div>
     <div footer>
       <app-button variant='secondary' (onClick)='closeUploadModal()'>Cancel</app-button>
-      <app-button variant='primary' [loading]='uploading' (onClick)='uploadReceipt()'>Upload</app-button>
+      <app-button 
+        variant='primary' 
+        [loading]='uploading' 
+        [disabled]='selectedFiles.length === 0'
+        (onClick)='uploadReceipt()'>
+        Upload
+      </app-button>
     </div>
   </app-modal>
 </div>
