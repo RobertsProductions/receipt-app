@@ -24,6 +24,43 @@
   gap: var(--space-6);
 }
 
+.email-notice {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fbbf24;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
+}
+
+.notice-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.notice-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.notice-text {
+  flex: 1;
+
+  strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #78350f;
+    margin-bottom: var(--space-1);
+  }
+
+  p {
+    font-size: 14px;
+    color: #92400e;
+    margin: 0;
+  }
+}
+
 .profile-header-card {
   background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
   color: white;

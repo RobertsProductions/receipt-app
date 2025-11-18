@@ -9,6 +9,20 @@
   <app-spinner *ngIf="loading" size="lg" text="Loading profile..."></app-spinner>
 
   <div *ngIf="!loading && profile" class="profile-content">
+    <!-- Email Confirmation Notice -->
+    <div *ngIf="!profile.emailConfirmed" class="email-notice">
+      <div class="notice-content">
+        <span class="notice-icon">📧</span>
+        <div class="notice-text">
+          <strong>Email Not Verified</strong>
+          <p>Verify your email to receive warranty expiration notifications and important updates.</p>
+        </div>
+        <app-button variant="primary" size="sm" (onClick)="resendConfirmation()" [loading]="resendingEmail">
+          Resend Verification Email
+        </app-button>
+      </div>
+    </div>
+
     <!-- Profile Header Card -->
     <app-card class="profile-header-card" padding="lg">
       <div class="profile-header">
@@ -18,6 +32,7 @@
           <p class="profile-email">
             {{ profile.email }}
             <app-badge *ngIf="profile.emailConfirmed" variant="success" size="sm">Verified</app-badge>
+            <app-badge *ngIf="!profile.emailConfirmed" variant="warning" size="sm">Not Verified</app-badge>
           </p>
           <p class="profile-member-since">Member since {{ getMemberSince() }}</p>
         </div>

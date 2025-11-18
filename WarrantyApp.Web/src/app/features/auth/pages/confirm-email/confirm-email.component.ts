@@ -32,9 +32,10 @@ export class ConfirmEmailComponent implements OnInit {
     const token = this.route.snapshot.queryParams['token'];
     this.email = this.route.snapshot.queryParams['email'] || '';
 
+    // If no token, user probably navigated here directly - not an error
     if (!token) {
       this.state = 'error';
-      this.errorMessage = 'Invalid confirmation link';
+      this.errorMessage = 'No confirmation token provided. If you just registered, please check your email for the confirmation link.';
       return;
     }
 
@@ -44,7 +45,7 @@ export class ConfirmEmailComponent implements OnInit {
       this.toastService.success('Email confirmed successfully!');
     } catch (error: any) {
       this.state = 'error';
-      this.errorMessage = error.error?.message || 'Email confirmation failed';
+      this.errorMessage = error.error?.message || 'Email confirmation failed. The link may have expired.';
     }
   }
 

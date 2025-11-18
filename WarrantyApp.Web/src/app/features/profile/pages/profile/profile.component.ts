@@ -37,6 +37,7 @@ export class ProfileComponent implements OnInit {
   loading: boolean = false;
   editMode: boolean = false;
   showPasswordModal: boolean = false;
+  resendingEmail: boolean = false;
   profile: UserProfile | null = null;
   profileForm: FormGroup;
   passwordForm: FormGroup;
@@ -184,5 +185,24 @@ export class ProfileComponent implements OnInit {
     const newPassword = group.get('newPassword')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return newPassword === confirmPassword ? null : { passwordMismatch: true };
+  }
+
+  resendConfirmation(): void {
+    if (!this.profile?.email) {
+      this.toast.error('Email address not found');
+      return;
+    }
+
+    this.resendingEmail = true;
+    this.authService.resendEmailConfirmation(this.profile.email).subscribe({
+      next: () => {
+        this.toast.success('Verification email sent! Please check your inbox.');
+        this.resendingEmail = false;
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Failed to send verification email');
+        this.resendingEmail = false;
+      }
+    });
   }
 }
