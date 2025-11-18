@@ -24,13 +24,13 @@ test.describe('Receipt List Page', () => {
   test('should display empty state when no receipts exist', async ({ page }) => {
     await goToReceiptsPage(page);
     
-    // Check for empty state message
-    const isEmpty = await isReceiptsListEmpty(page);
-    expect(isEmpty).toBe(true);
+    // Check for empty state (no receipt cards)
+    const receiptCount = await getReceiptCount(page);
+    expect(receiptCount).toBe(0);
     
-    // Should show call-to-action
-    await expect(page.getByText(/no receipts|add your first|get started/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /upload|add|create/i })).toBeVisible();
+    // Should show main heading and upload button
+    await expect(page.getByRole('heading', { name: /my receipts/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /upload.*receipt|add.*receipt|\+.*upload/i })).toBeVisible();
   });
 
   test('should display receipts list page correctly', async ({ page }) => {

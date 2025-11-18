@@ -20,14 +20,16 @@ export async function goToReceiptsPage(page: Page): Promise<void> {
  * Upload a receipt file (image or PDF)
  */
 export async function uploadReceipt(page: Page, filePath: string): Promise<void> {
-  await goToReceiptsPage(page);
+  // Don't navigate - assume caller is already on receipts page or will navigate
   
   // Look for upload button or file input
   const fileInput = page.locator('input[type="file"]');
   
   // If file input is hidden, click the upload button first
   const uploadButton = page.getByRole('button', { name: /upload|add receipt/i });
-  if (await uploadButton.isVisible().catch(() => false)) {
+  const isUploadButtonVisible = await uploadButton.isVisible({ timeout: 2000 }).catch(() => false);
+  
+  if (isUploadButtonVisible) {
     await uploadButton.click();
   }
   
@@ -43,7 +45,7 @@ export async function uploadReceipt(page: Page, filePath: string): Promise<void>
  * Create a receipt manually via form
  */
 export async function createReceipt(page: Page, receipt: TestReceipt): Promise<void> {
-  await goToReceiptsPage(page);
+  // Don't navigate - assume caller is already on receipts page
   
   // Click create/add button
   const createButton = page.getByRole('button', { name: /add|create|new receipt/i });
@@ -84,7 +86,7 @@ export async function createReceipt(page: Page, receipt: TestReceipt): Promise<v
  * Find receipt by merchant name in the list
  */
 export async function findReceipt(page: Page, merchantName: string): Promise<any> {
-  await goToReceiptsPage(page);
+  // Don't navigate - assume caller is already on receipts page
   
   // Look for receipt card with merchant name
   const receiptCard = page.locator('.receipt-card, [data-testid="receipt-card"]')
@@ -166,21 +168,23 @@ export async function deleteReceipt(page: Page): Promise<void> {
 }
 
 /**
- * Check if receipts list is empty
+ * Check if receipts list is empty (has empty state message)
  */
 export async function isReceiptsListEmpty(page: Page): Promise<boolean> {
-  await goToReceiptsPage(page);
+  // Don't navigate - assume caller is already on receipts page
   
-  // Look for empty state message
+  // Look for empty state message with proper timeout
   const emptyMessage = page.getByText(/no receipts|add your first|get started/i);
-  return await emptyMessage.isVisible().catch(() => false);
+  const isEmpty = await emptyMessage.isVisible({ timeout: 5000 }).catch(() => false);
+  
+  return isEmpty;
 }
 
 /**
  * Get count of receipts on current page
  */
 export async function getReceiptCount(page: Page): Promise<number> {
-  await goToReceiptsPage(page);
+  // Don't navigate - assume caller is already on receipts page
   
   const receiptCards = page.locator('.receipt-card, [data-testid="receipt-card"]');
   return await receiptCards.count();
@@ -216,7 +220,7 @@ export async function goToPreviousPage(page: Page): Promise<void> {
  * Filter receipts by search term
  */
 export async function searchReceipts(page: Page, searchTerm: string): Promise<void> {
-  await goToReceiptsPage(page);
+  // Don't navigate - assume caller is already on receipts page
   
   const searchInput = page.getByPlaceholder(/search/i)
     .or(page.getByLabel(/search/i));
