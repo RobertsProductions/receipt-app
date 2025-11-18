@@ -42,44 +42,46 @@ export async function uploadReceipt(page: Page, filePath: string): Promise<void>
 }
 
 /**
- * Create a receipt manually via form
+ * Create a receipt using the upload API with generated test data
+ * This properly uploads via the API endpoint for realistic testing
+ * Note: Caller should refresh/navigate after this to see the new receipt
  */
 export async function createReceipt(page: Page, receipt: TestReceipt): Promise<void> {
-  // Don't navigate - assume caller is already on receipts page
+  // Get auth token
+  const token = await page.evaluate(() => localStorage.getItem('access_token'));
   
-  // Click create/add button
-  const createButton = page.getByRole('button', { name: /add|create|new receipt/i });
-  await createButton.waitFor({ state: 'visible', timeout: 10000 });
-  await createButton.click();
+  if (!token) {
+    throw new Error('No auth token found. User must be logged in.');
+  }
   
-  // Fill form with explicit waits
-  const merchantInput = page.getByLabel(/merchant/i);
-  await merchantInput.waitFor({ state: 'visible', timeout: 10000 });
-  await merchantInput.fill(receipt.merchantName);
+  // Create a minimal 1x1 PNG file as FormData
+  const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  const imageBuffer = Buffer.from(base64Image, 'base64');
   
-  const amountInput = page.getByLabel(/amount|total/i);
-  await amountInput.waitFor({ state: 'visible', timeout: 10000 });
-  await amountInput.fill(receipt.totalAmount.toString());
+  // Make API call via the Angular dev server proxy
+  const response = await page.request.post('/api/receipts/upload', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    multipart: {
+      File: {
+        name: 'test-receipt.png',
+        mimeType: 'image/png',
+        buffer: imageBuffer
+      },
+      Merchant: receipt.merchantName,
+      Amount: receipt.totalAmount.toString(),
+      PurchaseDate: receipt.purchaseDate,
+      ProductName: receipt.productDescription,
+      WarrantyMonths: receipt.warrantyMonths.toString(),
+      UseOcr: 'false'
+    }
+  });
   
-  const dateInput = page.getByLabel(/date|purchase date/i);
-  await dateInput.waitFor({ state: 'visible', timeout: 10000 });
-  await dateInput.fill(receipt.purchaseDate);
-  
-  const productInput = page.getByLabel(/product|description/i);
-  await productInput.waitFor({ state: 'visible', timeout: 10000 });
-  await productInput.fill(receipt.productDescription);
-  
-  const warrantyInput = page.getByLabel(/warranty.*months/i);
-  await warrantyInput.waitFor({ state: 'visible', timeout: 10000 });
-  await warrantyInput.fill(receipt.warrantyMonths.toString());
-  
-  // Submit
-  const saveButton = page.getByRole('button', { name: /save|create|add/i });
-  await saveButton.waitFor({ state: 'visible', timeout: 10000 });
-  await saveButton.click();
-  
-  // Wait for success
-  await expect(page.getByText(/success|created/i)).toBeVisible({ timeout: 10000 });
+  if (!response.ok()) {
+    const error = await response.text();
+    throw new Error(`Failed to create receipt via API: ${response.status()} - ${error}`);
+  }
 }
 
 /**

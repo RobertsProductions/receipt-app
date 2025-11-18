@@ -7,9 +7,13 @@ This guide provides best practices for coding sessions, documentation maintenanc
 
 ## 🚀 Quick Start
 
-**Before doing ANYTHING, start Aspire:**
+**Before doing ANYTHING, check if Aspire is running, then start it if needed:**
 
-```bash
+```powershell
+# Check if Aspire dashboard port is in use (17263 = HTTPS dashboard)
+netstat -ano | findstr "17263"
+
+# If nothing returned, Aspire is NOT running. Start it:
 cd AppHost
 dotnet run
 ```
@@ -17,13 +21,23 @@ dotnet run
 **On first run, Aspire will prompt you for the OpenAI API key.**  
 This key is stored securely in user secrets and reused for all future sessions.
 
+**When Aspire starts successfully, you'll see:**
+```
+info: Aspire.Hosting.DistributedApplication[0]
+      Now listening on: https://localhost:17263
+info: Aspire.Hosting.DistributedApplication[0]
+      Login to the dashboard at https://localhost:17263/login?t=...
+info: Aspire.Hosting.DistributedApplication[0]
+      Distributed application started. Press Ctrl+C to shut down.
+```
+
 This single command:
 - ✅ Prompts for OpenAI API key (first run only)
 - ✅ Starts backend API with OpenAI key configured
 - ✅ Starts frontend dev server
 - ✅ Starts PostgreSQL database
 - ✅ Configures all service dependencies
-- ✅ Opens monitoring dashboard at http://localhost:15299
+- ✅ Opens monitoring dashboard at **https://localhost:17263** (hardcoded port)
 
 **Why Aspire is mandatory:**
 1. **OpenAI Integration**: Manages API key via user secrets (prompts on first run)
@@ -31,7 +45,8 @@ This single command:
 3. **Service Orchestration**: Ensures proper startup order and dependencies
 4. **Monitoring**: Real-time logs and health checks in dashboard
 
-**⚠️ DO NOT run services standalone** unless you have a specific reason and know what you're doing.
+**⚠️ DO NOT run services standalone** unless you have a specific reason and know what you're doing.  
+**⚠️ DO NOT start Aspire twice** - check if port 17263 is in use first to avoid conflicts.
 
 ## 📋 Table of Contents
 
@@ -114,17 +129,20 @@ git status
 - Configuration management
 
 ```bash
-# 1. Start All Services (via Aspire - RECOMMENDED)
+# 1. Check if Aspire is already running
+netstat -ano | findstr "17263"
+
+# 2. If not running, start All Services (via Aspire - REQUIRED)
 cd AppHost
 dotnet run
 # First run: Will prompt for OpenAI API key
 # Subsequent runs: Uses stored key from user secrets
-# Opens Aspire Dashboard at http://localhost:15299 (or similar)
-# ✅ Verify all services show "Running" status
-# ✅ Check API is accessible: http://localhost:5134
-# ✅ Check frontend is accessible: http://localhost:4200
+# Opens Aspire Dashboard at https://localhost:17263
+# ✅ Verify all services show "Running" status in dashboard
+# ✅ Check API is accessible (port shown in Aspire dashboard)
+# ✅ Check frontend is accessible (port shown in Aspire dashboard)
 
-# 2. Verify Backend (if running standalone - NOT recommended)
+# 3. Verify Backend (if running standalone - NOT recommended)
 cd MyApi
 dotnet build
 dotnet test
@@ -1002,8 +1020,9 @@ ls -R docs/               # Directory structure
 - [ ] [Doc 2]
 
 ## Environment Check
-- [ ] Aspire services running: `cd AppHost && dotnet run`
-- [ ] Aspire Dashboard accessible: http://localhost:15299
+- [ ] Check if Aspire running: `netstat -ano | findstr "17263"`
+- [ ] Start if needed: `cd AppHost && dotnet run`
+- [ ] Aspire Dashboard accessible: https://localhost:17263
 - [ ] All services show "Running" in dashboard
 - [ ] Backend tests pass: `dotnet test` (from MyApi.Tests)
 - [ ] Frontend lints: `cd WarrantyApp.Web && npm run lint`

@@ -218,7 +218,7 @@ public class ReceiptsController : ControllerBase
     /// <returns>List of receipts ordered by upload date (newest first)</returns>
     [HttpGet]
     [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "page", "pageSize" })] // Cache for 1 minute
-    public async Task<ActionResult<IEnumerable<ReceiptResponseDto>>> GetReceipts(
+    public async Task<ActionResult> GetReceipts(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
@@ -226,6 +226,10 @@ public class ReceiptsController : ControllerBase
 
         if (page < 1) page = 1;
         if (pageSize < 1 || pageSize > 100) pageSize = 20;
+
+        var totalCount = await _context.Receipts
+            .Where(r => r.UserId == userId)
+            .CountAsync();
 
         var receipts = await _context.Receipts
             .Where(r => r.UserId == userId)
@@ -235,7 +239,7 @@ public class ReceiptsController : ControllerBase
             .ToListAsync();
 
         var response = receipts.Select(MapToResponseDto);
-        return Ok(response);
+        return Ok(new { receipts = response, totalCount = totalCount });
     }
 
     /// <summary>
